@@ -99,12 +99,6 @@ class IcoDot(visual.SphericalVisual):
                         print(f'bling {i}')
                         self.states[i] = 1.
                         self.state_buffer[i] = 1.
-                        # self.states[:] = .5
-                        # self.states[i] = 1.
-                        # self.states[i] = np.array([1.], dtype=np.float32)
-                        # self.state_buffer.set_subdata(np.array([1.], dtype=np.float32), offset=i)
-                        # self.states[:] = .9
-                        # self.canvas.update()
                         break
                     else:
                         print(f'no for {i} [{v}]')
