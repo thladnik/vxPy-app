@@ -52,11 +52,11 @@ class IcoDot(visual.SphericalVisual):
         self.avail_vertex_idcs = np.where(self.vertices[:,-1] < .5)[0]
         np.random.seed(1)
         self.avail_vertex_idcs = np.random.permutation(self.avail_vertex_idcs)
-        print(f'Available vertices {len(self.avail_vertex_idcs)}')
 
         self.baseline_level = 0.05
         self.group_size = 5
         self.idx = None
+        self.tau = 2
 
     def initialize(self, **params):
         self.dot['u_time'] = 0.0
@@ -73,9 +73,12 @@ class IcoDot(visual.SphericalVisual):
             return
 
         cur_time = self.dot['u_time'][0]
-        tau = 2.
-        self.states = self.states[:] - dt * 1./tau * (self.states[:] - self.baseline_level)
+        self.states = self.states[:] - dt * 1./self.tau * (self.states[:] - self.baseline_level)
         self.state_buffer[:] = self.states
+
+        # Write to parameters
+        self.parameters.update(decay_tau=self.tau)
+
 
         if np.floor(cur_time/interval) > self.idx / self.group_size:
 
@@ -90,6 +93,8 @@ class IcoDot(visual.SphericalVisual):
                 self.states[idcs] = 1.
                 self.state_buffer[:] = self.states
 
+                # Write to parameters
+                self.parameters.update(active_vertex_indices=idcs, active_vertices=self.vertices[idcs])
 
             else:
                 while True:
