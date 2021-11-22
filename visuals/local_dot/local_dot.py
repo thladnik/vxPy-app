@@ -23,6 +23,8 @@ from vxpy.api import camera_rpc
 from vxpy.core import visual
 from vxpy.utils import sphere, geometry
 from vxpy.routines.camera.zf_tracking import EyePositionDetection
+from vxpy.api import controller_rpc
+from vxpy.api.protocol import end_protocol_phase
 
 
 class IcoDot(visual.SphericalVisual):
@@ -57,12 +59,14 @@ class IcoDot(visual.SphericalVisual):
         self.group_size = 5
         self.idx = None
         self.tau = 2
+        self.end_on_next = False
 
     def initialize(self, **params):
         self.dot['u_time'] = 0.0
         self.idx = 0
         self.states[:] = self.baseline_level
         self.state_buffer[:] = self.states
+        self.end_on_next = False
 
     def render(self, dt):
         self.dot['u_time'] += dt
@@ -79,34 +83,33 @@ class IcoDot(visual.SphericalVisual):
         # Write to parameters
         self.parameters.update(decay_tau=self.tau)
 
-
         if np.floor(cur_time/interval) > self.idx / self.group_size:
 
             choose_random = False
 
             if not choose_random:
-                # Loop around
-                if self.idx >= self.avail_vertex_idcs.shape[0]:
-                    self.idx = 0
 
-                idcs = (self.avail_vertex_idcs[(self.idx):(self.idx+self.group_size)]).astype(np.int64)
+                max_idx = self.avail_vertex_idcs.shape[0]
+                end_idx = self.idx + self.group_size
+
+                if end_idx > max_idx:
+                    if self.end_on_next:
+                        controller_rpc(end_protocol_phase)
+                    else:
+                        end_idx = max_idx
+                        self.end_on_next = True
+
+                idcs = (self.avail_vertex_idcs[self.idx:end_idx]).astype(np.int64)
+
+                lendiff = self.group_size - (end_idx-self.idx)
+                if lendiff > 0:
+                    idcs = np.append(idcs, self.avail_vertex_idcs[:lendiff].astype(np.int64))
+
                 self.states[idcs] = 1.
                 self.state_buffer[:] = self.states
 
                 # Write to parameters
                 self.parameters.update(active_vertex_indices=idcs, active_vertices=self.vertices[idcs])
-
-            else:
-                while True:
-                    i = np.random.randint(self.states.shape[0])
-                    v = self.vertices[i,:]
-                    if v[-1] < .5:
-                        print(f'bling {i}')
-                        self.states[i] = 1.
-                        self.state_buffer[i] = 1.
-                        break
-                    else:
-                        print(f'no for {i} [{v}]')
 
             self.idx += self.group_size
 
