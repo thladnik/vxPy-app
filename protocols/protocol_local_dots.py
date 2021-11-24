@@ -25,5 +25,6 @@ class TestLocalDotProtocol(StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
-        self.add_phase(IcoDot, None,
-                       {IcoDot.p_interval: 2000})
+        for i in range(3):
+            self.add_phase(IcoDot, None,
+                           {IcoDot.p_interval: 2000})

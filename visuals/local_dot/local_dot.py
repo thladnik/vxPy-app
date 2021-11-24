@@ -19,12 +19,12 @@ import numpy as np
 from vispy import gloo
 from vispy import scene
 
+from vxpy import Logging
 from vxpy.api import camera_rpc
 from vxpy.core import visual
 from vxpy.utils import sphere, geometry
 from vxpy.routines.camera.zf_tracking import EyePositionDetection
-from vxpy.api import controller_rpc
-from vxpy.api.protocol import end_protocol_phase
+from vxpy.utils import geometry
 
 
 class IcoDot(visual.SphericalVisual):
@@ -51,11 +51,15 @@ class IcoDot(visual.SphericalVisual):
         self.dot['a_position'] = self.position_buffer
         self.dot['a_state'] = self.state_buffer
 
-        self.avail_vertex_idcs = np.where(self.vertices[:,-1] < .5)[0]
+        # Fetch available indices (up to elevation of +45deg)
+        elev_max = np.pi/4
+        v_max = geometry.sph2cart(0., elev_max, 1.)
+        self.avail_vertex_idcs = np.where(self.vertices[:,-1] < v_max[-1])[0]
         np.random.seed(1)
         self.avail_vertex_idcs = np.random.permutation(self.avail_vertex_idcs)
-
-        self.baseline_level = 0.05
+        Logging.write(Logging.INFO, f'Using {len(self.avail_vertex_idcs)} vertices '
+                                    + 'up to elevation of {:.1f}'.format(180 / np.pi * elev_max))
+        self.baseline_level = 0.0
         self.group_size = 5
         self.idx = None
         self.tau = 2
@@ -94,7 +98,7 @@ class IcoDot(visual.SphericalVisual):
 
                 if end_idx > max_idx:
                     if self.end_on_next:
-                        controller_rpc(end_protocol_phase)
+                        self.end()
                     else:
                         end_idx = max_idx
                         self.end_on_next = True
@@ -115,7 +119,8 @@ class IcoDot(visual.SphericalVisual):
 
         # Draw dots
         self.apply_transform(self.dot)
-        self.dot.draw('triangles', self.index_buffer)
+        # self.dot.draw('triangles', self.index_buffer)
+        self.dot.draw('points')
 
     interface = [
         (p_interval, 1000, 100, 5000, dict(step_size=100)),
