@@ -25,14 +25,11 @@ void main() {
 //    else
 //        gl_FragColor = vec4(vec3(v_state), 1.);
 
-    float dot_diameter = 2.;
-//    float d = distance(v_position, v_original_position);
-    float angle = acos(dot(normalize(v_position), normalize(v_original_position)));
-    float c = step(angle, dot_diameter / 180. * PI / 2.);
+    float dot_diameter_deg = 10.;
+    float angle_rad = acos(dot(normalize(v_position), normalize(v_original_position)));
+    float dot_radius_rad = dot_diameter_deg / 180. * PI / 2.;
+    float c = angle_rad/dot_radius_rad;
 
-    if (c == 0.0)
-        discard;
-    else
-        gl_FragColor = vec4(vec3(c), 1.);
+    gl_FragColor = vec4(vec3(c), 1.);
 
 }
