@@ -70,6 +70,7 @@ class BlackAndWhiteGrating(PlanarVisual):
         self.grating = gloo.Program(vert, frag)
 
     def initialize(self, *args, **kwargs):
+        print('Initialize')
         # Reset u_time to 0 on each visual initialization
         self.grating['u_time'] = 0.
 
@@ -79,6 +80,7 @@ class BlackAndWhiteGrating(PlanarVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.grating['u_time'] += dt
+        print(self.grating['u_time'][0], '(visual)')
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
