@@ -25,10 +25,13 @@ from vxpy.core import visual
 from vxpy.utils import sphere
 
 
-class IcoBinaryNoiseSphere_SimuSaccade(visual.SphericalVisual):
+class IcoSphereWithSimulatedSaccade(visual.SphericalVisual):
 
     p_sacc_duration = 'p_sacc_duration'
     p_sacc_azim_target = 'p_sacc_azim_target'
+
+    VERT_LOC = './sphere.vert'
+    FRAG_LOC = ''
 
     def __init__(self, *args):
         visual.SphericalVisual.__init__(self, *args)
@@ -38,22 +41,18 @@ class IcoBinaryNoiseSphere_SimuSaccade(visual.SphericalVisual):
         self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
         vertices = self.ico_sphere.get_vertices()
         self.position_buffer = gloo.VertexBuffer(vertices)
-        # self.states = np.ascontiguousarray(np.random.randint(2, size=vertices.shape[0]), dtype=np.float32)
-        self.states = np.ascontiguousarray(np.random.rand(vertices.shape[0]), dtype=np.float32)
-        self.state_buffer = gloo.VertexBuffer(self.states)
 
-        # Set up programs
-        VERT = self.load_vertex_shader('./binary_noise_sphere.vert')
-        FRAG = self.load_shader('./binary_noise_sphere.frag')
-
-        # Set dot
+        # Set up program
+        VERT = self.load_vertex_shader(self.VERT_LOC)
+        FRAG = self.load_shader(self.FRAG_LOC)
         self.binary_noise = gloo.Program(VERT, FRAG)
         self.binary_noise['a_position'] = self.position_buffer
-        self.binary_noise['a_state'] = self.state_buffer
 
         self.sacc_start_time = None
         self.u_rotate = np.eye(4)
         self.cur_azim = 0.
+
+        np.random.seed(1)
 
     def trigger_mock_saccade(self):
         self.sacc_start_time = self.binary_noise['u_time']
@@ -100,72 +99,32 @@ class IcoBinaryNoiseSphere_SimuSaccade(visual.SphericalVisual):
     ]
 
 
-class IcoNoise(visual.BaseVisual):
+class IcoNoiseSphereWithSimulatedSaccade(IcoSphereWithSimulatedSaccade):
 
-    interface = []
-
-
-    def __init__(self, *args):
-        visual.BaseVisual.__init__(self, *args)
-
-        # Set up sphere
-        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=3)
-        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        vertices = self.ico_sphere.get_vertices()
-        self.position_buffer = gloo.VertexBuffer(vertices)
-        np.random.seed(1)
-        self.states = np.ascontiguousarray(np.random.randint(2, size=vertices.shape[0]), dtype=np.float32)
-        self.state_buffer = gloo.VertexBuffer(self.states)
-
-        # Set up program
-        VERT = self.load_vertex_shader('./filtered_noise_sphere.vert')
-        FRAG = self.load_shader('./filtered_noise_sphere.frag')
-        self.binary_noise = gloo.Program(VERT, FRAG)
-        self.binary_noise['a_position'] = self.position_buffer
-        self.binary_noise['a_state'] = self.state_buffer
-
-    def initialize(self, **params):
-        self.binary_noise['u_time'] = 0.0
-
-    def render(self, dt):
-        self.binary_noise['u_time'] += dt
-
-        # Draw dots
-        self.apply_transform(self.binary_noise)
-        self.binary_noise.draw('triangles', self.index_buffer)
-
-
-
-class IcoGaussianNoise(visual.BaseVisual):
-
-    interface = []
-
+    FRAG_LOC = './smooth_noise_sphere.frag'
 
     def __init__(self, *args):
-        visual.BaseVisual.__init__(self, *args)
+        IcoSphereWithSimulatedSaccade.__init__(self, *args)
 
-        # Set up sphere
-        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=3)
-        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        vertices = self.ico_sphere.get_vertices()
-        self.position_buffer = gloo.VertexBuffer(vertices)
-        np.random.seed(1)
-        self.states = np.ascontiguousarray(np.random.randint(2, size=vertices.shape[0]), dtype=np.float32)
+        self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size), dtype=np.float32)
         self.state_buffer = gloo.VertexBuffer(self.states)
 
-        # Set up program
-        VERT = self.load_vertex_shader('./filtered_noise_sphere.vert')
-        FRAG = self.load_shader('./filtered_noise_sphere.frag')
-        self.binary_noise = gloo.Program(VERT, FRAG)
-        self.binary_noise['a_position'] = self.position_buffer
+        # Set vertex states
         self.binary_noise['a_state'] = self.state_buffer
 
-    def initialize(self, **params):
-        self.binary_noise['u_time'] = 0.0
 
-    def render(self, dt):
-        self.binary_noise['u_time'] += dt
+class IcoBinaryNoiseSphereWithSimulatedSaccade(IcoSphereWithSimulatedSaccade):
 
-        # Draw dots
-        self.apply_transform(self.binary_noise)
-        self.binary_noise.draw('triangles', self.index_buffer)
+    FRAG_LOC = './binary_noise_sphere.frag'
+
+    def __init__(self, *args):
+        IcoSphereWithSimulatedSaccade.__init__(self, *args)
+
+        # self.states = np.ascontiguousarray(np.random.randint(2, size=self.position_buffer.size), dtype=np.float32)
+        bias = 0.2
+        invert = True
+        self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - bias), dtype=np.float32)
+        self.state_buffer = gloo.VertexBuffer(self.states)
+
+        # Set vertex states
+        self.binary_noise['a_state'] = self.state_buffer
