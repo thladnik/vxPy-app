@@ -17,7 +17,7 @@ vec2 cart2sph(in vec3 cart_coord)
 }
 
 void main() {
-    vec2 uv_pos = cart2sph(v_position.zxy);
+    vec2 uv_pos = cart2sph(v_position);
     vec3 color = vec3(smoothstep(-0.1,0.1,sin(uv_pos.x*(180/u_spat_period)+u_stime*PI/180*u_ang_velocity)));
     gl_FragColor = vec4(color,1.);
 }
