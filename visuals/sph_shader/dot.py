@@ -50,14 +50,14 @@ class Dot(visual.SphericalVisual):
         # Set up program
         vert = self.load_vertex_shader('./sphericalShader.vert')
         frag = self.load_shader('./dot.frag')
-        self.grating = gloo.Program(vert, frag)
-        self.grating['a_position'] = self.position_buffer
+        self.dot = gloo.Program(vert, frag)
+        self.dot['a_position'] = self.position_buffer
 
     def initialize(self, **params):
-        self.grating['u_stime'] = 0.0
+        self.dot['u_stime'] = 0.0
         self.update(**params)
 
     def render(self, dt):
-        self.grating['u_stime'] += dt
-        self.apply_transform(self.grating)
-        self.grating.draw('triangles', self.index_buffer)
+        self.dot['u_stime'] += dt
+        self.apply_transform(self.dot)
+        self.dot.draw('triangles', self.index_buffer)
