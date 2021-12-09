@@ -30,10 +30,10 @@ class TranslationWithDot(visual.SphericalVisual):
 
     interface = [
         # Translation grating
-        (u_ang_velocity, 5., -100., 100., {'step_size': 1.}),
-        (u_spat_period, 40., 2., 360., {'step_size': 1.}),
+        (u_ang_velocity, 15., -100., 100., {'step_size': 1.}),
+        (u_spat_period, 10., 2., 360., {'step_size': 1.}),
         # Dot
-        (u_ang_size, 5., 0., 100., {'step_size': 1.}),
+        (u_ang_size, 20., 0., 100., {'step_size': 1.}),
         (u_period, 10., -40., 40., {'step_size': 1.}),
         (u_elv, 0., -45., 45., {'step_size': 1.})
     ]
@@ -46,31 +46,18 @@ class TranslationWithDot(visual.SphericalVisual):
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
 
-        # Set up programs
-
-        # Translation grating
+        # Translation grating with dot
         vert = self.load_vertex_shader('./sphericalShader.vert')
-        frag = self.load_shader('./trans_grating.frag')
-        self.translation = gloo.Program(vert, frag)
-        self.translation['a_position'] = self.position_buffer
-
-        # Dot
-        vert = self.load_vertex_shader('./sphericalShader.vert')
-        frag = self.load_shader('./dot.frag')
-        self.dot = gloo.Program(vert, frag)
-        self.dot['a_position'] = self.position_buffer
+        frag = self.load_shader('./trans_grating_with_dot.frag')
+        self.trans_with_dot = gloo.Program(vert, frag)
+        self.trans_with_dot['a_position'] = self.position_buffer
 
     def initialize(self, **params):
-        self.translation['u_stime'] = 0.0
-        self.dot['u_stime'] = 0.0
+        self.trans_with_dot['u_stime'] = 0.0
         self.update(**params)
 
     def render(self, dt):
-        self.translation['u_stime'] += dt
-        self.dot['u_stime'] += dt
+        self.trans_with_dot['u_stime'] += dt
 
-        self.apply_transform(self.translation)
-        self.translation.draw('triangles', self.index_buffer)
-
-        self.apply_transform(self.dot)
-        self.dot.draw('triangles', self.index_buffer)
+        self.apply_transform(self.trans_with_dot)
+        self.trans_with_dot.draw('triangles', self.index_buffer)
