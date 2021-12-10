@@ -16,13 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import annotations
+
 import numpy as np
 from vispy import gloo
-from vispy import scene
-from vispy.util import transforms
 
-from vxpy.core import visual
+from vxpy.core import logging, visual
 from vxpy.utils import sphere
+
+log = logging.getLogger(__name__)
 
 
 class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
@@ -64,6 +65,7 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
         self.binary_noise['u_time'] = 0.0
         self.last = 0
+        log.info('Hello')
 
     def render(self, dt):
         self.binary_noise['u_time'] += dt
