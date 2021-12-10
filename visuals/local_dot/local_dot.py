@@ -17,13 +17,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import numpy as np
 from vispy import gloo
-from vispy import scene
 
-from vxpy import Logging
-from vxpy.api import camera_rpc
-from vxpy.core import visual
-from vxpy.utils import sphere, geometry
-from vxpy.routines.camera.zf_tracking import EyePositionDetection
+from vxpy.core import visual, logging
+from vxpy.utils import sphere
 from vxpy.utils import geometry
 
 
@@ -58,7 +54,7 @@ class IcoDot(visual.SphericalVisual):
         np.random.seed(1)
         self.avail_vertex_idcs = np.random.permutation(self.avail_vertex_idcs)
         Logging.write(Logging.INFO, f'Using {len(self.avail_vertex_idcs)} vertices '
-                                    + 'up to elevation of {:.1f}'.format(180 / np.pi * elev_max))
+                      + 'up to elevation of {:.1f}'.format(180 / np.pi * elev_max))
         self.baseline_level = 0.0
         self.group_size = 5
         self.idx = None
