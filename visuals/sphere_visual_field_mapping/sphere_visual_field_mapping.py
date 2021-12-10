@@ -65,7 +65,6 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
         self.binary_noise['u_time'] = 0.0
         self.last = 0
-        log.info('Hello')
 
     def render(self, dt):
         self.binary_noise['u_time'] += dt
