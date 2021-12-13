@@ -35,13 +35,23 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
     VERT_LOC = './sphere.vert'
     FRAG_LOC = './binary_sphere.frag'
 
+    interface = [
+        (p_interval, 1000, 100, 10000, {'step_size': 100}),
+        (p_bias, .10, .01, .50, {'step_size': .01}),
+        (p_inverted, False),
+    ]
+
     def __init__(self, *args):
         visual.SphericalVisual.__init__(self, *args)
 
         # Set up sphere
         self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
         self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        self.position_buffer = gloo.VertexBuffer(self.ico_sphere.get_vertices())
+        vertices = self.ico_sphere.get_vertices()
+        self.position_buffer = gloo.VertexBuffer(vertices)
+
+        # For now, just set this to parameters
+        self._add_data_appendix('vertex_coords', vertices)
 
         # Set up program
         VERT = self.load_vertex_shader(self.VERT_LOC)
@@ -53,37 +63,37 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
         # Set seed!
         np.random.seed(1)
 
-        self.parameters[self.p_bias] = .2
-        self.parameters[self.p_inverted] = False
-        self.parameters[self.p_interval] = 1.
-
         # Set initial vertex states
         self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - self.parameters[self.p_bias]), dtype=np.float32)
         self.state_buffer = gloo.VertexBuffer(self.states)
         self.binary_noise['a_state'] = self.state_buffer
 
-
         self.binary_noise['u_time'] = 0.0
-        self.last = 0
+        self.last = 0.0
+        self._set_new_states(self.parameters[self.p_bias], self.parameters[self.p_inverted])
+
+    def _set_new_states(self, bias, inverted):
+
+        states = np.random.rand(self.position_buffer.size) < (1. - bias)
+        if inverted:
+            states = np.logical_not(states)
+
+        self.parameters.update(vertex_states=states)
+        self.state_buffer[:] = np.ascontiguousarray(states, dtype=np.float32)
 
     def render(self, dt):
         self.binary_noise['u_time'] += dt
 
         bias = self.parameters.get(self.p_bias)
         inverted = self.parameters.get(self.p_inverted)
-        interval = self.parameters.get(self.p_interval)
+        interval = self.parameters.get(self.p_interval) / 1000
 
         if bias is None or inverted is None or interval is None:
             return
 
-        now = int(self.binary_noise['u_time'][0] / interval)
-        # print(self.binary_noise['u_time'], now)
-        if now > self.last:
-            states = np.random.rand(self.position_buffer.size) < (1. - bias)
-            if inverted:
-                states = np.abs(states - 1)
-
-            self.state_buffer[:] = np.ascontiguousarray(states, dtype=np.float32)
+        now = self.binary_noise['u_time'][0]
+        if now > self.last + interval:
+            self._set_new_states(bias, inverted)
             self.last = now
 
         # Draw
