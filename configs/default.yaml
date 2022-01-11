@@ -1,3 +1,5 @@
+CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
+
 CONF_CAMERA_USE: true
 
 CONF_CAMERA_DEVICES: 
