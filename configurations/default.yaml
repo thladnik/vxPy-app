@@ -3,20 +3,22 @@ CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
 CONF_CAMERA_USE: true
 
 CONF_CAMERA_DEVICES: 
-- api: vxpy.devices.camera.virtual.virtual_camera
-  serial: 1234
-  id: fish_embedded
-  model: Single_Fish_Spontaneous_1@115fps
-  format: RGB8(640x480)@115
-  exposure: 5.0
-  gain: 1.5
-- api: vxpy.devices.camera.virtual.virtual_camera
-  serial: 5678
-  id: multiple_fish
-  model: Multi_Fish_Eyes_Cam@20fps
-  format: Y800(752x480)@20
-  exposure: 2.0
-  gain: 5.5
+  fish_embedded:
+    api: vxpy.devices.camera.virtual.virtual_camera
+    serial: 1234
+    id: fish_embedded
+    model: Single_Fish_Spontaneous_1@115fps
+    format: RGB8(640x480)@115
+    exposure: 5.0
+    gain: 1.5
+  multiple_fish:
+    api: vxpy.devices.camera.virtual.virtual_camera
+    serial: 5678
+    id: multiple_fish
+    model: Multi_Fish_Eyes_Cam@20fps
+    format: Y800(752x480)@20
+    exposure: 2.0
+    gain: 5.5
 
 CONF_CAMERA_ROUTINES:
 - vxpy.routines.camera.camera_capture.Frames
@@ -24,7 +26,7 @@ CONF_CAMERA_ROUTINES:
 
 CONF_DISPLAY_USE: true
 
-CONF_DISPLAY_FPS: 20
+CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
 - vxpy.routines.display.display_capture.Frames
 - vxpy.routines.display.display_capture.DynamicParameters

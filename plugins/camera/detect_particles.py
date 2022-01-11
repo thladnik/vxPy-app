@@ -21,7 +21,7 @@ from PySide6 import QtWidgets
 import pyqtgraph as pg
 
 from vxpy.api.attribute import ArrayAttribute, ArrayType, read_attribute
-from vxpy.api.camera import find_config_for_camera_id, Format
+from vxpy.api.camera import get_config_for_camera, Format
 from vxpy.api.dependency import require_camera_device
 from vxpy.api.routine import CameraRoutine
 from vxpy.api.ui import AddonWidget
@@ -37,7 +37,7 @@ class ParticleDetection(CameraRoutine):
 
     def setup(self):
         # Get camera dimensions
-        config = find_config_for_camera_id('multiple_fish')
+        config = get_config_for_camera('multiple_fish')
         fmt = Format.from_str(config['format'])
         self.res_x = fmt.width
         self.res_y = fmt.height
