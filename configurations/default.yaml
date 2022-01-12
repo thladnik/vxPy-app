@@ -35,22 +35,28 @@ CONF_GUI_ADDONS:
   - vxpy.gui.io.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
 CONF_IO_PINS:
-  Dev1:
-    sawtooth_analogin:
-      type: ai
-      map: ai2
-    saccade_trigger_out:
-      type: do
-      map: do5
-    rectangular_analogin:
-      type: ai
-      map: ai01
+  sawtooth_analogin:
+    device: Dev1
+    type: ai
+    map: ai2
+  saccade_trigger_out:
+    device: Dev1
+    type: do
+    map: do5
+  rectangular_analogin:
+    device: Dev2
+    type: ai
+    map: ai01
 CONF_IO_MAX_SR: 1000
 CONF_IO_DEVICES:
   Dev1:
     type: virtual_daq
     model: VirtualDaqDevice
-    com: COM3
+    port: COM3
+  Dev2:
+    type: virtual_daq
+    model: VirtualDaqDevice
+    port: COM6
 CONF_IO_ROUTINES:
 - vxpy.routines.io.read_inputs.ReadAll
 - vxpy.routines.io.write_test_attributes.SinesAddedWhiteNoise
