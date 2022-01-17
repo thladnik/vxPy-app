@@ -24,8 +24,8 @@ void main() {
     float secLen = sin(u_ang_size/360*PI);
     float dot_color = 1.-smoothstep(secLen,secLen+0.01,distance(v_position,dotloc));
     if(dot_color > .5) {
-        gl_FragColor = vec4(vec3(dot_color),1.);
+        gl_FragColor = vec4(vec3(dot_color) ,1.);
     } else {
-        gl_FragColor = vec4(vec3(grating_color),1.);
+        gl_FragColor = vec4(vec3(grating_color) / 2.,1.);
     }
 }

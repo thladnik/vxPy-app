@@ -18,7 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import numpy as np
-from vispy import gloo
+from vispy import app, gloo
 
 from vxpy.core import logging, visual
 from vxpy.utils import sphere
@@ -59,6 +59,11 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
         self.binary_noise = gloo.Program(VERT, FRAG)
         self.binary_noise['a_position'] = self.position_buffer
 
+        # self.all_states = np.nan * np.ones((1000, vertices.shape[0]))
+        # self.tmr = app.Timer()
+        # self.tmr.connect(self.print_states_params)
+        # self.tmr.start(1)
+
     def initialize(self, **params):
         # Set seed!
         np.random.seed(1)
@@ -70,6 +75,7 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
         self.binary_noise['u_time'] = 0.0
         self.last = 0.0
+        self.states_idx = 0
         self._set_new_states(self.parameters[self.p_bias], self.parameters[self.p_inverted])
 
     def _set_new_states(self, bias, inverted):
@@ -79,7 +85,16 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
             states = np.logical_not(states)
 
         self.parameters.update(vertex_states=states)
+        self.all_states[self.states_idx] = states
+        self.states_idx += 1
         self.state_buffer[:] = np.ascontiguousarray(states, dtype=np.float32)
+
+    def print_states_params(self, dt):
+        pass
+        # print('Timer?')
+        # mean_states = np.nanmean(self.all_states, axis=0)
+        # print(mean_states.shape)
+        # print(np.mean(mean_states), '+/-', np.std(mean_states))
 
     def render(self, dt):
         self.binary_noise['u_time'] += dt
