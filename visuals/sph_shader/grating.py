@@ -49,6 +49,7 @@ class Rotation(visual.SphericalVisual):
 
     def render(self, dt):
         self.rotation['u_stime'] += dt
+
         self.apply_transform(self.rotation)
         self.rotation.draw('triangles', self.index_buffer)
 

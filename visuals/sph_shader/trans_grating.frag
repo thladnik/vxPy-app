@@ -6,5 +6,5 @@ varying vec3 v_position;
 
 void main() {
     vec3 color = vec3(smoothstep(-0.1,0.1,sin(v_position.x*(180/u_spat_period)+u_stime*PI/180*u_ang_velocity)));
-    gl_FragColor = vec4(color,1.);
+    gl_FragColor = vec4(color / 2.,1.);
 }

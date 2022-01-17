@@ -3,6 +3,7 @@
 from vxpy.core.protocol import StaticPhasicProtocol
 
 from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping
+from visuals.sph_shader import Blank
 
 
 class TestProtocol01(StaticPhasicProtocol):
@@ -12,8 +13,9 @@ class TestProtocol01(StaticPhasicProtocol):
 
         for inv in [False, True]:
             for bias in [0.1, 0.2]:
+                self.add_phase(Blank, 15, {})
                 self.add_phase(BinaryNoiseVisualFieldMapping,
-                               10,
+                               300,
                                {BinaryNoiseVisualFieldMapping.p_bias: bias,
-                                BinaryNoiseVisualFieldMapping.p_interval: 500,
+                                BinaryNoiseVisualFieldMapping.p_interval: 1000,
                                 BinaryNoiseVisualFieldMapping.p_inverted: inv})
