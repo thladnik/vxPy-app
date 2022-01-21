@@ -36,15 +36,15 @@ class sphDotProtocol(StaticPhasicProtocol):
         for i in range(3):
             all_stimuli.extend(np.random.permutation(stimuli))
 
-        self.add_phase(Blank, 20,{"u_color":(0.5,0.5,0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color":(0.5, 0.5, 0.5)})
 
         for stim, v in all_stimuli:
 
-            self.add_phase(stim, 5,
-                           {stim.u_ang_velocity: 0,
+            self.add_visual_phase(stim, 5,
+                                  {stim.u_ang_velocity: 0,
                             stim.u_spat_period: 15})
-            self.add_phase(stim, 5,
-                           {stim.u_ang_velocity: v,
+            self.add_visual_phase(stim, 5,
+                                  {stim.u_ang_velocity: v,
                             stim.u_spat_period: 15})
 
-        self.add_phase(Blank, 20,{"u_color":(0.5,0.5,0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color":(0.5, 0.5, 0.5)})

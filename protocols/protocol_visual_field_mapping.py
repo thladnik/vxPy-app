@@ -13,9 +13,9 @@ class TestProtocol01(StaticPhasicProtocol):
 
         for inv in [False, True]:
             for bias in [0.1, 0.2]:
-                self.add_phase(Blank, 15, {})
-                self.add_phase(BinaryNoiseVisualFieldMapping,
-                               300,
-                               {BinaryNoiseVisualFieldMapping.p_bias: bias,
+                self.add_visual_phase(Blank, 15, {})
+                self.add_visual_phase(BinaryNoiseVisualFieldMapping,
+                                      300,
+                                      {BinaryNoiseVisualFieldMapping.p_bias: bias,
                                 BinaryNoiseVisualFieldMapping.p_interval: 1000,
                                 BinaryNoiseVisualFieldMapping.p_inverted: inv})

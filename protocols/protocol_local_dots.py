@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from vxpy.core.protocol import StaticPhasicProtocol
+from vxpy.core.protocol import Phase, StaticPhasicProtocol
 
 from visuals.local_dot import IcoDot
 
@@ -26,5 +26,6 @@ class TestLocalDotProtocol(StaticPhasicProtocol):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
         for i in range(3):
-            self.add_phase(IcoDot, None,
-                           {IcoDot.p_interval: 2000})
+            p = Phase()
+            p.set_visual(IcoDot, **{IcoDot.p_interval: 2000})
+            self.add_phase(p)
