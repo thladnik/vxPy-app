@@ -1,6 +1,6 @@
 """
-vxpy ./visuals/spherical/grating.py
-Copyright (C) 2020 Tim Hladnik
+vxpy_app ./visuals/sphere_simu_saccade/sphere_simu_saccade.py
+Copyright (C) 2022 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
