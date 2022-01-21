@@ -1,6 +1,6 @@
 """
-vxpy ./visuals/spherical/grating.py
-Copyright (C) 2020 Tim Hladnik
+vxpy_app ./visuals/sphere_visual_field_mapping/sphere_visual_field_mapping.py
+Copyright (C) 2022 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import annotations
-
 import numpy as np
-from vispy import app, gloo
+from vispy import gloo
 
 from vxpy.core import logging, visual
 from vxpy.utils import sphere
@@ -85,7 +84,7 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
             states = np.logical_not(states)
 
         self.parameters.update(vertex_states=states)
-        self.all_states[self.states_idx] = states
+        # self.all_states[self.states_idx] = states
         self.states_idx += 1
         self.state_buffer[:] = np.ascontiguousarray(states, dtype=np.float32)
 
