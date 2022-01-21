@@ -25,11 +25,11 @@ class sphDotProtocol(StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
         angSize = np.array([np.random.permutation([2,5,10,20,40]) for k in range(3)]).flatten()
-        self.add_phase(Blank, 20,{"u_color":(0,0,0)})
+        self.add_visual_phase(Blank, 20, {"u_color":(0, 0, 0)})
         for i in range(len(angSize)):
-            self.add_phase(Blank, 10,{"u_color":(0,0,0)})
-            self.add_phase(Dot, 10,
-                           {Dot.u_elv: 0,
+            self.add_visual_phase(Blank, 10, {"u_color":(0, 0, 0)})
+            self.add_visual_phase(Dot, 10,
+                                  {Dot.u_elv: 0,
                            Dot.u_period: 10,
                            Dot.u_ang_size: angSize[i]})
-        self.add_phase(Blank, 20,{"u_color":(0,0,0)})
+        self.add_visual_phase(Blank, 20, {"u_color":(0, 0, 0)})

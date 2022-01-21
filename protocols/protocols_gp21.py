@@ -40,24 +40,24 @@ class GP21TranslationsWithDot(StaticPhasicProtocol):
         for i in range(3):
             all_stimuli.extend(np.random.permutation(stimuli))
 
-        self.add_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
 
         for stim, v, s in all_stimuli:
-            self.add_phase(stim, 5,
-                           {stim.u_ang_velocity: 0,
+            self.add_visual_phase(stim, 5,
+                                  {stim.u_ang_velocity: 0,
                             stim.u_spat_period: 15,
                             Dot.u_elv: 0,
                             Dot.u_period: 10**8,
                             Dot.u_ang_size: s})
 
-            self.add_phase(stim, 10,
-                           {stim.u_ang_velocity: v,
+            self.add_visual_phase(stim, 10,
+                                  {stim.u_ang_velocity: v,
                             stim.u_spat_period: 15,
                             Dot.u_elv: 0,
                             Dot.u_period: 10,
                             Dot.u_ang_size: s})
 
-        self.add_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
 
         # Translations
         np.random.seed(1)
@@ -69,30 +69,30 @@ class GP21TranslationsWithDot(StaticPhasicProtocol):
         for i in range(3):
             all_stimuli.extend(np.random.permutation(stimuli))
 
-        self.add_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
 
         for stim, v in all_stimuli:
-            self.add_phase(stim, 5,
-                           {stim.u_ang_velocity: 0,
+            self.add_visual_phase(stim, 5,
+                                  {stim.u_ang_velocity: 0,
                             stim.u_spat_period: 15})
-            self.add_phase(stim, 10,
-                           {stim.u_ang_velocity: v,
+            self.add_visual_phase(stim, 10,
+                                  {stim.u_ang_velocity: v,
                             stim.u_spat_period: 15})
 
-        self.add_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0.5, 0.5, 0.5)})
 
         all_sizes = []
         for i in range(3):
             all_sizes.extend(np.random.permutation(dot_sizes))
 
-        self.add_phase(Blank, 20, {"u_color": (0, 0, 0)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0, 0, 0)})
 
         for s in all_sizes:
-            self.add_phase(Blank, 10, {"u_color": (0, 0, 0)})
+            self.add_visual_phase(Blank, 10, {"u_color": (0, 0, 0)})
 
-            self.add_phase(Dot, 10,
-                           {Dot.u_elv: 0,
+            self.add_visual_phase(Dot, 10,
+                                  {Dot.u_elv: 0,
                             Dot.u_period: 10,
                             Dot.u_ang_size: s})
 
-        self.add_phase(Blank, 20, {"u_color": (0, 0, 0)})
+        self.add_visual_phase(Blank, 20, {"u_color": (0, 0, 0)})
