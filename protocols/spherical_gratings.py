@@ -1,5 +1,5 @@
 """
-vxpy ./protocols/spherical_gratings.py - Example protocol for demonstration.
+vxpy_app ./protocols/spherical_gratings.py
 Copyright (C) 2020 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-
 from vxpy.core.protocol import StaticPhasicProtocol, Phase
 from vxpy.visuals import pause
 
@@ -46,7 +45,8 @@ class MovingGratingDemo(StaticPhasicProtocol):
         for i in range(5):
             sp = 10 * (i+1)
             for j in range(5):
-                v = 8 * 2**j
+                v = 4 * 2**j
+
                 p = Phase(2)
                 p.set_visual(BlackWhiteGrating,
                              **{BlackWhiteGrating.p_shape: 'rectangular',
