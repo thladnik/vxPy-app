@@ -25,7 +25,7 @@ from vxpy.core import visual
 from vxpy.utils import sphere
 
 
-class IcoSphereWithSimulatedSaccade(visual.SphericalVisual):
+class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
 
     p_sacc_duration = 'p_sacc_duration'
     p_sacc_azim_target = 'p_sacc_azim_target'
@@ -48,10 +48,16 @@ class IcoSphereWithSimulatedSaccade(visual.SphericalVisual):
         self.binary_noise = gloo.Program(VERT, FRAG)
         self.binary_noise['a_position'] = self.position_buffer
 
+        # Set saccade start time
         self.sacc_start_time = None
+
+        # Set initial rotation matrix
         self.u_rotate = np.eye(4)
+
+        # Set initial azimuth
         self.cur_azim = 0.
 
+        # Keep seed fixed for now
         np.random.seed(1)
 
     def trigger_mock_saccade(self):
@@ -62,27 +68,30 @@ class IcoSphereWithSimulatedSaccade(visual.SphericalVisual):
 
     def render(self, dt):
 
+        # Get Saccade parameters
         sacc_duration = self.parameters.get(self.p_sacc_duration) / 1000
         sacc_azim_target = self.parameters.get(self.p_sacc_azim_target)
 
         if sacc_duration is None or sacc_azim_target is None:
             return
 
-        # Reset azimuth
+        # Reset azimuth (unlikely to overflow, but you never know)
         if self.cur_azim < -360.:
             self.cur_azim += 360.
         elif self.cur_azim > 360:
             self.cur_azim -= 360.
 
+        # Increment time
         self.binary_noise['u_time'] += dt
-
         cur_time = self.binary_noise['u_time']
+
+        # Check if saccade was triggered
         if self.sacc_start_time is not None and cur_time > self.sacc_start_time:
+            # If saccade is still happening: increment azimuth rotation
             if cur_time - self.sacc_start_time <= sacc_duration:
-                # Increment azimuth rotation
                 self.cur_azim += sacc_azim_target * dt / sacc_duration
+            # Saccade is over
             else:
-                # Saccade is over
                 self.sacc_start_time = None
 
         # Apply rotation
@@ -99,12 +108,12 @@ class IcoSphereWithSimulatedSaccade(visual.SphericalVisual):
     ]
 
 
-class IcoNoiseSphereWithSimulatedSaccade(IcoSphereWithSimulatedSaccade):
+class IcoNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
 
     FRAG_LOC = './smooth_noise_sphere.frag'
 
     def __init__(self, *args):
-        IcoSphereWithSimulatedSaccade.__init__(self, *args)
+        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args)
 
         self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size), dtype=np.float32)
         self.state_buffer = gloo.VertexBuffer(self.states)
@@ -113,12 +122,12 @@ class IcoNoiseSphereWithSimulatedSaccade(IcoSphereWithSimulatedSaccade):
         self.binary_noise['a_state'] = self.state_buffer
 
 
-class IcoBinaryNoiseSphereWithSimulatedSaccade(IcoSphereWithSimulatedSaccade):
+class IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
 
     FRAG_LOC = './binary_noise_sphere.frag'
 
     def __init__(self, *args):
-        IcoSphereWithSimulatedSaccade.__init__(self, *args)
+        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args)
 
         # self.states = np.ascontiguousarray(np.random.randint(2, size=self.position_buffer.size), dtype=np.float32)
         bias = 0.2
