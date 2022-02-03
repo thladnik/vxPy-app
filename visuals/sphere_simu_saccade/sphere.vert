@@ -1,14 +1,14 @@
 attribute vec3 a_position;
-attribute float a_azimuth;
-attribute float a_elevation;
-attribute float a_state;
+attribute float a_texture_normal;
+attribute float a_texture_dark;
+attribute float a_texture_light;
 
 uniform mat4 u_rotate;
 
-varying float v_azimuth;
-varying float v_elevation;
 varying vec3 v_position;
-varying float v_state;
+varying float v_texture_normal;
+varying float v_texture_dark;
+varying float v_texture_light;
 
 void main() {
 
@@ -16,8 +16,8 @@ void main() {
 
     gl_Position = transform_position(pos.xyz);
 
-    v_azimuth = a_azimuth;
-    v_elevation = a_elevation;
     v_position = a_position;
-    v_state = a_state;
+    v_texture_normal = a_texture_normal;
+    v_texture_dark = a_texture_dark;
+    v_texture_light = a_texture_light;
 }

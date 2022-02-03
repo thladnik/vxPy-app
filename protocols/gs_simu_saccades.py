@@ -3,7 +3,7 @@ import numpy as np
 from vxpy.core.protocol import Phase, StaticPhasicProtocol
 from vxpy.visuals import pause
 
-from visuals.sphere_simu_saccade import IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
+from visuals.sphere_simu_saccade import IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
 
 
 class Protocol01(StaticPhasicProtocol):
@@ -23,12 +23,13 @@ class Protocol01(StaticPhasicProtocol):
         #                 IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade.p_sacc_start_time: -1})
         # self.add_phase(p)
 
-        for i in range(10):
-            p = Phase(duration=3)
+        for i in range(5):
+            p = Phase(duration=5)
             p.set_visual(VisualClass,
                          **{VisualClass.p_sacc_duration: 100,
                             VisualClass.p_sacc_azim_target: 15,
                             VisualClass.p_sacc_direction: [-1, 1][np.random.randint(2)],
+                            VisualClass.p_flash_polarity: [-1, 1][np.random.randint(2)],
                             VisualClass.p_sacc_start_time: 2.,
                             VisualClass.p_flash_start_time: 2.3,
                             VisualClass.p_flash_duration: 20.,
