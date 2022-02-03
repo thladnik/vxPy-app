@@ -11,27 +11,35 @@ class Protocol01(StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
-        # Blank at start of protocol
-        # p = Phase(duration=2)
-        # p.set_visual(pause.ClearBlack)
-        # self.add_phase(p)
-        #
-        # p = Phase(duration=4)
-        # p.set_visual(IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade,
-        #              **{IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade.p_sacc_duration: 100,
-        #                 IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade.p_sacc_azim_target: 0,
-        #                 IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade.p_sacc_start_time: -1})
-        # self.add_phase(p)
+        # # Blank at start of protocol
+        p = Phase(duration=5)
+        p.set_visual(pause.ClearBlack)
+        self.add_phase(p)
 
-        for i in range(5):
-            p = Phase(duration=5)
+        # Static texture
+        p = Phase(duration=4)
+        p.set_visual(VisualClass,
+                     **{VisualClass.p_sacc_duration: 100,
+                        VisualClass.p_sacc_azim_target: 15,
+                        VisualClass.p_sacc_direction: 1,
+                        VisualClass.p_flash_polarity: 1,
+                        VisualClass.p_sacc_start_time: -1.,
+                        VisualClass.p_flash_start_time: -1,
+                        VisualClass.p_flash_duration: 20.,
+                        })
+        self.add_phase(p)
+
+        for i in range(10):
+            p = Phase(duration=4)
+            sacc_start = 1. + np.random.rand()
+            flash_start = sacc_start + np.random.rand() / 2
             p.set_visual(VisualClass,
                          **{VisualClass.p_sacc_duration: 100,
                             VisualClass.p_sacc_azim_target: 15,
                             VisualClass.p_sacc_direction: [-1, 1][np.random.randint(2)],
                             VisualClass.p_flash_polarity: [-1, 1][np.random.randint(2)],
-                            VisualClass.p_sacc_start_time: 2.,
-                            VisualClass.p_flash_start_time: 2.3,
+                            VisualClass.p_sacc_start_time: sacc_start,
+                            VisualClass.p_flash_start_time: flash_start,
                             VisualClass.p_flash_duration: 20.,
                             })
             self.add_phase(p)
