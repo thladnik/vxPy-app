@@ -32,6 +32,7 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
     p_sacc_start_time = 'p_sacc_start_time'
     p_sacc_direction = 'p_sacc_direction'
     p_flash_delay = 'p_flash_delay'
+    p_flash_polarity = 'p_flash_polarity'
     p_flash_start_time = 'p_flash_start_time'
     p_flash_duration = 'p_flash_duration'
 
@@ -41,13 +42,7 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
     def __init__(self, *args, **kwargs):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
 
-        # Set up program
-        VERT = self.load_vertex_shader(self.VERT_LOC)
-        FRAG = self.load_shader(self.FRAG_LOC)
-        self.binary_noise = gloo.Program(VERT, FRAG)
-
-        # Set saccade start time
-        # self.sacc_start_time = None
+        self.program: gloo.Program = None
 
         # Set initial rotation matrix
         self.u_rotate = np.eye(4)
@@ -64,11 +59,10 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
         np.random.seed(1)
 
     def trigger_mock_saccade(self):
-        self.parameters[self.p_sacc_start_time] = self.binary_noise['u_time']
-        # self.sacc_start_time = self.binary_noise['u_time']
+        self.parameters[self.p_sacc_start_time] = self.program['u_time']
 
     def initialize(self, **params):
-        self.binary_noise['u_time'] = 0.0
+        self.program['u_time'] = 0.0
 
         if self.protocol is not None and hasattr(self.protocol, 'p_cur_azim'):
             self.cur_azim = self.protocol.p_cur_azim
@@ -92,8 +86,8 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
             self.cur_azim -= 360.
 
         # Increment time
-        self.binary_noise['u_time'] += dt
-        cur_time = self.binary_noise['u_time']
+        self.program['u_time'] += dt
+        cur_time = self.program['u_time']
 
         # Check if saccade was triggered
         sacc_start_time = self.parameters.get(self.p_sacc_start_time)
@@ -115,21 +109,21 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
         # Perform flash
         flash_start_time = self.parameters.get(self.p_flash_start_time)
         flash_duration = self.parameters.get(self.p_flash_duration) / 1000
-        if cur_time > flash_start_time:
-            if cur_time - flash_start_time <= flash_duration:
-                self.state_buffer[:] = self.flash
-            else:
-                self.state_buffer[:] = self.states
+        flash_polarity = self.parameters.get(self.p_flash_polarity)
+        if cur_time > flash_start_time and cur_time - flash_start_time <= flash_duration:
+            self.program['u_flash_polarity'] = flash_polarity
+        else:
+            self.program['u_flash_polarity'] = 0
 
         if self.protocol is not None:
             self.protocol.p_cur_azim = self.cur_azim
 
         # Apply rotation
-        self.binary_noise['u_rotate'] = transforms.rotate(self.cur_azim, (0, 0, 1))
+        self.program['u_rotate'] = transforms.rotate(self.cur_azim, (0, 0, 1))
 
         # Draw dots
-        self.apply_transform(self.binary_noise)
-        self.binary_noise.draw('triangles', self.index_buffer)
+        self.apply_transform(self.program)
+        self.program.draw('triangles', self.index_buffer)
 
     interface = [
         (p_sacc_duration, 200, 40, 2000, dict(step_size=5)),
@@ -186,28 +180,68 @@ class IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWit
     def __init__(self, *args, **kwargs):
         IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
 
-        d = io.loadmat('visuals/sphere_simu_saccade/blobstimtest.mat')
-        step_size = 100
-        x, y, z = d['grid']['x'][0][0][::step_size, ::step_size], \
-                  d['grid']['y'][0][0][::step_size, ::step_size], \
-                  d['grid']['z'][0][0][::step_size, ::step_size]
+        # Load model data
+        d = io.loadmat('visuals/sphere_simu_saccade/stimulus_data/blobstimtest20220228a.mat')
 
-        v = np.array([x.flatten(), y.flatten(), z.flatten()])
-        vertices = np.ascontiguousarray(v.T)
-        self.position_buffer = gloo.VertexBuffer(vertices)
-        self.binary_noise['a_position'] = self.position_buffer
+        # Vertices
+        x, y, z = d['grid']['x'][0][0], \
+                  d['grid']['y'][0][0], \
+                  d['grid']['z'][0][0]
 
+        vertices = np.array([x.flatten(), y.flatten(), z.flatten()]).T
+
+        # Faces
         idcs = list()
-        azim_lvls = x.shape[0]
-        elev_lvls = x.shape[1]
+        azim_lvls = x.shape[1]
+        elev_lvls = x.shape[0]
         for i in np.arange(elev_lvls):
             for j in np.arange(azim_lvls):
                 idcs.append([i * azim_lvls + j, i * azim_lvls + j + 1, (i + 1) * azim_lvls + j + 1])
                 idcs.append([i * azim_lvls + j, (i + 1) * azim_lvls + j, (i + 1) * azim_lvls + j + 1])
-        self.indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
+        indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
+        self.indices = indices[indices < azim_lvls * elev_lvls]
         self.index_buffer = gloo.IndexBuffer(self.indices)
 
-        self.flash = np.ascontiguousarray(np.zeros(self.position_buffer.size), dtype=np.float32)
-        self.states = np.ascontiguousarray(np.repeat(d['totalintensity'][::step_size, ::step_size].flatten(), 3, axis=-1))
-        self.state_buffer = gloo.VertexBuffer(self.states)
-        self.binary_noise['a_state'] = self.state_buffer
+        # Intensities
+        intensity = d['totalintensity'].flatten()
+
+        # Set up program
+        VERT = self.load_vertex_shader(self.VERT_LOC)
+        FRAG = self.load_shader(self.FRAG_LOC)
+        self.program = gloo.Program(VERT, FRAG, count=vertices.shape[0])
+        self.program['a_position'] = vertices
+        self.program['a_texture_normal'] = intensity
+        self.program['a_texture_dark'] = intensity * 0.35
+        self.program['a_texture_light'] = intensity * 1.65
+
+#
+# def something():
+#     d = io.loadmat('visuals/sphere_simu_saccade/stimulus_data/blobstimtest20220228b.mat')
+#     x, y, z = d['grid']['x'][0][0], \
+#               d['grid']['y'][0][0], \
+#               d['grid']['z'][0][0]
+#
+#     az, el = d['grid']['azim'][0][0].flatten(), \
+#              d['grid']['elev'][0][0].flatten()
+#
+#     v = np.array([x.flatten(), y.flatten(), z.flatten()])
+#     vertices = np.ascontiguousarray(v.T)
+#
+#     idcs = list()
+#     azim_lvls = x.shape[1]
+#     elev_lvls = x.shape[0]
+#     for i in np.arange(elev_lvls):
+#         for j in np.arange(azim_lvls):
+#             idcs.append([i * azim_lvls + j, i * azim_lvls + j + 1, (i + 1) * azim_lvls + j + 1])
+#             idcs.append([i * azim_lvls + j, (i + 1) * azim_lvls + j, (i + 1) * azim_lvls + j + 1])
+#     indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
+#     indices = indices[indices < azim_lvls * elev_lvls]
+#
+#     states = np.ascontiguousarray(d['totalintensity'].flatten())
+#     flash = states
+#
+#     plt.figure()
+#     for face in indices.reshape((-1, 3)):
+#         plt.plot(az[[*face, face[0]]], el[[*face, face[0]]], color='black', alpha=.7, linewidth=.7)
+#     plt.scatter(az, el, c=states, cmap='gray')
+#     plt.show()
