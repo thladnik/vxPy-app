@@ -8,11 +8,9 @@ CONF_DISPLAY_ROUTINES:
 - vxpy.routines.display.display_capture.DynamicParameters
 CONF_GUI_USE: true
 CONF_GUI_ADDONS:
-  Camera:
   Display:
   - vxpy.gui.display.core.Protocols
   - vxpy.gui.display.core.VisualInteractor
-  Io:
 CONF_IO_USE: true
 CONF_IO_PINS:
   y_mirror_in:
