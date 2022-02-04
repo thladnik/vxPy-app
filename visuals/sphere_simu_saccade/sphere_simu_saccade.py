@@ -126,51 +126,51 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
     ]
 
 
-# class IcoNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
-#     FRAG_LOC = './smooth_noise_sphere.frag'
-#
-#     def __init__(self, *args, **kwargs):
-#         IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
-#
-#         # Set up sphere
-#         self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
-#         self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-#         vertices = self.ico_sphere.get_vertices()
-#         self.position_buffer = gloo.VertexBuffer(vertices)
-#         self.binary_noise['a_position'] = self.position_buffer
-#
-#         self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size), dtype=np.float32)
-#         self.state_buffer = gloo.VertexBuffer(self.states)
-#
-#         # Set vertex states
-#         self.binary_noise['a_state'] = self.state_buffer
-#
-#
-# class IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
-#     FRAG_LOC = './binary_noise_sphere.frag'
-#
-#     def __init__(self, *args, **kwargs):
-#         IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
-#
-#         lum_decrease = 0.2
-#         lum_increase = 0.2
-#
-#         # Set up sphere
-#         self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
-#         self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-#         vertices = self.ico_sphere.get_vertices()
-#         self.position_buffer = gloo.VertexBuffer(vertices)
-#         self.binary_noise['a_position'] = self.position_buffer
-#
-#         bias = 0.1
-#         intensity = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - bias), dtype=np.float32)
-#         self.state_buffer = gloo.VertexBuffer(self.states)
-#
-#         # Set vertex states
-#         self.program['a_position'] = vertices
-#         self.program['a_texture_normal'] = intensity
-#         self.program['a_texture_dark'] = intensity - lum_decrease
-#         self.program['a_texture_light'] = intensity + lum_increase
+class IcoNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
+    FRAG_LOC = './smooth_noise_sphere.frag'
+
+    def __init__(self, *args, **kwargs):
+        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
+
+        # Set up sphere
+        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
+        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
+        vertices = self.ico_sphere.get_vertices()
+        self.position_buffer = gloo.VertexBuffer(vertices)
+        self.binary_noise['a_position'] = self.position_buffer
+
+        self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size), dtype=np.float32)
+        self.state_buffer = gloo.VertexBuffer(self.states)
+
+        # Set vertex states
+        self.binary_noise['a_state'] = self.state_buffer
+
+
+class IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
+    FRAG_LOC = './binary_noise_sphere.frag'
+
+    def __init__(self, *args, **kwargs):
+        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
+
+        lum_decrease = 0.2
+        lum_increase = 0.2
+
+        # Set up sphere
+        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
+        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
+        vertices = self.ico_sphere.get_vertices()
+        self.position_buffer = gloo.VertexBuffer(vertices)
+        self.binary_noise['a_position'] = self.position_buffer
+
+        bias = 0.1
+        intensity = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - bias), dtype=np.float32)
+        self.state_buffer = gloo.VertexBuffer(self.states)
+
+        # Set vertex states
+        self.program['a_position'] = vertices
+        self.program['a_texture_normal'] = intensity
+        self.program['a_texture_dark'] = intensity - lum_decrease
+        self.program['a_texture_light'] = intensity + lum_increase
 
 
 class IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
