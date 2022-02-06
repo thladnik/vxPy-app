@@ -18,7 +18,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from vxpy.core.protocol import StaticPhasicProtocol, Phase
 from vxpy.visuals import pause
 
-from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping
+from visuals.sphere_visual_field_mapping import \
+    BinaryNoiseVisualFieldMapping8deg, \
+    BinaryNoiseVisualFieldMapping16deg, \
+    BinaryNoiseVisualFieldMapping32deg
 
 
 class BinaryNoise(StaticPhasicProtocol):
@@ -32,8 +35,22 @@ class BinaryNoise(StaticPhasicProtocol):
                 self.add_phase(p)
 
                 p = Phase(30)
-                p.set_visual(BinaryNoiseVisualFieldMapping,
-                             **{BinaryNoiseVisualFieldMapping.p_bias: bias,
-                                BinaryNoiseVisualFieldMapping.p_interval: 1000,
-                                BinaryNoiseVisualFieldMapping.p_inverted: inv})
+                p.set_visual(BinaryNoiseVisualFieldMapping32deg,
+                             **{BinaryNoiseVisualFieldMapping32deg.p_bias: bias,
+                                BinaryNoiseVisualFieldMapping32deg.p_interval: 1000,
+                                BinaryNoiseVisualFieldMapping32deg.p_inverted: inv})
+                self.add_phase(p)
+
+                p = Phase(30)
+                p.set_visual(BinaryNoiseVisualFieldMapping16deg,
+                             **{BinaryNoiseVisualFieldMapping16deg.p_bias: bias,
+                                BinaryNoiseVisualFieldMapping16deg.p_interval: 1000,
+                                BinaryNoiseVisualFieldMapping16deg.p_inverted: inv})
+                self.add_phase(p)
+
+                p = Phase(30)
+                p.set_visual(BinaryNoiseVisualFieldMapping8deg,
+                             **{BinaryNoiseVisualFieldMapping8deg.p_bias: bias,
+                                BinaryNoiseVisualFieldMapping8deg.p_interval: 1000,
+                                BinaryNoiseVisualFieldMapping8deg.p_inverted: inv})
                 self.add_phase(p)

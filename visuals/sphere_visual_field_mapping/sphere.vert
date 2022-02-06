@@ -2,6 +2,7 @@ attribute vec3 a_position;
 attribute float a_azimuth;
 attribute float a_elevation;
 attribute float a_state;
+attribute float a_vertex_lvl;
 
 uniform mat4 u_rotate;
 
@@ -9,6 +10,7 @@ varying float v_azimuth;
 varying float v_elevation;
 varying vec3 v_position;
 varying float v_state;
+varying float v_vertex_lvl;
 
 void main() {
 
