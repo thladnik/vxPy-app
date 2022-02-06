@@ -4,6 +4,8 @@ from vxpy.core.protocol import Phase, StaticPhasicProtocol
 from vxpy.visuals import pause
 
 from visuals.sphere_simu_saccade import IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
+from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping16deg
+from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 
 class Protocol01(StaticPhasicProtocol):
@@ -11,9 +13,24 @@ class Protocol01(StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
+        np.random.seed(1)
+
         # # Blank at start of protocol
-        p = Phase(duration=5)
-        p.set_visual(pause.ClearBlack)
+        # p = Phase(duration=5)
+        # p.set_visual(pause.ClearBlack)
+        # self.add_phase(p)
+
+        # for luminance_lvl in np.random.permutation(np.linspace(0., 1., 11)):
+        #     p = Phase(duration=2)
+        #     p.set_visual(SphereUniformBackground,
+        #                  **{SphereUniformBackground.u_color: (luminance_lvl,) * 3})
+        #     self.add_phase(p)
+
+        p = Phase(duration=10)
+        p.set_visual(BinaryNoiseVisualFieldMapping16deg,
+                     **{BinaryNoiseVisualFieldMapping16deg.p_interval: 1000,
+                        BinaryNoiseVisualFieldMapping16deg.p_bias: .5,
+                        BinaryNoiseVisualFieldMapping16deg.p_inverted: False})
         self.add_phase(p)
 
         # Static texture

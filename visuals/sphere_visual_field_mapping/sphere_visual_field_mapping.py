@@ -40,35 +40,36 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
         (p_inverted, False),
     ]
 
-    def __init__(self, *args):
-        visual.SphericalVisual.__init__(self, *args)
+    def __init__(self, subdiv_lvl, *args, **kwargs):
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up sphere
-        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
+        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=subdiv_lvl)
         self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        vertices = self.ico_sphere.get_vertices()
-        self.position_buffer = gloo.VertexBuffer(vertices)
+        self.vertices = self.ico_sphere.get_vertices()
+        vertex_lvls = self.ico_sphere.get_vertex_levels()
 
         # For now, just set this to parameters
-        self._add_data_appendix('vertex_coords', vertices)
+        self._add_data_appendix('vertex_coords', self.vertices)
 
-        # Set up program
+        # Set up program for noise pattern
         VERT = self.load_vertex_shader(self.VERT_LOC)
         FRAG = self.load_shader(self.FRAG_LOC)
-        self.binary_noise = gloo.Program(VERT, FRAG)
-        self.binary_noise['a_position'] = self.position_buffer
+        self.binary_noise = gloo.Program(VERT, FRAG, count=self.vertices.shape[0])
+        self.binary_noise['a_position'] = self.vertices
+        self.binary_noise['a_vertex_lvl'] = np.ascontiguousarray(vertex_lvls, dtype=np.float32)
 
-        # self.all_states = np.nan * np.ones((1000, vertices.shape[0]))
-        # self.tmr = app.Timer()
-        # self.tmr.connect(self.print_states_params)
-        # self.tmr.start(1)
+        # Program for mesh
+        self.mesh = gloo.Program(VERT, 'void main() { gl_FragColor = vec4(1., 0., 0., 1.); }',
+                                 count=self.vertices.shape[0])
+        self.mesh['a_position'] = self.vertices
 
     def initialize(self, **params):
         # Set seed!
         np.random.seed(1)
 
         # Set initial vertex states
-        self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - self.parameters[self.p_bias]), dtype=np.float32)
+        self.states = np.ascontiguousarray(np.zeros(self.vertices.shape[0]), dtype=np.float32)
         self.state_buffer = gloo.VertexBuffer(self.states)
         self.binary_noise['a_state'] = self.state_buffer
 
@@ -79,21 +80,14 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
     def _set_new_states(self, bias, inverted):
 
-        states = np.random.rand(self.position_buffer.size) < (1. - bias)
+        states = np.random.rand(self.vertices.shape[0]) > (1. - bias)
         if inverted:
             states = np.logical_not(states)
 
         self.parameters.update(vertex_states=states)
         # self.all_states[self.states_idx] = states
         self.states_idx += 1
-        self.state_buffer[:] = np.ascontiguousarray(states, dtype=np.float32)
-
-    def print_states_params(self, dt):
-        pass
-        # print('Timer?')
-        # mean_states = np.nanmean(self.all_states, axis=0)
-        # print(mean_states.shape)
-        # print(np.mean(mean_states), '+/-', np.std(mean_states))
+        self.binary_noise['a_state'][:] = np.ascontiguousarray(states, dtype=np.float32)
 
     def render(self, dt):
         self.binary_noise['u_time'] += dt
@@ -111,5 +105,46 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
             self.last = now
 
         # Draw
+        from vispy.gloo import gl
+        self.apply_transform(self.mesh)
+        gl.glLineWidth(2)
+        self.mesh.draw('line_loop', indices=self.index_buffer)
         self.apply_transform(self.binary_noise)
-        self.binary_noise.draw('triangles', self.index_buffer)
+        self.binary_noise.draw('triangles', indices=self.index_buffer)
+
+
+
+class BinaryNoiseVisualFieldMapping2deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 5, *args, **kwargs)
+
+
+class BinaryNoiseVisualFieldMapping4deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 4, *args, **kwargs)
+
+
+class BinaryNoiseVisualFieldMapping8deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 3, *args, **kwargs)
+
+
+class BinaryNoiseVisualFieldMapping16deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 2, *args, **kwargs)
+
+
+class BinaryNoiseVisualFieldMapping32deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 1, *args, **kwargs)
+
+
+class BinaryNoiseVisualFieldMapping64deg(BinaryNoiseVisualFieldMapping):
+
+    def __init__(self, *args, **kwargs):
+        BinaryNoiseVisualFieldMapping.__init__(self, 0, *args, **kwargs)
