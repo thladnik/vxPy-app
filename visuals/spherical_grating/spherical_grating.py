@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from vispy import gloo
+from vispy.util import transforms
+import numpy as np
 
 from vxpy.api.visual import SphericalVisual
 from vxpy.utils import sphere
@@ -40,7 +42,7 @@ class BlackWhiteGrating(SphericalVisual):
         (u_ang_velocity, 5., 0., 100., {'step_size': 1.}),
         (u_spat_period, 40., 2., 360., {'step_size': 1.})]
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """Black und white contrast grating stimulus on a sphere
 
         :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
@@ -49,10 +51,10 @@ class BlackWhiteGrating(SphericalVisual):
         :param u_spat_period: <float> spatial period of the grating in [mm]
         :param u_time: <float> time elapsed since start of visual [s]
         """
-        SphericalVisual.__init__(self, *args)
+        SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up 3d model of sphere
-        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30)
+        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi/2)
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
         self.azimuth_buffer = gloo.VertexBuffer(self.sphere.a_azimuth)
@@ -63,9 +65,13 @@ class BlackWhiteGrating(SphericalVisual):
         frag = self.load_shader('./spherical_grating.frag')
         self.grating = gloo.Program(vert, frag)
 
+        self.rotation = np.eye(4)
+
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
         self.grating['u_time'] = 0.0
+        self.grating['u_rotation'] = self.rotation
+        print(self.rotation)
 
         # Set positions with buffers
         self.grating['a_position'] = self.position_buffer
@@ -89,3 +95,11 @@ class BlackWhiteGrating(SphericalVisual):
     @staticmethod
     def parse_p_type(direction):
         return 1 if direction == 'translation' else 2  # 'horizontal'
+
+
+class GratingRotAlongRoll(BlackWhiteGrating):
+
+    def __init__(self, *args, **kwargs):
+        BlackWhiteGrating.__init__(self, *args, **kwargs)
+
+        self.rotation = transforms.rotate(90, (0, 1, 0))

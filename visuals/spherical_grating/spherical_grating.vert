@@ -1,3 +1,5 @@
+uniform mat4 u_rotation;
+
 // Input
 attribute vec3 a_position;
 attribute float a_azimuth;
@@ -10,7 +12,8 @@ varying vec3 v_position;
 
 // Main
 void main() {
-    gl_Position = transform_position(a_position);
+    vec3 pos = (u_rotation * vec4(a_position, 1.0)).xyz;
+    gl_Position = transform_position(pos);
     v_azimuth = a_azimuth;
     v_elevation = a_elevation;
     v_position = a_position;

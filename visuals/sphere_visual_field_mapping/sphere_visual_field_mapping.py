@@ -59,10 +59,10 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
         self.binary_noise['a_position'] = self.vertices
         self.binary_noise['a_vertex_lvl'] = np.ascontiguousarray(vertex_lvls, dtype=np.float32)
 
-        # Program for mesh
-        self.mesh = gloo.Program(VERT, 'void main() { gl_FragColor = vec4(1., 0., 0., 1.); }',
-                                 count=self.vertices.shape[0])
-        self.mesh['a_position'] = self.vertices
+        # Program for mesh (debugging)
+        # self.mesh = gloo.Program(VERT, 'void main() { gl_FragColor = vec4(1., 0., 0., 1.); }',
+        #                          count=self.vertices.shape[0])
+        # self.mesh['a_position'] = self.vertices
 
     def initialize(self, **params):
         # Set seed!
@@ -80,7 +80,7 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
     def _set_new_states(self, bias, inverted):
 
-        states = np.random.rand(self.vertices.shape[0]) > (1. - bias)
+        states = np.random.rand(self.vertices.shape[0]) < (1. - bias)
         if inverted:
             states = np.logical_not(states)
 
@@ -105,13 +105,12 @@ class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
             self.last = now
 
         # Draw
-        from vispy.gloo import gl
-        self.apply_transform(self.mesh)
-        gl.glLineWidth(2)
-        self.mesh.draw('line_loop', indices=self.index_buffer)
+        # from vispy.gloo import gl
+        # self.apply_transform(self.mesh)
+        # gl.glLineWidth(2)
+        # self.mesh.draw('line_loop', indices=self.index_buffer)
         self.apply_transform(self.binary_noise)
         self.binary_noise.draw('triangles', indices=self.index_buffer)
-
 
 
 class BinaryNoiseVisualFieldMapping2deg(BinaryNoiseVisualFieldMapping):

@@ -1,1 +1,1 @@
-from .spherical_grating import BlackWhiteGrating
+from .spherical_grating import BlackWhiteGrating, GratingRotAlongRoll
