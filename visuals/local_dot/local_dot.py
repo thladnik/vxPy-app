@@ -18,11 +18,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 from vispy import gloo
 
-from vxpy.core import visual, logging
+from vxpy.core import visual, logger
 from vxpy.utils import sphere
 from vxpy.utils import geometry
 
-log = logging.getLogger(__name__)
+log = logger.getLogger(__name__)
 
 
 class IcoDot(visual.SphericalVisual):

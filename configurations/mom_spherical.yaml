@@ -5,7 +5,10 @@ CONF_CAMERA_DEVICES:
     api: vxpy.devices.camera.tis.gst_linux
     serial: 7610475
     model: DMK 23UV024
-    format: GRAY8(640x480)@80
+    dtype: GRAY8
+    width: 640
+    height: 480
+    framerate: 80
     exposure: 10.0
     gain: 120
 CONF_CAMERA_ROUTINES:
