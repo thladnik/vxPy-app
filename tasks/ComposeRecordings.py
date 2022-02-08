@@ -1,6 +1,6 @@
 import numpy as np
 
-from vxpy.core import logging
+from vxpy.core import logger
 
 a = np.random.randint(5, size=(1000, 2000, 5))
 

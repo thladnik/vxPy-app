@@ -11,6 +11,7 @@ CONF_CAMERA_DEVICES:
     framerate: 115
     exposure: 5.0
     gain: 1.5
+    preload_file: False
   multiple_fish:
     api: vxpy.devices.camera.virtual_camera
     serial: 5678
@@ -21,6 +22,7 @@ CONF_CAMERA_DEVICES:
     framerate: 20
     exposure: 2.0
     gain: 5.5
+    preload_file: False
 CONF_CAMERA_ROUTINES:
 - vxpy.routines.camera.camera_capture.Frames
 - vxpy.routines.camera.zf_tracking.EyePositionDetection

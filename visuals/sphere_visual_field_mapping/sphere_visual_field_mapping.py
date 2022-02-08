@@ -19,10 +19,10 @@ from __future__ import annotations
 import numpy as np
 from vispy import gloo
 
-from vxpy.core import logging, visual
+from vxpy.core import logger, visual
 from vxpy.utils import sphere
 
-log = logging.getLogger(__name__)
+log = logger.getLogger(__name__)
 
 
 class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
