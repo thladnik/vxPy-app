@@ -27,7 +27,7 @@ class StaticGratings(StaticPhasicProtocol):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):
-            sp = 10 * (i + 1)
+            sp = 10 * 2 ** i
             p = Phase(4)
             p.set_visual(BlackWhiteGrating,
                          **{BlackWhiteGrating.p_shape: 'rectangular',
@@ -37,15 +37,17 @@ class StaticGratings(StaticPhasicProtocol):
             self.add_phase(p)
 
 
-class MovingGratingDemo(StaticPhasicProtocol):
+class MovingGratings(StaticPhasicProtocol):
 
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
-        for i in range(5):
-            sp = 10 * (i+1)
+        mov_duration = 3
+
+        for i in list(range(4))[::-1]:
+            sp = 30 * 2 ** (i - 1)
             for j in range(5):
-                v = 4 * 2**j
+                v = (j + 1) * sp / mov_duration
 
                 p = Phase(2)
                 p.set_visual(BlackWhiteGrating,
@@ -55,11 +57,19 @@ class MovingGratingDemo(StaticPhasicProtocol):
                                 BlackWhiteGrating.u_spat_period: sp})
                 self.add_phase(p)
 
-                p = Phase(5)
+                p = Phase(mov_duration)
                 p.set_visual(BlackWhiteGrating,
                              **{BlackWhiteGrating.p_shape: 'rectangular',
                                 BlackWhiteGrating.p_type: 'horizontal',
                                 BlackWhiteGrating.u_ang_velocity: v,
+                                BlackWhiteGrating.u_spat_period: sp})
+                self.add_phase(p)
+
+                p = Phase(mov_duration)
+                p.set_visual(BlackWhiteGrating,
+                             **{BlackWhiteGrating.p_shape: 'rectangular',
+                                BlackWhiteGrating.p_type: 'horizontal',
+                                BlackWhiteGrating.u_ang_velocity: -v,
                                 BlackWhiteGrating.u_spat_period: sp})
                 self.add_phase(p)
 
