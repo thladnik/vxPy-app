@@ -37,8 +37,8 @@ CONF_GUI_ADDONS:
   - vxpy.gui.camera.frames_widgets.FrameStream
   - vxpy.gui.camera.zf_tracking_widgets.EyePositionDetector
   Display:
-  - vxpy.gui.display.core.Protocols
-  - vxpy.gui.display.core.VisualInteractor
+  - vxpy.gui.display.display_widgets.Protocols
+  - vxpy.gui.display.display_widgets.VisualInteractor
   Io:
   - vxpy.gui.io.io_core_widgets.DisplayPSD
 CONF_IO_USE: true

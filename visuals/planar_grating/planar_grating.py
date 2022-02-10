@@ -42,7 +42,7 @@ class BlackAndWhiteGrating(PlanarVisual):
         (u_spat_period, 10., 1.0, 200., dict(step_size=1.))
     ]
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """Black und white contrast grating stimulus
 
         :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
@@ -51,7 +51,7 @@ class BlackAndWhiteGrating(PlanarVisual):
         :param u_spat_period: <float> spatial period of the grating in [mm]
         :param u_time: <float> time elapsed since start of visual [s]
         """
-        PlanarVisual.__init__(self, *args)
+        PlanarVisual.__init__(self, *args, **kwargs)
 
         # Set up model of a 2d plane
         self.plane_2d = plane.XYPlane()
