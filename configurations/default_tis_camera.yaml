@@ -2,15 +2,15 @@ CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   fish_embedded:
-    api: vxpy.devices.camera.tis_windows_tisgrabber
-    serial: 24510521
-    model: DMK 23UV024
-    dtype: Y800
+    api: vxpy.devices.camera.tis_linux_gst
+    serial: 49410244
+    model: DMK 23U618
+    dtype: GRAY8
     width: 640
     height: 480
     framerate: 100
-    exposure: 2.0
-    gain: 5.5
+    exposure: 1.5
+    gain: 64
 CONF_CAMERA_ROUTINES:
 - vxpy.routines.camera.camera_capture.Frames
 - vxpy.routines.camera.zf_tracking.EyePositionDetection
@@ -25,8 +25,8 @@ CONF_GUI_ADDONS:
   - vxpy.gui.camera.frames_widgets.FrameStream
   - vxpy.gui.camera.zf_tracking_widgets.EyePositionDetector
   Display:
-  - vxpy.gui.display.core.Protocols
-  - vxpy.gui.display.core.VisualInteractor
+  - vxpy.gui.display.display_widgets.Protocols
+  - vxpy.gui.display.display_widgets.VisualInteractor
   Io:
   - vxpy.gui.io.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
