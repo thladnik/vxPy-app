@@ -71,7 +71,6 @@ class BlackWhiteGrating(SphericalVisual):
         # Reset u_time to 0 on each visual initialization
         self.grating['u_time'] = 0.0
         self.grating['u_rotation'] = self.rotation
-        print(self.rotation)
 
         # Set positions with buffers
         self.grating['a_position'] = self.position_buffer
