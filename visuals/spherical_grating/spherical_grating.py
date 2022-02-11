@@ -19,39 +19,50 @@ from vispy import gloo
 from vispy.util import transforms
 import numpy as np
 
-from vxpy.api.visual import SphericalVisual
+from vxpy.core import visual
 from vxpy.utils import sphere
 
 
-class BlackWhiteGrating(SphericalVisual):
+class MotionAxis(visual.Mat4Parameter):
+    """Example for a custom mapping with different methods, based on input data to the parameter"""
+    def __init__(self, *args, **kwargs):
+        visual.Mat4Parameter.__init__(self, *args, **kwargs)
+
+        self.value_map = {'forward': self._rotate_forward,
+                          'sideways': self._rotate_sideways,
+                          'vertical': np.eye(4)}
+
+    @staticmethod
+    def _rotate_forward():
+        return transforms.rotate(90, (0, 1, 0))
+
+    @staticmethod
+    def _rotate_sideways():
+        return transforms.rotate(90, (1, 0, 0))
+
+
+class BlackWhiteGrating(visual.SphericalVisual):
+    """Black und white contrast grating stimulus on a sphere
+
+    :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
+    :param p_type: <string> motion type of grating; either 'rotation' or 'translation'
+    :param u_lin_velocity: <float> linear velocity of grating in [mm/s]
+    :param u_spat_period: <float> spatial period of the grating in [mm]
+    :param u_time: <float> time elapsed since start of visual [s]
+    """
     # (optional) Add a short description
     description = 'Spherical black und white contrast grating stimulus'
 
-    # (optional) Define names for used variables
-    p_shape = 'p_shape'
-    p_type = 'p_type'
-    u_ang_velocity = 'u_ang_velocity'
-    u_spat_period = 'u_spat_period'
-
-    # (optional) Define parameters of an interface
-    interface = [
-        # Name, 'value1', 'value2', 'value3'
-        (p_shape, 'rectangular', 'sinusoidal'),
-        (p_type, 'rotation', 'translation'),
-        # Name, default, min, max, additional info
-        (u_ang_velocity, 5., 0., 100., {'step_size': 1.}),
-        (u_spat_period, 40., 2., 360., {'step_size': 1.})]
+    # Define parameters
+    time = visual.FloatParameter('time', internal=True)
+    waveform = visual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2})
+    motion_type = visual.IntParameter('motion_type')
+    motion_axis = MotionAxis('motion_axis')
+    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(5, 360), step_size=5)
+    angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5)
 
     def __init__(self, *args, **kwargs):
-        """Black und white contrast grating stimulus on a sphere
-
-        :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
-        :param p_type: <string> motion type of grating; either 'rotation' or 'translation'
-        :param u_lin_velocity: <float> linear velocity of grating in [mm/s]
-        :param u_spat_period: <float> spatial period of the grating in [mm]
-        :param u_time: <float> time elapsed since start of visual [s]
-        """
-        SphericalVisual.__init__(self, *args, **kwargs)
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up 3d model of sphere
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi/2)
@@ -65,12 +76,20 @@ class BlackWhiteGrating(SphericalVisual):
         frag = self.load_shader('./spherical_grating.frag')
         self.grating = gloo.Program(vert, frag)
 
-        self.rotation = np.eye(4)
+        # Connect parameters
+        self.time.connect(self.grating)
+        self.waveform.connect(self.grating)
+        self.motion_type.connect(self.grating)
+        self.motion_axis.connect(self.grating)
+        self.angular_velocity.connect(self.grating)
+        self.angular_period.connect(self.grating)
+
+        # Alternative way of setting value_map: during instance creation
+        self.motion_type.value_map = {'translation': 1, 'rotation': 2}
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
-        self.grating['u_time'] = 0.0
-        self.grating['u_rotation'] = self.rotation
+        self.time.data = 0.0
 
         # Set positions with buffers
         self.grating['a_position'] = self.position_buffer
@@ -79,26 +98,10 @@ class BlackWhiteGrating(SphericalVisual):
 
     def render(self, dt):
         # Add elapsed time to u_time
-        self.grating['u_time'] += dt
+        self.time.data += dt
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
-
-    @staticmethod
-    def parse_p_shape(waveform):
-        return 1 if waveform == 'rectangular' else 2  # 'sinusoidal'
-
-    @staticmethod
-    def parse_p_type(direction):
-        return 1 if direction == 'translation' else 2  # 'horizontal'
-
-
-class GratingRotAlongRoll(BlackWhiteGrating):
-
-    def __init__(self, *args, **kwargs):
-        BlackWhiteGrating.__init__(self, *args, **kwargs)
-
-        self.rotation = transforms.rotate(90, (0, 1, 0))

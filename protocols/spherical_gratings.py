@@ -15,26 +15,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+import numpy as np
+
 from vxpy.core.protocol import StaticPhasicProtocol, Phase
 from vxpy.visuals import pause
 
 from visuals.spherical_grating import BlackWhiteGrating
 
 
-class StaticGratings(StaticPhasicProtocol):
-
-    def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
-
-        for i in range(5):
-            sp = 10 * 2 ** i
-            p = Phase(4)
-            p.set_visual(BlackWhiteGrating,
-                         **{BlackWhiteGrating.p_shape: 'rectangular',
-                            BlackWhiteGrating.p_type: 'horizontal',
-                            BlackWhiteGrating.u_ang_velocity: 0,
-                            BlackWhiteGrating.u_spat_period: sp})
-            self.add_phase(p)
+# class StaticGratings(StaticPhasicProtocol):
+#
+#     def __init__(self, *args, **kwargs):
+#         StaticPhasicProtocol.__init__(self, *args, **kwargs)
+#
+#         for i in range(5):
+#             sp = 10 * 2 ** i
+#             p = Phase(4)
+#             p.set_visual(BlackWhiteGrating,
+#                          **{BlackWhiteGrating.p_shape: 'rectangular',
+#                             BlackWhiteGrating.p_type: 'horizontal',
+#                             BlackWhiteGrating.u_ang_velocity: 0,
+#                             BlackWhiteGrating.u_spat_period: sp})
+#             self.add_phase(p)
 
 
 class MovingGratings(StaticPhasicProtocol):
@@ -51,26 +53,29 @@ class MovingGratings(StaticPhasicProtocol):
 
                 p = Phase(2)
                 p.set_visual(BlackWhiteGrating,
-                             **{BlackWhiteGrating.p_shape: 'rectangular',
-                                BlackWhiteGrating.p_type: 'horizontal',
-                                BlackWhiteGrating.u_ang_velocity: 0,
-                                BlackWhiteGrating.u_spat_period: sp})
+                             {BlackWhiteGrating.waveform: 'rectangular',
+                              BlackWhiteGrating.motion_axis: 'vertical',
+                              BlackWhiteGrating.motion_type: 'rotation',
+                              BlackWhiteGrating.angular_period: sp,
+                              BlackWhiteGrating.angular_velocity: 0})
                 self.add_phase(p)
 
                 p = Phase(mov_duration)
                 p.set_visual(BlackWhiteGrating,
-                             **{BlackWhiteGrating.p_shape: 'rectangular',
-                                BlackWhiteGrating.p_type: 'horizontal',
-                                BlackWhiteGrating.u_ang_velocity: v,
-                                BlackWhiteGrating.u_spat_period: sp})
+                             {BlackWhiteGrating.waveform: 'rectangular',
+                              BlackWhiteGrating.motion_axis: 'vertical',
+                              BlackWhiteGrating.motion_type: 'rotation',
+                              BlackWhiteGrating.angular_period: sp,
+                              BlackWhiteGrating.angular_velocity: v})
                 self.add_phase(p)
 
                 p = Phase(mov_duration)
                 p.set_visual(BlackWhiteGrating,
-                             **{BlackWhiteGrating.p_shape: 'rectangular',
-                                BlackWhiteGrating.p_type: 'horizontal',
-                                BlackWhiteGrating.u_ang_velocity: -v,
-                                BlackWhiteGrating.u_spat_period: sp})
+                             {BlackWhiteGrating.waveform: 'rectangular',
+                              BlackWhiteGrating.motion_axis: 'vertical',
+                              BlackWhiteGrating.motion_type: 'rotation',
+                              BlackWhiteGrating.angular_period: sp,
+                              BlackWhiteGrating.angular_velocity: -v})
                 self.add_phase(p)
 
                 p = Phase(2, visual=pause.KeepLast)

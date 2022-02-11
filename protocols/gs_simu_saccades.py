@@ -6,7 +6,7 @@ from vxpy.visuals import pause
 from visuals.sphere_simu_saccade import IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
 from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping16deg, BinaryNoiseVisualFieldMapping8deg
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
-from visuals.spherical_grating import BlackWhiteGrating, GratingRotAlongRoll
+from visuals.spherical_grating import BlackWhiteGrating
 
 
 class Protocol01(StaticPhasicProtocol):
@@ -61,14 +61,14 @@ class Protocol01(StaticPhasicProtocol):
             self.add_phase(p)
 
         # In roll
-        for direction in [-1, 1]:
-            p = Phase(duration=6)
-            p.set_visual(GratingRotAlongRoll,
-                         **{GratingRotAlongRoll.u_spat_period: 60,
-                            GratingRotAlongRoll.u_ang_velocity: direction * 30,
-                            GratingRotAlongRoll.p_type: 'rotation',
-                            GratingRotAlongRoll.p_shape: 'rectangular'})
-            self.add_phase(p)
+        # for direction in [-1, 1]:
+        #     p = Phase(duration=6)
+        #     p.set_visual(GratingRotAlongRoll,
+        #                  **{GratingRotAlongRoll.u_spat_period: 60,
+        #                     GratingRotAlongRoll.u_ang_velocity: direction * 30,
+        #                     GratingRotAlongRoll.p_type: 'rotation',
+        #                     GratingRotAlongRoll.p_shape: 'rectangular'})
+        #     self.add_phase(p)
 
         # Spatial RF mapping for pos/neg polarities
         for inv in [True, False]:

@@ -2,11 +2,11 @@
 const float PI = 3.14159265359;
 
 // Uniform input
-uniform int p_shape;
-uniform int p_type;
-uniform float u_spat_period;
-uniform float u_ang_velocity;
-uniform float u_time;
+uniform int waveform;
+uniform int motion_type;
+uniform float angular_period;
+uniform float angular_velocity;
+uniform float time;
 
 // Input
 varying float v_azimuth;
@@ -17,17 +17,17 @@ void main() {
 
     // Set position to be used
     float p;
-    if (p_type == 1) {
+    if (motion_type == 1) {
         p = v_elevation;
     } else {
         p = v_azimuth;
     }
 
     // Calculate brightness using position
-    float c = sin(1.0/(u_spat_period/360.0) * p + u_time * u_ang_velocity/u_spat_period *  2.0 * PI);
+    float c = sin(1.0/(angular_period/360.0) * p + time * angular_velocity/angular_period *  2.0 * PI);
 
     // If waveform is rectangular (1): apply threshold to brightness
-    if (p_shape == 1) {
+    if (waveform == 1) {
         c = step(c, 0.);
     }
 
