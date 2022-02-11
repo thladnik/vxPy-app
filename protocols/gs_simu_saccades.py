@@ -6,7 +6,7 @@ from vxpy.visuals import pause
 from visuals.sphere_simu_saccade import IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
 from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping16deg, BinaryNoiseVisualFieldMapping8deg
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
-from visuals.spherical_grating import BlackWhiteGrating
+from visuals.spherical_grating import SphericalBlackWhiteGrating
 
 
 class Protocol01(StaticPhasicProtocol):
@@ -53,11 +53,11 @@ class Protocol01(StaticPhasicProtocol):
         # In yaw
         for direction in [-1, 1]:
             p = Phase(duration=6)
-            p.set_visual(BlackWhiteGrating,
-                         **{BlackWhiteGrating.u_spat_period: 60,
-                            BlackWhiteGrating.u_ang_velocity: direction * 30,
-                            BlackWhiteGrating.p_type: 'rotation',
-                            BlackWhiteGrating.p_shape: 'rectangular'})
+            p.set_visual(SphericalBlackWhiteGrating,
+                         **{SphericalBlackWhiteGrating.u_spat_period: 60,
+                            SphericalBlackWhiteGrating.u_ang_velocity: direction * 30,
+                            SphericalBlackWhiteGrating.p_type: 'rotation',
+                            SphericalBlackWhiteGrating.p_shape: 'rectangular'})
             self.add_phase(p)
 
         # In roll

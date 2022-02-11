@@ -20,23 +20,23 @@ import numpy as np
 from vxpy.core.protocol import StaticPhasicProtocol, Phase
 from vxpy.visuals import pause
 
-from visuals.spherical_grating import BlackWhiteGrating
+from visuals.spherical_grating import SphericalBlackWhiteGrating, SphericalColorGrating
 
 
-# class StaticGratings(StaticPhasicProtocol):
-#
-#     def __init__(self, *args, **kwargs):
-#         StaticPhasicProtocol.__init__(self, *args, **kwargs)
-#
-#         for i in range(5):
-#             sp = 10 * 2 ** i
-#             p = Phase(4)
-#             p.set_visual(BlackWhiteGrating,
-#                          **{BlackWhiteGrating.p_shape: 'rectangular',
-#                             BlackWhiteGrating.p_type: 'horizontal',
-#                             BlackWhiteGrating.u_ang_velocity: 0,
-#                             BlackWhiteGrating.u_spat_period: sp})
-#             self.add_phase(p)
+class StaticGratings(StaticPhasicProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+
+        for i in range(5):
+            sp = 10 * 2 ** i
+            p = Phase(4)
+            p.set_visual({SphericalBlackWhiteGrating.waveform: 'rectangular',
+                          SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                          SphericalBlackWhiteGrating.motion_type: 'rotation',
+                          SphericalBlackWhiteGrating.angular_period: sp,
+                          SphericalBlackWhiteGrating.angular_velocity: 0})
+            self.add_phase(p)
 
 
 class MovingGratings(StaticPhasicProtocol):
@@ -46,36 +46,36 @@ class MovingGratings(StaticPhasicProtocol):
 
         mov_duration = 3
 
-        for i in list(range(4))[::-1]:
+        for i in list(range(3))[::-1]:
             sp = 30 * 2 ** (i - 1)
             for j in range(5):
                 v = (j + 1) * sp / mov_duration
 
                 p = Phase(2)
-                p.set_visual(BlackWhiteGrating,
-                             {BlackWhiteGrating.waveform: 'rectangular',
-                              BlackWhiteGrating.motion_axis: 'vertical',
-                              BlackWhiteGrating.motion_type: 'rotation',
-                              BlackWhiteGrating.angular_period: sp,
-                              BlackWhiteGrating.angular_velocity: 0})
+                p.set_visual(SphericalBlackWhiteGrating,
+                             {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                              SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                              SphericalBlackWhiteGrating.motion_type: 'rotation',
+                              SphericalBlackWhiteGrating.angular_period: sp,
+                              SphericalBlackWhiteGrating.angular_velocity: 0})
                 self.add_phase(p)
 
                 p = Phase(mov_duration)
-                p.set_visual(BlackWhiteGrating,
-                             {BlackWhiteGrating.waveform: 'rectangular',
-                              BlackWhiteGrating.motion_axis: 'vertical',
-                              BlackWhiteGrating.motion_type: 'rotation',
-                              BlackWhiteGrating.angular_period: sp,
-                              BlackWhiteGrating.angular_velocity: v})
+                p.set_visual(SphericalBlackWhiteGrating,
+                             {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                              SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                              SphericalBlackWhiteGrating.motion_type: 'rotation',
+                              SphericalBlackWhiteGrating.angular_period: sp,
+                              SphericalBlackWhiteGrating.angular_velocity: v})
                 self.add_phase(p)
 
                 p = Phase(mov_duration)
-                p.set_visual(BlackWhiteGrating,
-                             {BlackWhiteGrating.waveform: 'rectangular',
-                              BlackWhiteGrating.motion_axis: 'vertical',
-                              BlackWhiteGrating.motion_type: 'rotation',
-                              BlackWhiteGrating.angular_period: sp,
-                              BlackWhiteGrating.angular_velocity: -v})
+                p.set_visual(SphericalBlackWhiteGrating,
+                             {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                              SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                              SphericalBlackWhiteGrating.motion_type: 'rotation',
+                              SphericalBlackWhiteGrating.angular_period: sp,
+                              SphericalBlackWhiteGrating.angular_velocity: -v})
                 self.add_phase(p)
 
                 p = Phase(2, visual=pause.KeepLast)
@@ -83,3 +83,26 @@ class MovingGratings(StaticPhasicProtocol):
 
         p = Phase(2, visual=pause.ClearBlack)
         self.add_phase(p)
+
+
+class MovingColorGratings(StaticPhasicProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+
+        mov_duration = 5
+        sp = 30
+
+        for j in range(5):
+            v = (j + 1) * sp / mov_duration
+            for i in range(3):
+
+                p = Phase(mov_duration)
+                p.set_visual(SphericalColorGrating,
+                             {SphericalColorGrating.waveform: 'rectangular',
+                              SphericalColorGrating.motion_axis: 'vertical',
+                              SphericalColorGrating.motion_type: 'rotation',
+                              SphericalColorGrating.angular_period: sp,
+                              SphericalColorGrating.angular_velocity: v,
+                              SphericalColorGrating.color: (i == 0, i == 1, i == 2)})
+                self.add_phase(p)
