@@ -23,8 +23,8 @@ CONF_GUI_ADDONS:
   Camera:
   - vxpy.gui.camera.frames_widgets.FrameStream
   Display:
-  - vxpy.gui.display.core.Protocols
-  - vxpy.gui.display.core.VisualInteractor
+  - vxpy.gui.display.display_widgets.Protocols
+  - vxpy.gui.display.display_widgets.VisualInteractor
 CONF_IO_USE: true
 CONF_IO_PINS:
   y_mirror_in:

@@ -41,7 +41,7 @@ class MotionAxis(visual.Mat4Parameter):
         return transforms.rotate(90, (1, 0, 0))
 
 
-class BlackWhiteGrating(visual.SphericalVisual):
+class SphericalBlackWhiteGrating(visual.SphericalVisual):
     """Black und white contrast grating stimulus on a sphere
 
     :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
@@ -61,6 +61,10 @@ class BlackWhiteGrating(visual.SphericalVisual):
     angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(5, 360), step_size=5)
     angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5)
 
+    # Paths to shaders
+    VERT_PATH = './spherical_grating.vert'
+    FRAG_PATH = './spherical_grating.frag'
+
     def __init__(self, *args, **kwargs):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
 
@@ -72,9 +76,7 @@ class BlackWhiteGrating(visual.SphericalVisual):
         self.elevation_buffer = gloo.VertexBuffer(self.sphere.a_elevation)
 
         # Set up program
-        vert = self.load_vertex_shader('./spherical_grating.vert')
-        frag = self.load_shader('./spherical_grating.frag')
-        self.grating = gloo.Program(vert, frag)
+        self.grating = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
 
         # Connect parameters
         self.time.connect(self.grating)
@@ -105,3 +107,17 @@ class BlackWhiteGrating(visual.SphericalVisual):
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
+
+
+class SphericalColorGrating(SphericalBlackWhiteGrating):
+
+    FRAG_PATH = './spherical_color_grating.frag'
+
+    color = visual.Vec3Parameter('color')
+
+    def __init__(self, *args, **kwargs):
+        SphericalBlackWhiteGrating.__init__(self, *args, **kwargs)
+
+        self.color.connect(self.grating)
+
+        # self.color.data = (1., 0., 0.)
