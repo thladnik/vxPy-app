@@ -58,8 +58,9 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
     waveform = visual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2})
     motion_type = visual.IntParameter('motion_type')
     motion_axis = MotionAxis('motion_axis')
-    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(5, 360), step_size=5)
+    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(0, 360), step_size=5)
     angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5)
+    test123 = visual.IntParameter('test123', default=45, limits=(5, 360), step_size=5)
 
     # Paths to shaders
     VERT_PATH = './spherical_grating.vert'
