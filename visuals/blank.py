@@ -102,8 +102,8 @@ class ClearBlack(visual.PlanarVisual):
     def render(self, frame_time):
         gloo.clear(0., 0., 0.)
 
+
 class Noise(visual.PlanarVisual):
-    description = 'A blank screen of arbitrary uniform color.'
 
     _vert = """
     attribute vec3 a_position;
@@ -143,7 +143,6 @@ class Noise(visual.PlanarVisual):
         self.blank['a_position'] = self.position_buffer
         np.random.seed(23)
         self.blank['u_bg'] = np.random.rand(100, 100).astype(np.float32)
-
 
     def initialize(self, *args, **kwargs):
         pass
