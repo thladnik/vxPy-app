@@ -31,7 +31,8 @@ class StaticGratings(StaticPhasicProtocol):
         for i in range(5):
             sp = 10 * 2 ** i
             p = Phase(4)
-            p.set_visual({SphericalBlackWhiteGrating.waveform: 'rectangular',
+            p.set_visual(SphericalBlackWhiteGrating,
+                        {SphericalBlackWhiteGrating.waveform: 'rectangular',
                           SphericalBlackWhiteGrating.motion_axis: 'vertical',
                           SphericalBlackWhiteGrating.motion_type: 'rotation',
                           SphericalBlackWhiteGrating.angular_period: sp,
