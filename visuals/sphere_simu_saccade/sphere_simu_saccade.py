@@ -16,28 +16,30 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import annotations
+import h5py
 import numpy as np
 from vispy import gloo
-from vispy import scene
 from vispy.util import transforms
 from scipy import io
 
 from vxpy.core import visual
-from vxpy.utils import sphere
 
 
-class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
-    p_sacc_duration = 'p_sacc_duration'
-    p_sacc_azim_target = 'p_sacc_azim_target'
-    p_sacc_start_time = 'p_sacc_start_time'
-    p_sacc_direction = 'p_sacc_direction'
-    p_flash_delay = 'p_flash_delay'
-    p_flash_polarity = 'p_flash_polarity'
-    p_flash_start_time = 'p_flash_start_time'
-    p_flash_duration = 'p_flash_duration'
+class SphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
 
     VERT_LOC = './sphere.vert'
     FRAG_LOC = ''
+
+    u_time = visual.FloatParameter('u_time', default=0.0, limits=(0.0, 20.0))
+
+    saccade_start_time = visual.FloatParameter('saccade_start_time', static=True, default=2.0, limits=(0.1, 10.0))
+    saccade_duration = visual.UIntParameter('saccade_duration', static=True, default=200, limits=(20, 1000))
+    saccade_azim_target = visual.FloatParameter('saccade_azim_target', static=True, default=15.0, limits=(1.0, 60.0))
+    saccade_direction = visual.IntParameter('saccade_direction', static=True, default=1, limits=(-1, 1))
+
+    flash_start_time = visual.FloatParameter('flash_start_time', static=True, default=2.5, limits=(-1.0, 20.0))
+    flash_duration = visual.UIntParameter('flash_duration', static=True, default=50, limits=(20, 1000))
+    flash_polarity = visual.IntParameter('flash_polarity', static=True, default=1, limits=(-1, 1))
 
     def __init__(self, *args, **kwargs):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -55,14 +57,20 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
         self.flash: np.ndarray = None
         self.state_buffer: gloo.VertexBuffer = None
 
+        self.trigger_functions.append(self.trigger_simulated_saccade)
+        self.trigger_functions.append(self.reset_time)
+
         # Keep seed fixed for now
         np.random.seed(1)
 
-    def trigger_mock_saccade(self):
-        self.parameters[self.p_sacc_start_time] = self.program['u_time']
+    def trigger_simulated_saccade(self):
+        self.u_time.data = self.saccade_start_time.data
+
+    def reset_time(self):
+        self.u_time.data = 0.0
 
     def initialize(self, **params):
-        self.program['u_time'] = 0.0
+        self.reset_time()
 
         if self.protocol is not None and hasattr(self.protocol, 'p_cur_azim'):
             self.cur_azim = self.protocol.p_cur_azim
@@ -78,32 +86,32 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
             self.cur_azim -= 360.
 
         # Increment time
-        self.program['u_time'] += dt
-        cur_time = self.program['u_time']
+        self.u_time.data = self.u_time.data + dt
+        cur_time = self.u_time.data
 
         # Check if saccade was triggered
-        sacc_start_time = self.parameters.get(self.p_sacc_start_time)
+        sacc_start_time = self.saccade_start_time.data
         if sacc_start_time is not None:
 
             # Get saccade parameters
-            sacc_duration = self.parameters.get(self.p_sacc_duration) / 1000
-            sacc_azim_target = self.parameters.get(self.p_sacc_azim_target)
-            sacc_direction = self.parameters.get(self.p_sacc_direction)
+            sacc_duration = self.saccade_duration.data / 1000
+            sacc_azim_target = self.saccade_azim_target.data
+            sacc_direction = self.saccade_direction.data
 
             # Perform saccade
             if cur_time > sacc_start_time:
                 if cur_time - sacc_start_time <= sacc_duration:
                     # If saccade is still happening: increment azimuth rotation
                     self.cur_azim += sacc_direction * sacc_azim_target * dt / sacc_duration
-                else:
-                    # If saccade is over
-                    self.parameters[self.p_sacc_start_time] = -np.inf
+                # else:
+                #     # If saccade is over
+                #     self.saccade_start_time.data = -np.inf
 
         # Perform flash
-        flash_start_time = self.parameters.get(self.p_flash_start_time)
+        flash_start_time = self.flash_start_time.data
         if flash_start_time is not None:
-            flash_duration = self.parameters.get(self.p_flash_duration) / 1000
-            flash_polarity = self.parameters.get(self.p_flash_polarity)
+            flash_duration = self.flash_duration.data / 1000
+            flash_polarity = self.flash_polarity.data
             if cur_time > flash_start_time and cur_time - flash_start_time <= flash_duration:
                 self.program['u_flash_polarity'] = flash_polarity
             else:
@@ -119,70 +127,18 @@ class IcoSphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
         self.apply_transform(self.program)
         self.program.draw('triangles', self.index_buffer)
 
-    interface = [
-        (p_sacc_duration, 200, 40, 2000, dict(step_size=5)),
-        (p_sacc_azim_target, 30, -90, 90, dict(step_size=1)),
-        ('trigger_saccade', trigger_mock_saccade)
-    ]
 
-
-class IcoNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
+class GaussianConvNoiseSphereSimuSaccade(SphereWithSimulatedHorizontalSaccade):
     FRAG_LOC = './smooth_noise_sphere.frag'
 
     def __init__(self, *args, **kwargs):
-        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
-
-        # Set up sphere
-        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
-        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        vertices = self.ico_sphere.get_vertices()
-        self.position_buffer = gloo.VertexBuffer(vertices)
-        self.binary_noise['a_position'] = self.position_buffer
-
-        self.states = np.ascontiguousarray(np.random.rand(self.position_buffer.size), dtype=np.float32)
-        self.state_buffer = gloo.VertexBuffer(self.states)
-
-        # Set vertex states
-        self.binary_noise['a_state'] = self.state_buffer
-
-
-class IcoBinaryNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
-    FRAG_LOC = './binary_noise_sphere.frag'
-
-    def __init__(self, *args, **kwargs):
-        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
-
-        lum_decrease = 0.2
-        lum_increase = 0.2
-
-        # Set up sphere
-        self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=5)
-        self.index_buffer = gloo.IndexBuffer(self.ico_sphere.get_indices())
-        vertices = self.ico_sphere.get_vertices()
-        self.position_buffer = gloo.VertexBuffer(vertices)
-        self.binary_noise['a_position'] = self.position_buffer
-
-        bias = 0.1
-        intensity = np.ascontiguousarray(np.random.rand(self.position_buffer.size) < (1. - bias), dtype=np.float32)
-        self.state_buffer = gloo.VertexBuffer(self.states)
-
-        # Set vertex states
-        self.program['a_position'] = vertices
-        self.program['a_texture_normal'] = intensity
-        self.program['a_texture_dark'] = intensity - lum_decrease
-        self.program['a_texture_light'] = intensity + lum_increase
-
-
-class IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWithSimulatedHorizontalSaccade):
-    FRAG_LOC = './smooth_noise_sphere.frag'
-
-    def __init__(self, *args, **kwargs):
-        IcoSphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
+        SphereWithSimulatedHorizontalSaccade.__init__(self, *args, **kwargs)
 
         lum_decrease = 0.2
         lum_increase = 0.2
         # texture_file = 'visuals/sphere_simu_saccade/stimulus_data/blobstimtest20220228a.mat'
-        texture_file = 'visuals/sphere_simu_saccade/stimulus_data/blobstimtest.mat'
+        # texture_file = 'visuals/sphere_simu_saccade/stimulus_data/blobstimtest.mat'
+        texture_file = 'visuals/sphere_simu_saccade/stimulus_data/blobstimtest.hdf5'
 
         configuration_key = str((texture_file, lum_decrease, lum_increase))
 
@@ -198,6 +154,38 @@ class IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWit
                 self.program, self.index_buffer = stored
                 return
 
+        # Load model and texture
+        # vertices, indices, intensity = self._import_texture_from_mat(texture_file)
+        vertices, indices, intensity = self._import_texture_from_hdf(texture_file)
+
+        # Create index buffer
+        self.index_buffer = gloo.IndexBuffer(indices)
+
+        # Set up program
+        VERT = self.load_vertex_shader(self.VERT_LOC)
+        FRAG = self.load_shader(self.FRAG_LOC)
+        self.program = gloo.Program(VERT, FRAG, count=vertices.shape[0])
+        self.program['a_position'] = vertices
+        self.program['a_texture_normal'] = intensity
+        self.program['a_texture_dark'] = intensity - lum_decrease
+        self.program['a_texture_light'] = intensity + lum_increase
+
+        if self.protocol is not None:
+            self.protocol.configurations[configuration_key] = self.program, self.index_buffer
+
+        self.u_time.connect(self.program)
+
+    @staticmethod
+    def _import_texture_from_hdf(texture_file):
+        with h5py.File(texture_file, 'r') as f:
+            vertices = f['vertices'][:]
+            indices = f['indices'][:]
+            intensity = f['intensity'][:]
+
+        return vertices, indices, intensity
+
+    @staticmethod
+    def _import_texture_from_mat(texture_file):
         # Load model data
         d = io.loadmat(texture_file)
 
@@ -218,19 +206,8 @@ class IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade(IcoSphereWit
                 idcs.append([i * azim_lvls + j, (i + 1) * azim_lvls + j, (i + 1) * azim_lvls + j + 1])
         indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
         indices = indices[indices < azim_lvls * elev_lvls]
-        self.index_buffer = gloo.IndexBuffer(indices)
 
-        # Intensities
+        # Get intensity
         intensity = d['totalintensity'].flatten()
 
-        # Set up program
-        VERT = self.load_vertex_shader(self.VERT_LOC)
-        FRAG = self.load_shader(self.FRAG_LOC)
-        self.program = gloo.Program(VERT, FRAG, count=vertices.shape[0])
-        self.program['a_position'] = vertices
-        self.program['a_texture_normal'] = intensity
-        self.program['a_texture_dark'] = intensity - lum_decrease
-        self.program['a_texture_light'] = intensity + lum_increase
-
-        self.protocol.configurations[configuration_key] = self.program, self.index_buffer
-
+        return vertices, indices, intensity

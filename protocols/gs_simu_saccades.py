@@ -3,7 +3,7 @@ import numpy as np
 from vxpy.core.protocol import Phase, StaticPhasicProtocol
 from vxpy.visuals import pause
 
-from visuals.sphere_simu_saccade import IcoGaussianConvolvedNoiseSphereWithSimulatedHorizontalSaccade as VisualClass
+from visuals.sphere_simu_saccade import GaussianConvNoiseSphereSimuSaccade as VisualClass
 from visuals.sphere_visual_field_mapping import BinaryNoiseVisualFieldMapping16deg, BinaryNoiseVisualFieldMapping8deg
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 from visuals.spherical_grating import SphericalBlackWhiteGrating
