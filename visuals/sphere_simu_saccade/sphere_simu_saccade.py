@@ -41,6 +41,10 @@ class SphereWithSimulatedHorizontalSaccade(visual.SphericalVisual):
     flash_duration = visual.UIntParameter('flash_duration', static=True, default=50, limits=(20, 1000))
     flash_polarity = visual.IntParameter('flash_polarity', static=True, default=1, limits=(-1, 1))
 
+    texture_normal = visual.Texture2D('texture_normal', static=True)
+    texture_light = visual.Texture2D('texture_light', static=True)
+    texture_dark = visual.Texture2D('texture_dark', static=True)
+
     def __init__(self, *args, **kwargs):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
 
@@ -166,14 +170,21 @@ class GaussianConvNoiseSphereSimuSaccade(SphereWithSimulatedHorizontalSaccade):
         FRAG = self.load_shader(self.FRAG_LOC)
         self.program = gloo.Program(VERT, FRAG, count=vertices.shape[0])
         self.program['a_position'] = vertices
-        self.program['a_texture_normal'] = intensity
-        self.program['a_texture_dark'] = intensity - lum_decrease
-        self.program['a_texture_light'] = intensity + lum_increase
+        # self.program['texture_normal'] = intensity
+        # self.program['texture_dark'] = intensity - lum_decrease
+        # self.program['texture_light'] = intensity + lum_increase
+
+        self.texture_normal.data = intensity
+        self.texture_light.data = intensity + lum_increase
+        self.texture_dark.data = intensity - lum_decrease
 
         if self.protocol is not None:
             self.protocol.configurations[configuration_key] = self.program, self.index_buffer
 
         self.u_time.connect(self.program)
+        self.texture_normal.connect(self.program)
+        self.texture_light.connect(self.program)
+        self.texture_dark.connect(self.program)
 
     @staticmethod
     def _import_texture_from_hdf(texture_file):
