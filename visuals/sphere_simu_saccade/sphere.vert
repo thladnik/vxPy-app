@@ -1,7 +1,7 @@
 attribute vec3 a_position;
-attribute float a_texture_normal;
-attribute float a_texture_dark;
-attribute float a_texture_light;
+attribute float texture_normal;
+attribute float texture_dark;
+attribute float texture_light;
 
 uniform mat4 u_rotate;
 
@@ -17,7 +17,7 @@ void main() {
     gl_Position = transform_position(pos.xyz);
 
     v_position = a_position;
-    v_texture_normal = a_texture_normal;
-    v_texture_dark = a_texture_dark;
-    v_texture_light = a_texture_light;
+    v_texture_normal = texture_normal;
+    v_texture_dark = texture_dark;
+    v_texture_light = texture_light;
 }
