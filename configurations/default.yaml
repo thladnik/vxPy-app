@@ -30,7 +30,7 @@ CONF_DISPLAY_USE: true
 CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
 - vxpy.routines.display.display_capture.Frames
-- vxpy.routines.display.display_capture.DynamicParameters
+- vxpy.routines.display.display_capture.Parameters
 CONF_GUI_USE: true
 CONF_GUI_ADDONS:
   Camera:
@@ -75,7 +75,7 @@ CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
-- ddp*
+- var_param*
 - eyepos_*
 - ~*_frame
 - test_sines_whitenoise

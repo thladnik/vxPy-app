@@ -31,22 +31,22 @@ class Protocol01(StaticPhasicProtocol):
         for i in range(4):
             p = Phase(duration=2)
             p.set_visual(SphereUniformBackground,
-                         **{SphereUniformBackground.u_color: (0.5,) * 3})
+                         {SphereUniformBackground.u_color: (0.5,) * 3})
             self.add_phase(p)
 
             p = Phase(duration=2)
             p.set_visual(SphereUniformBackground,
-                         **{SphereUniformBackground.u_color: (0.0,) * 3})
+                         {SphereUniformBackground.u_color: (0.0,) * 3})
             self.add_phase(p)
 
             p = Phase(duration=2)
             p.set_visual(SphereUniformBackground,
-                         **{SphereUniformBackground.u_color: (0.5,) * 3})
+                         {SphereUniformBackground.u_color: (0.5,) * 3})
             self.add_phase(p)
 
             p = Phase(duration=2)
             p.set_visual(SphereUniformBackground,
-                         **{SphereUniformBackground.u_color: (1.0,) * 3})
+                         {SphereUniformBackground.u_color: (1.0,) * 3})
             self.add_phase(p)
 
         # Global rotations
@@ -54,51 +54,52 @@ class Protocol01(StaticPhasicProtocol):
         for direction in [-1, 1]:
             p = Phase(duration=6)
             p.set_visual(SphericalBlackWhiteGrating,
-                         **{SphericalBlackWhiteGrating.u_spat_period: 60,
-                            SphericalBlackWhiteGrating.u_ang_velocity: direction * 30,
-                            SphericalBlackWhiteGrating.p_type: 'rotation',
-                            SphericalBlackWhiteGrating.p_shape: 'rectangular'})
+                         {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                          SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                          SphericalBlackWhiteGrating.motion_type: 'rotation',
+                          SphericalBlackWhiteGrating.angular_period: 60,
+                          SphericalBlackWhiteGrating.angular_velocity: direction * 30})
             self.add_phase(p)
 
         # In roll
-        # for direction in [-1, 1]:
-        #     p = Phase(duration=6)
-        #     p.set_visual(GratingRotAlongRoll,
-        #                  **{GratingRotAlongRoll.u_spat_period: 60,
-        #                     GratingRotAlongRoll.u_ang_velocity: direction * 30,
-        #                     GratingRotAlongRoll.p_type: 'rotation',
-        #                     GratingRotAlongRoll.p_shape: 'rectangular'})
-        #     self.add_phase(p)
+        for direction in [-1, 1]:
+            p = Phase(duration=6)
+            p.set_visual(SphericalBlackWhiteGrating,
+                         {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                          SphericalBlackWhiteGrating.motion_axis: 'forward',
+                          SphericalBlackWhiteGrating.motion_type: 'rotation',
+                          SphericalBlackWhiteGrating.angular_period: 60,
+                          SphericalBlackWhiteGrating.angular_velocity: direction * 30})
+            self.add_phase(p)
 
         # Spatial RF mapping for pos/neg polarities
-        for inv in [True, False]:
-            # 16 deg
-            p = Phase(duration=120)
-            p.set_visual(BinaryNoiseVisualFieldMapping16deg,
-                         **{BinaryNoiseVisualFieldMapping16deg.p_interval: 1000,
-                            BinaryNoiseVisualFieldMapping16deg.p_bias: .1,
-                            BinaryNoiseVisualFieldMapping16deg.p_inverted: inv})
-            self.add_phase(p)
-
-            # 8 deg
-            p = Phase(duration=180)
-            p.set_visual(BinaryNoiseVisualFieldMapping8deg,
-                         **{BinaryNoiseVisualFieldMapping8deg.p_interval: 1000,
-                            BinaryNoiseVisualFieldMapping8deg.p_bias: .1,
-                            BinaryNoiseVisualFieldMapping8deg.p_inverted: inv})
-            self.add_phase(p)
+        # for inv in [True, False]:
+        #     # 16 deg
+        #     p = Phase(duration=120)
+        #     p.set_visual(BinaryNoiseVisualFieldMapping16deg,
+        #                  **{BinaryNoiseVisualFieldMapping16deg.p_interval: 1000,
+        #                     BinaryNoiseVisualFieldMapping16deg.p_bias: .1,
+        #                     BinaryNoiseVisualFieldMapping16deg.p_inverted: inv})
+        #     self.add_phase(p)
+        #
+        #     # 8 deg
+        #     p = Phase(duration=180)
+        #     p.set_visual(BinaryNoiseVisualFieldMapping8deg,
+        #                  **{BinaryNoiseVisualFieldMapping8deg.p_interval: 1000,
+        #                     BinaryNoiseVisualFieldMapping8deg.p_bias: .1,
+        #                     BinaryNoiseVisualFieldMapping8deg.p_inverted: inv})
+        #     self.add_phase(p)
 
         # Static texture
         p = Phase(duration=5)
         p.set_visual(VisualClass,
-                     **{VisualClass.p_sacc_duration: 100,
-                        VisualClass.p_sacc_azim_target: 15,
-                        VisualClass.p_sacc_direction: 1,
-                        VisualClass.p_flash_polarity: 1,
-                        VisualClass.p_sacc_start_time: -1.,
-                        VisualClass.p_flash_start_time: -1,
-                        VisualClass.p_flash_duration: 20.,
-                        })
+                     {VisualClass.saccade_start_time: 10,
+                      VisualClass.saccade_duration: 100,
+                      VisualClass.saccade_azim_target: 15,
+                      VisualClass.saccade_direction: 1,
+                      VisualClass.flash_start_time: 10,
+                      VisualClass.flash_duration: 20,
+                      VisualClass.flash_polarity: 1})
         self.add_phase(p)
 
         # Simulated saccades + flashes
@@ -107,16 +108,14 @@ class Protocol01(StaticPhasicProtocol):
                 p = Phase(duration=5)
                 sacc_start = 1.5  # 1. + np.random.rand()
                 flash_start = sacc_start + flash_delay / 1000
-
                 p.set_visual(VisualClass,
-                             **{VisualClass.p_sacc_duration: 100,
-                                VisualClass.p_sacc_azim_target: 15,
-                                VisualClass.p_sacc_direction: sacc_direction,
-                                VisualClass.p_flash_polarity: flash_polarity,
-                                VisualClass.p_sacc_start_time: sacc_start,
-                                VisualClass.p_flash_start_time: flash_start,
-                                VisualClass.p_flash_duration: 20.,
-                                })
+                             {VisualClass.saccade_start_time: sacc_start,
+                              VisualClass.saccade_duration: 100,
+                              VisualClass.saccade_azim_target: 15,
+                              VisualClass.saccade_direction: sacc_direction,
+                              VisualClass.flash_start_time: flash_start,
+                              VisualClass.flash_duration: 20,
+                              VisualClass.flash_polarity: flash_polarity})
                 self.add_phase(p)
 
         # Blank at end of protocol
