@@ -1,6 +1,6 @@
 """
-vxpy ./visuals/spherical/grating.py
-Copyright (C) 2020 Tim Hladnik
+vxPy_app ./visuals/spherical_grating/spherical_grating.py
+Copyright (C) 2022 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,24 +43,17 @@ class MotionAxis(visual.Mat4Parameter):
 
 class SphericalBlackWhiteGrating(visual.SphericalVisual):
     """Black und white contrast grating stimulus on a sphere
-
-    :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
-    :param p_type: <string> motion type of grating; either 'rotation' or 'translation'
-    :param u_lin_velocity: <float> linear velocity of grating in [mm/s]
-    :param u_spat_period: <float> spatial period of the grating in [mm]
-    :param u_time: <float> time elapsed since start of visual [s]
     """
     # (optional) Add a short description
     description = 'Spherical black und white contrast grating stimulus'
 
     # Define parameters
     time = visual.FloatParameter('time', internal=True)
-    waveform = visual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2})
-    motion_type = visual.IntParameter('motion_type')
-    motion_axis = MotionAxis('motion_axis')
-    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(0, 360), step_size=5)
-    angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5)
-    test123 = visual.IntParameter('test123', default=45, limits=(5, 360), step_size=5)
+    waveform = visual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2}, static=True)
+    motion_type = visual.IntParameter('motion_type', static=True)
+    motion_axis = MotionAxis('motion_axis', static=True)
+    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(0, 360), step_size=5, static=True)
+    angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
 
     # Paths to shaders
     VERT_PATH = './spherical_grating.vert'
@@ -79,7 +72,7 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
         # Set up program
         self.grating = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
 
-        # Connect parameters
+        # Connect parameters (this makes them be automatically updated in the connected programs)
         self.time.connect(self.grating)
         self.waveform.connect(self.grating)
         self.motion_type.connect(self.grating)
