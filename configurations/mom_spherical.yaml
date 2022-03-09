@@ -19,11 +19,11 @@ CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
 - vxpy.routines.display.display_capture.DynamicParameters
 CONF_GUI_USE: true
+CONF_GUI_SCREEN: 0
 CONF_GUI_ADDONS:
   Camera:
   - vxpy.gui.camera.frames_widgets.FrameStream
   Display:
-  - vxpy.gui.display.display_widgets.Protocols
   - vxpy.gui.display.display_widgets.VisualInteractor
 CONF_IO_USE: true
 CONF_IO_PINS:

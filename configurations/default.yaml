@@ -32,12 +32,12 @@ CONF_DISPLAY_ROUTINES:
 - vxpy.routines.display.display_capture.Frames
 - vxpy.routines.display.display_capture.Parameters
 CONF_GUI_USE: true
+CONF_GUI_SCREEN: 0
 CONF_GUI_ADDONS:
   Camera:
   - vxpy.gui.camera.frames_widgets.FrameStream
   - vxpy.gui.camera.zf_tracking_widgets.EyePositionDetector
   Display:
-  - vxpy.gui.display.display_widgets.Protocols
   - vxpy.gui.display.display_widgets.VisualInteractor
   Io:
   - vxpy.gui.io.io_core_widgets.DisplayPSD
