@@ -27,21 +27,21 @@ class GratingsKeepUntilEnd(StaticPhasicProtocol):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
-            sp = i + 1
+            sp = (i + 1) * 5
             p = Phase(duration=2)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 0.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 0.})
             self.add_phase(p)
 
             p = Phase(duration=5)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 5.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 2 * sp})
             self.add_phase(p)
 
             p = Phase(duration=2)
@@ -60,21 +60,21 @@ class GratingsBlankPauses(StaticPhasicProtocol):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
-            sp = i + 1
+            sp = (i + 1) * 10
             p = Phase(duration=2)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 0.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 0.})
             self.add_phase(p)
 
             p = Phase(duration=5)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 5.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 2 * sp})
             self.add_phase(p)
 
             p = Phase(duration=2)
@@ -93,21 +93,21 @@ class GratingsKeepForever(StaticPhasicProtocol):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
-            sp = i + 1
+            sp = (i + 1) * 10
             p = Phase(duration=2)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 0.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 0.})
             self.add_phase(p)
 
             p = Phase(duration=5)
             p.set_visual(BlackAndWhiteGrating,
-                         **{BlackAndWhiteGrating.p_direction: 'horizontal',
-                            BlackAndWhiteGrating.p_shape: 'rectangular',
-                            BlackAndWhiteGrating.u_spat_period: 2 * sp,
-                            BlackAndWhiteGrating.u_lin_velocity: 5.})
+                         {BlackAndWhiteGrating.direction: 'horizontal',
+                          BlackAndWhiteGrating.waveform: 'rectangular',
+                          BlackAndWhiteGrating.spatial_period: sp,
+                          BlackAndWhiteGrating.linear_velocity: 2 * sp})
             self.add_phase(p)
 
             p = Phase(duration=2)
