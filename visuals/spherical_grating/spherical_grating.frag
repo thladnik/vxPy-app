@@ -16,11 +16,11 @@ varying float v_elevation;
 void main() {
 
     // Set position to be used
-    float p;
+    float angular_pos;
     if (motion_type == 1) {
-        p = v_elevation;
+        angular_pos = v_elevation;
     } else {
-        p = v_azimuth;
+        angular_pos = v_azimuth;
     }
 
     // Calculate brightness using position

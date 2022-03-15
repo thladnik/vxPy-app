@@ -68,8 +68,8 @@ class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi/2)
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
-        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.angular_azimuth)
-        self.elevation_buffer = gloo.VertexBuffer(self.sphere.angular_elevation)
+        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree)
+        self.elevation_buffer = gloo.VertexBuffer(self.sphere.elevation_degree)
 
         # Set up program
         self.grating = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
