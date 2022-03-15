@@ -1,4 +1,4 @@
-CONF_CALIBRATION_PATH: calibrations/mom_spherical.yaml
+CONF_CALIBRATION_PATH: calibrations/mom_mini_display.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   faraday_control_cam:
@@ -13,6 +13,7 @@ CONF_CAMERA_DEVICES:
     gain: 120
 CONF_CAMERA_ROUTINES:
   - vxpy.routines.camera.camera_capture.Frames
+  - plugins.camera.calculate_pixel_sum.CalculateControlCamPixelSum
 CONF_DISPLAY_USE: true
 CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
