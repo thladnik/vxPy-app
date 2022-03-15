@@ -19,38 +19,21 @@ from vispy import gloo
 
 from vxpy.api.visual import PlanarVisual
 from vxpy.utils import plane
+import vxpy.core.visual as vxvisual
 
 
 class BlackAndWhiteGrating(PlanarVisual):
     # (optional) Add a short description
     description = 'Black und white contrast grating stimulus'
 
-    # (optional) Define names for used variables
-    p_shape = 'p_shape'
-    p_direction = 'p_direction'
-    u_lin_velocity = 'u_lin_velocity'
-    u_spat_period = 'u_spat_period'
-    u_time = 'u_time'
-
-    # (optional) Define parameters of an interface
-    interface = [
-        # Name, 'value1', 'value2', 'value3'
-        (p_shape, 'rectangular', 'sinusoidal'),
-        (p_direction, 'horizontal', 'vertical'),
-        # Name, default, min, max, additional info
-        (u_lin_velocity, 5., 0., 100., dict(step_size=1.)),
-        (u_spat_period, 10., 1.0, 200., dict(step_size=1.))
-    ]
+    # Define parameters
+    time = vxvisual.FloatParameter('time', internal=True)
+    waveform = vxvisual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2}, static=True)
+    direction = vxvisual.IntParameter('direction', value_map={'vertical': 1, 'horizontal': 2}, static=True)
+    linear_velocity = vxvisual.FloatParameter('linear_velocity', default=10, limits=(-100, 100), step_size=5, static=True)
+    spatial_period = vxvisual.FloatParameter('spatial_period', default=10, limits=(-100, 100), step_size=5, static=True)
 
     def __init__(self, *args, **kwargs):
-        """Black und white contrast grating stimulus
-
-        :param p_shape: <string> shape of grating; either 'rectangular' or 'sinusoidal'; rectangular is a zero-rectified sinusoidal
-        :param p_direction: <string> movement direction of grating; either 'vertical' or 'horizontal'
-        :param u_lin_velocity: <float> linear velocity of grating in [mm/s]
-        :param u_spat_period: <float> spatial period of the grating in [mm]
-        :param u_time: <float> time elapsed since start of visual [s]
-        """
         PlanarVisual.__init__(self, *args, **kwargs)
 
         # Set up model of a 2d plane
@@ -69,29 +52,25 @@ class BlackAndWhiteGrating(PlanarVisual):
         frag = self.load_shader('./planar_grating.frag')
         self.grating = gloo.Program(vert, frag)
 
+        self.time.connect(self.grating)
+        self.waveform.connect(self.grating)
+        self.direction.connect(self.grating)
+        self.linear_velocity.connect(self.grating)
+        self.spatial_period.connect(self.grating)
+
     def initialize(self, *args, **kwargs):
         # Reset u_time to 0 on each visual initialization
-        self.grating['u_time'] = 0.
+        self.time.data = 0.0
 
         # Set positions with vertex buffer
         self.grating['a_position'] = self.position_buffer
 
     def render(self, dt):
         # Add elapsed time to u_time
-        self.grating['u_time'] += dt
+        self.time.data += dt
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
-
-    # Parse function for waveform shape
-    @staticmethod
-    def parse_p_shape(shape: str) -> int:
-        return 1 if shape == 'rectangular' else 2  # 'sinusoidal'
-
-    # Parse function for motion direction
-    @staticmethod
-    def parse_p_direction(orientation: str) -> int:
-        return 1 if orientation == 'vertical' else 2  # 'horizontal'
