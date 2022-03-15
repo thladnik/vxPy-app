@@ -24,7 +24,8 @@ void main() {
     }
 
     // Calculate brightness using position
-    float c = sin(1.0/(angular_period/360.0) * p + time * angular_velocity/angular_period *  2.0 * PI);
+    float c = sin(2.0 * PI * (angular_pos  / angular_period + time * angular_velocity / angular_period));
+//    float c = sin(1.0/(angular_period/360.0) * p + time * angular_velocity/angular_period *  2.0 * PI);
 
     // If waveform is rectangular (1): apply threshold to brightness
     if (waveform == 1) {
