@@ -1,23 +1,14 @@
-attribute vec3 a_position;
-attribute float a_azimuth;
-attribute float a_elevation;
-attribute float a_state;
-attribute float a_vertex_lvl;
+attribute vec3 xyz_coordinate;
+attribute float binary_state;
 
-uniform mat4 u_rotate;
+uniform mat4 rotation;
 
-varying float v_azimuth;
-varying float v_elevation;
-varying vec3 v_position;
 varying float v_state;
-varying float v_vertex_lvl;
+
 
 void main() {
 
-    gl_Position = transform_position(a_position);
+    gl_Position = transform_position((rotation * vec4(xyz_coordinate, 1.0)).xyz);
 
-    v_azimuth = a_azimuth;
-    v_elevation = a_elevation;
-    v_position = a_position;
-    v_state = a_state;
+    v_state = float(binary_state);
 }
