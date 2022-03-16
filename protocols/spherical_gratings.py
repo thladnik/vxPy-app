@@ -32,7 +32,7 @@ class StaticGratings(StaticPhasicProtocol):
             sp = 10 * 2 ** i
             p = Phase(4)
             p.set_visual(SphericalBlackWhiteGrating,
-                        {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                         {SphericalBlackWhiteGrating.waveform: 'rectangular',
                           SphericalBlackWhiteGrating.motion_axis: 'vertical',
                           SphericalBlackWhiteGrating.motion_type: 'rotation',
                           SphericalBlackWhiteGrating.angular_period: sp,
@@ -79,8 +79,7 @@ class MovingGratings(StaticPhasicProtocol):
                               SphericalBlackWhiteGrating.angular_velocity: -v})
                 self.add_phase(p)
 
-                p = Phase(2, visual=pause.KeepLast)
-                self.add_phase(p)
+                self.keep_last_frame_for(2)
 
         p = Phase(2, visual=pause.ClearBlack)
         self.add_phase(p)
@@ -97,7 +96,6 @@ class MovingColorGratings(StaticPhasicProtocol):
         for j in range(5):
             v = (j + 1) * sp / mov_duration
             for i in range(3):
-
                 p = Phase(mov_duration)
                 p.set_visual(SphericalColorGrating,
                              {SphericalColorGrating.waveform: 'rectangular',
