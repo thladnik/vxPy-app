@@ -40,7 +40,11 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
-    def _create_protocol(self, angular_period_degrees, angular_velocity_degrees):
+    def _create_protocol(self, angular_period_degrees: float, angular_velocity_degrees: float,
+                         lower_el: float = -45, upper_el: float = 45,
+                         lower_az: float = 0, upper_az: float = 180,
+                         large_rows: int = 2, large_cols: int = 2,
+                         small_rows: int = 6, small_cols: int = 6):
 
         # Blank at start of protocol for baseline
         p = vxprotocol.Phase(duration=15)
@@ -79,10 +83,10 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
             self.keep_last_frame_for(pause_duration)
 
             # LARGE
-            large_rows = 2
-            large_cols = 2
-            large_patch_borders_el = np.linspace(-45, 45, large_rows + 1)
-            large_patch_borders_az = np.linspace(0, 180, large_cols + 1)
+            # large_rows = 2
+            # large_cols = 2
+            large_patch_borders_el = np.linspace(lower_el, upper_el, large_rows + 1)
+            large_patch_borders_az = np.linspace(lower_az, upper_az, large_cols + 1)
 
             # Large rows
             for lel, hel in zip(large_patch_borders_el[:-1], large_patch_borders_el[1:]):
@@ -134,10 +138,10 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                     self.keep_last_frame_for(pause_duration)
 
             # SMALL
-            rows = 6
-            cols = 6
-            small_patch_borders_el = np.linspace(-45, 45, rows + 1)
-            small_patch_borders_az = np.linspace(0, 180, cols + 1)
+            # small_rows = 6
+            # small_cols = 6
+            small_patch_borders_el = np.linspace(lower_el, upper_el, small_rows + 1)
+            small_patch_borders_az = np.linspace(lower_az, upper_az, small_cols + 1)
 
             # Small rows
             for lel, hel in zip(small_patch_borders_el[:-1], small_patch_borders_el[1:]):
@@ -196,7 +200,7 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolCW(BaseProtocol):
+class ProtocolN45toP45CW(BaseProtocol):
 
     def __init__(self):
         BaseProtocol.__init__(self)
@@ -207,7 +211,7 @@ class ProtocolCW(BaseProtocol):
         self._create_protocol(angular_period_degrees, angular_velocity_degrees)
 
 
-class ProtocolCCW(BaseProtocol):
+class ProtocolN45toP45CCW(BaseProtocol):
 
     def __init__(self):
         BaseProtocol.__init__(self)
@@ -216,3 +220,15 @@ class ProtocolCCW(BaseProtocol):
         angular_velocity_degrees = -30
 
         self._create_protocol(angular_period_degrees, angular_velocity_degrees)
+
+
+class ProtocolN90toP45CW(BaseProtocol):
+
+    def __init__(self):
+        BaseProtocol.__init__(self)
+
+        angular_period_degrees = 30
+        angular_velocity_degrees = 30
+
+        self._create_protocol(angular_period_degrees, angular_velocity_degrees,
+                              lower_el=-90, large_rows=3, small_rows=9)
