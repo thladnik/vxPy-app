@@ -46,6 +46,12 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                          large_rows: int = 2, large_cols: int = 2,
                          small_rows: int = 6, small_cols: int = 6):
 
+        elevation_full_center = np.mean([lower_el, upper_el])
+        elevation_full_range = upper_el - lower_el
+
+        azimuth_full_center = np.mean([lower_az, upper_az])
+        azimuth_full_range = upper_az - lower_az
+
         # Blank at start of protocol for baseline
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -76,8 +82,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
             p.set_visual(PartialSphericalBlackWhiteGrating,
                          create_partially_mov_grating_params(angular_period_degrees,
                                                              angular_velocity_degrees,
-                                                             90, 180,
-                                                             0, 90))
+                                                             azimuth_full_center, azimuth_full_range,
+                                                             elevation_full_center, elevation_full_range))
             self.add_phase(p)
             # Pause
             self.keep_last_frame_for(pause_duration)
@@ -97,7 +103,7 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                 p.set_visual(PartialSphericalBlackWhiteGrating,
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
-                                                                 90, 180,
+                                                                 azimuth_full_center, azimuth_full_range,
                                                                  el_center, el_range))
                 self.add_phase(p)
                 # Pause
@@ -109,11 +115,16 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                 az_range = haz - laz
 
                 p = vxprotocol.Phase(mov_duration)
+                # p.set_visual(PartialSphericalBlackWhiteGrating,
+                #              create_partially_mov_grating_params(angular_period_degrees,
+                #                                                  angular_velocity_degrees,
+                #                                                  az_center, az_range,
+                #                                                  0, 90))
                 p.set_visual(PartialSphericalBlackWhiteGrating,
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  az_center, az_range,
-                                                                 0, 90))
+                                                                 elevation_full_center, elevation_full_range))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
@@ -152,7 +163,7 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                 p.set_visual(PartialSphericalBlackWhiteGrating,
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
-                                                                 90, 180,
+                                                                 azimuth_full_center, azimuth_full_range,
                                                                  el_center, el_range))
                 self.add_phase(p)
                 # Pause
@@ -168,7 +179,7 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  az_center, az_range,
-                                                                 0, 90))
+                                                                 elevation_full_center, elevation_full_range))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
