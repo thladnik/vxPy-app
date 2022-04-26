@@ -20,9 +20,11 @@ void main() {
     angular_pos = v_elevation;
 
     // Calculate brightness using position
-    float c = sin(2.0 * PI * (angular_pos  / angular_period + time * angular_velocity / angular_period));
+    float c = 1.0 + sin(2.0 * PI * (angular_pos  / angular_period + time * angular_velocity / angular_period));
+    c /= 2.0;
 
     // Set final color
+    c = step(c, 0.5);
     gl_FragColor = vec4(vec3(c), 1.0);
 
 }
