@@ -1,1 +1,1 @@
-from .sph_cmn import SphCMN
+from .sph_cmn import SphCMN, SphGlobalFlow
