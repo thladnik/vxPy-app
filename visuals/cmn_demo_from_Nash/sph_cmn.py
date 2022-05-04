@@ -23,6 +23,97 @@ import vxpy.utils.geometry as Geometry
 from vxpy.core import visual
 from vxpy.utils import sphere
 
+class SphGlobalFlow(visual.SphericalVisual):
+    p_trans_azi = 'p_trans_azi'
+    p_trans_elv = 'p_trans_elv'
+    p_trans_speed = 'p_trans_speed'
+    p_rot_azi = 'p_rot_azi'
+    p_rot_elv = 'p_rot_elv'
+    p_rot_speed = 'p_rot_speed'
+    p_tex_scale = 'p_tex_scale'
+
+    interface = [
+        (p_trans_azi, 0., -180, 180., {'step_size': 1.}),
+        (p_trans_elv, 0., -90, 90., {'step_size': 1.}),
+        (p_trans_speed, 0., -100, 100., {'step_size': 1.}),
+        (p_rot_azi, 0., -180, 180., {'step_size': 1.}),
+        (p_rot_elv, 0., -90, 90., {'step_size': 1.}),
+        (p_rot_speed, 0., -100, 100., {'step_size': 1.}),
+        (p_tex_scale, 0., -2., 2., {'step_size': 0.01}),
+    ]
+
+    parameters = {
+        p_trans_azi: None,
+        p_trans_elv: None,
+        p_trans_speed: None,
+        p_rot_azi: None,
+        p_rot_elv: None,
+        p_rot_speed: None,
+        p_tex_scale: None,
+    }
+
+    def __init__(self, *args):
+        visual.SphericalVisual.__init__(self, *args)
+        vert = self.load_vertex_shader('./sph_CMN.vert')
+        frag = self.load_shader('./sph_CMN.frag')
+        self.sphere_program = gloo.Program(vert, frag)
+        self.sphere_program['u_texture'] = np.uint8(
+            np.random.randint(0, 2, [100, 100, 1]) * np.array([[[1, 1, 1]]]) * 255)
+        self.sphere_program['u_texture'].wrapping = "repeat"
+
+        # Set up sphere
+        self.sphere_model = sphere.CMNIcoSphere(subdivisionTimes=2)
+        self.index_buffer = gloo.IndexBuffer(self.sphere_model.indices)
+        self.position_buffer = gloo.VertexBuffer(np.float32(self.sphere_model.a_position))
+        Isize = self.sphere_model.indices.size
+
+        self.tile_center_q = Geometry.qn(self.sphere_model.tile_center)
+        self.tile_hori_dir = Geometry.qn(np.real(self.sphere_model.tile_orientation)).normalize[:, None]
+        self.tile_vert_dir = Geometry.qn(np.imag(self.sphere_model.tile_orientation)).normalize[:, None]
+        startpoint = Geometry.cen2tri(np.random.rand(np.int(Isize / 3)), np.random.rand(np.int(Isize / 3)), .1)
+        self.motmat = None
+
+        self._texcoord = np.float32(startpoint.reshape([-1, 2]))
+        self.sphere_program['a_position'] = self.position_buffer
+        self.sphere_program['a_texcoord'] = self._texcoord
+
+    def initialize(self, **params):
+        self.sphere_model = sphere.CMNIcoSphere(subdivisionTimes=3)
+        self.index_buffer = gloo.IndexBuffer(self.sphere_model.indices)
+        self.position_buffer = gloo.VertexBuffer(np.float32(self.sphere_model.a_position))
+        Isize = self.sphere_model.indices.size
+
+        self.tile_center_q = Geometry.qn(self.sphere_model.tile_center)
+        self.tile_hori_dir = Geometry.qn(np.real(self.sphere_model.tile_orientation)).normalize[:, None]
+        self.tile_vert_dir = Geometry.qn(np.imag(self.sphere_model.tile_orientation)).normalize[:, None]
+        startpoint = Geometry.cen2tri(np.random.rand(np.int(Isize / 3)), np.random.rand(np.int(Isize / 3)), .1)
+        self.motmat = None
+
+        self._texcoord = np.float32(startpoint.reshape([-1, 2]))
+        self.sphere_program['a_position'] = self.position_buffer
+        self.sphere_program['a_texcoord'] = self._texcoord
+        self.update(**params)
+
+    def gen_motmat(self):
+        trans_motmat = Geometry.qcross(self.tile_center_q[:, None], Geometry.qn(
+            [self.parameters['p_trans_azi'] / 180 * np.pi, self.parameters['p_trans_elv'] / 180 * np.pi])) / 30000 * \
+                       self.parameters['p_trans_speed']
+        rot_motmat = Geometry.projection(self.tile_center_q[:, None], Geometry.qn(
+            [self.parameters['p_rot_azi'] / 180 * np.pi, self.parameters['p_rot_elv'] / 180 * np.pi])) / 30000 * \
+                     self.parameters['p_rot_speed']
+        motmat = trans_motmat+rot_motmat
+        self.motmat = np.repeat(
+            Geometry.qdot(self.tile_hori_dir, motmat) - 1.j * Geometry.qdot(self.tile_vert_dir,
+                                                                                  motmat), 3, axis=0)
+
+    def render(self, dt):
+        self.gen_motmat()
+        self.apply_transform(self.sphere_program)
+        self._texcoord += np.array([np.real(self.motmat), np.imag(self.motmat)]).T[0, ...]
+        self.sphere_program['a_texcoord'] = self._texcoord * 10**self.parameters['p_tex_scale']
+        self.sphere_program.draw('triangles', self.index_buffer)
+        
+        
 
 class SphCMN(visual.SphericalVisual):
 
