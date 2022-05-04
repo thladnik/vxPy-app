@@ -24,36 +24,18 @@ from vxpy.core import visual
 from vxpy.utils import sphere
 
 class SphGlobalFlow(visual.SphericalVisual):
-    p_trans_azi = 'p_trans_azi'
-    p_trans_elv = 'p_trans_elv'
-    p_trans_speed = 'p_trans_speed'
-    p_rot_azi = 'p_rot_azi'
-    p_rot_elv = 'p_rot_elv'
-    p_rot_speed = 'p_rot_speed'
-    p_tex_scale = 'p_tex_scale'
 
-    interface = [
-        (p_trans_azi, 0., -180, 180., {'step_size': 1.}),
-        (p_trans_elv, 0., -90, 90., {'step_size': 1.}),
-        (p_trans_speed, 0., -100, 100., {'step_size': 1.}),
-        (p_rot_azi, 0., -180, 180., {'step_size': 1.}),
-        (p_rot_elv, 0., -90, 90., {'step_size': 1.}),
-        (p_rot_speed, 0., -100, 100., {'step_size': 1.}),
-        (p_tex_scale, 0., -2., 2., {'step_size': 0.01}),
-    ]
+    time = visual.FloatParameter('time', internal=True)
+    p_trans_azi = visual.FloatParameter('p_trans_azi', default=0, limits=(-180, +180), step_size=1)
+    p_trans_elv = visual.FloatParameter('p_trans_elv', default=0, limits=(-90, +90), step_size=1)
+    p_trans_speed = visual.FloatParameter('p_trans_speed', default=0, limits=(-100, +100), step_size=1)
+    p_rot_azi = visual.FloatParameter('p_rot_azi', default=0, limits=(-180, +180), step_size=1)
+    p_rot_elv = visual.FloatParameter('p_rot_elv', default=0, limits=(-90, +90), step_size=1)
+    p_rot_speed = visual.FloatParameter('p_rot_speed', default=0, limits=(-100, +100), step_size=1)
+    p_tex_scale = visual.FloatParameter('p_tex_scale', default=0, limits=(-2, +2), step_size=0.01)
 
-    parameters = {
-        p_trans_azi: None,
-        p_trans_elv: None,
-        p_trans_speed: None,
-        p_rot_azi: None,
-        p_rot_elv: None,
-        p_rot_speed: None,
-        p_tex_scale: None,
-    }
-
-    def __init__(self, *args):
-        visual.SphericalVisual.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
         vert = self.load_vertex_shader('./sph_CMN.vert')
         frag = self.load_shader('./sph_CMN.frag')
         self.sphere_program = gloo.Program(vert, frag)
@@ -77,7 +59,7 @@ class SphGlobalFlow(visual.SphericalVisual):
         self.sphere_program['a_position'] = self.position_buffer
         self.sphere_program['a_texcoord'] = self._texcoord
 
-    def initialize(self, **params):
+    def initialize(self):
         self.sphere_model = sphere.CMNIcoSphere(subdivisionTimes=3)
         self.index_buffer = gloo.IndexBuffer(self.sphere_model.indices)
         self.position_buffer = gloo.VertexBuffer(np.float32(self.sphere_model.a_position))
@@ -92,15 +74,14 @@ class SphGlobalFlow(visual.SphericalVisual):
         self._texcoord = np.float32(startpoint.reshape([-1, 2]))
         self.sphere_program['a_position'] = self.position_buffer
         self.sphere_program['a_texcoord'] = self._texcoord
-        self.update(**params)
 
     def gen_motmat(self):
         trans_motmat = Geometry.qcross(self.tile_center_q[:, None], Geometry.qn(
-            [self.parameters['p_trans_azi'] / 180 * np.pi, self.parameters['p_trans_elv'] / 180 * np.pi])) / 30000 * \
-                       self.parameters['p_trans_speed']
+            [self.p_trans_azi.data[0] / 180 * np.pi, self.p_trans_elv.data[0] / 180 * np.pi])) / 30000 * \
+                       self.p_trans_speed.data[0]
         rot_motmat = Geometry.projection(self.tile_center_q[:, None], Geometry.qn(
-            [self.parameters['p_rot_azi'] / 180 * np.pi, self.parameters['p_rot_elv'] / 180 * np.pi])) / 30000 * \
-                     self.parameters['p_rot_speed']
+            [self.p_rot_azi.data[0] / 180 * np.pi, self.p_rot_elv.data[0] / 180 * np.pi])) / 30000 * \
+                     self.p_rot_speed.data[0]
         motmat = trans_motmat+rot_motmat
         self.motmat = np.repeat(
             Geometry.qdot(self.tile_hori_dir, motmat) - 1.j * Geometry.qdot(self.tile_vert_dir,
@@ -110,9 +91,8 @@ class SphGlobalFlow(visual.SphericalVisual):
         self.gen_motmat()
         self.apply_transform(self.sphere_program)
         self._texcoord += np.array([np.real(self.motmat), np.imag(self.motmat)]).T[0, ...]
-        self.sphere_program['a_texcoord'] = self._texcoord * 10**self.parameters['p_tex_scale']
+        self.sphere_program['a_texcoord'] = self._texcoord * 10**self.p_tex_scale.data[0]
         self.sphere_program.draw('triangles', self.index_buffer)
-        
         
 
 class SphCMN(visual.SphericalVisual):
@@ -123,7 +103,7 @@ class SphCMN(visual.SphericalVisual):
         frag = self.load_shader('./sph_CMN.frag')
         self.sphere_program = gloo.Program(vert, frag)
         # Set up sphere
-        self.sphere_model = sphere.CMNIcoSphere(subdivisionTimes=1)
+        self.sphere_model = sphere.CMNIcoSphere(subdivisionTimes=2)
         self.index_buffer = gloo.IndexBuffer(self.sphere_model.indices)
         self.position_buffer = gloo.VertexBuffer(np.float32(self.sphere_model.a_position))
         Isize = self.sphere_model.indices.size

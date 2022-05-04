@@ -89,6 +89,9 @@ class TranslationGrating(vxvisual.SphericalVisual):
         # Add elapsed time to u_time
         self.time.data += dt
 
+        # TEMP!
+        # self.azimuth.data = 2 * self.time.data[0]
+
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
 
