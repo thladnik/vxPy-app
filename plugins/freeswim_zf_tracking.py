@@ -47,6 +47,35 @@ class RoiView(pg.GraphicsLayoutWidget):
         self.image_item.setImage(np.vstack(frame[0]))
 
 
+class Roi(pg.RectROI):
+    def __init__(self):
+        pg.RectROI.__init__(self, FreeswimTrackerRoutine.calibration_rect_pos,
+                            [100, 100], sideScalers=True,
+                            pen=pg.mkPen(color='orange', width=2),
+                            maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
+
+        self.active_calibration = False
+
+    def set_calibration_mode(self, active):
+
+        self.active_calibration = active
+        self.translatable = self.active_calibration
+        self.resizable = self.active_calibration
+
+        self.update_handles()
+
+    def update_handles(self):
+        for h in self.handles:
+            if self.active_calibration:
+                h['item'].show()
+            else:
+                h['item'].hide()
+
+    # def mouseDragEvent(self, ev):
+    #     self.update_handles()
+    #     ev.accept()
+
+
 class FrameView(pg.GraphicsLayoutWidget):
     def __init__(self, parent, **kwargs):
         pg.GraphicsLayoutWidget.__init__(self, parent=parent, **kwargs)
@@ -54,16 +83,6 @@ class FrameView(pg.GraphicsLayoutWidget):
         self._calibrate = False
         self._points = []
         self._attribute = None
-        # self._attribute = vxattribute.get_attribute('freeswim_tracked_zf_frame')
-        # self._attribute = vxattribute.get_attribute('freeswim_tracked_zf_filtered')
-
-        # Set context menu
-        self.context_menu = QtWidgets.QMenu()
-
-        # Set new line
-        self.menu_new = QtGui.QAction('Set calibration rectangle')
-        self.menu_new.triggered.connect(self.start_calibration)
-        self.context_menu.addAction(self.menu_new)
 
         # Set up plot image item
         self.image_plot = self.addPlot(0, 0, 1, 10)
@@ -75,15 +94,8 @@ class FrameView(pg.GraphicsLayoutWidget):
         self.image_plot.addItem(self.image_item)
 
         # Add calibration ROI
-        self.rect_roi = pg.RectROI(FreeswimTrackerRoutine.calibration_rect_pos,
-                                   (100, 100),
-                                   pen=pg.mkPen(color='blue', width=2), maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
+        self.rect_roi = Roi()
         self.image_plot.vb.addItem(self.rect_roi)
-
-        # Bind mouse click event
-        self.image_plot.scene().sigMouseClicked.connect(self.mouse_clicked)
-        # Bind context menu call function
-        self.image_plot.vb.raiseContextMenu = self.raise_context_menu
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self._update_image)
@@ -92,35 +104,6 @@ class FrameView(pg.GraphicsLayoutWidget):
 
     def set_attribute(self, frame_name):
         self._attribute = vxattribute.get_attribute(frame_name)
-
-    def raise_context_menu(self, ev):
-        self.context_menu.popup(QtCore.QPoint(ev.screenPos().x(), ev.screenPos().y()))
-
-    def start_calibration(self):
-        self._calibrate = True
-        self._points = []
-
-    def mouse_clicked(self, ev):
-        if not self._calibrate:
-            return
-
-        pos = self.image_plot.vb.mapSceneToView(ev.scenePos())
-
-        # First click
-        if len(self._points) == 0:
-            self._points.append(pos)
-            return
-
-        self._points.append(pos)
-
-        self._set_rect_roi()
-
-        self._calibrate = False
-
-    def _set_rect_roi(self):
-        size = self._points[1] - self._points[0]
-        self.rect_roi.setPos(self._points[0])
-        self.rect_roi.setSize(size)
 
     def _update_image(self):
         if self._attribute is None:
@@ -169,6 +152,11 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
                                        'freeswim_tracked_zf_filtered',
                                        'freeswim_tracked_zf_binary'])
         self.console.layout().addWidget(self.display_choice)
+        # Calibration mode
+        self.calibration = widgets.ComboBox(self)
+        self.calibration.connect_callback(self.set_calibration_mode)
+        self.calibration.add_items(['Open', 'Locked'])
+        self.console.layout().addWidget(self.calibration)
         # Threshold
         self.binary_threshold = widgets.IntSliderWidget(self.console, label='Threshold [au]',
                                                         default=FreeswimTrackerRoutine.binary_thresh_val,
@@ -203,6 +191,9 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.console.layout().addItem(QtWidgets.QSpacerItem(1, 1,
                                                             QtWidgets.QSizePolicy.Minimum,
                                                             QtWidgets.QSizePolicy.MinimumExpanding))
+
+    def set_calibration_mode(self, mode):
+        self.frame_view.rect_roi.set_calibration_mode(mode == 'Open')
 
     def set_filter_size(self):
         self.call_routine(FreeswimTrackerRoutine.set_filter_size, self.filter_size.get_value())
@@ -381,10 +372,10 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
                 text_args = (cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                 cv2.putText(display_frame,
                             f'x: {mapped_position[0]:.1f}',
-                            (c_rev[0]+xdiff+5, c_rev[1]-ydiff//2), *text_args)
+                            (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2), *text_args)
                 cv2.putText(display_frame,
                             f'y: {mapped_position[1]:.1f}',
-                            (c_rev[0]+xdiff+5, c_rev[1]-ydiff//2+25), *text_args)
+                            (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2 + 25), *text_args)
 
                 if rect.shape == self.rect_size:
                     particle_rectangles.append(rect)
