@@ -23,6 +23,23 @@ from vxpy.visuals import pause
 from visuals.spherical_grating import SphericalBlackWhiteGrating, SphericalColorGrating
 
 
+class MiniTestProtocol(StaticPhasicProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+
+        for i in range(3):
+            sp = 10 * 2 ** i
+            p = Phase(duration=4)
+            p.set_visual(SphericalBlackWhiteGrating,
+                         {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                          SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                          SphericalBlackWhiteGrating.motion_type: 'rotation',
+                          SphericalBlackWhiteGrating.angular_period: sp,
+                          SphericalBlackWhiteGrating.angular_velocity: 0})
+            self.add_phase(p)
+
+
 class StaticGratings(StaticPhasicProtocol):
 
     def __init__(self, *args, **kwargs):
