@@ -3,7 +3,7 @@ import numpy as np
 from vxpy.core.protocol import Phase, StaticPhasicProtocol
 from vxpy.visuals import pause
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
-from visuals import gs_flash_tests as gsft
+from visuals import gs_saccadic_suppression as gsft
 
 
 class Protocol01(StaticPhasicProtocol):
