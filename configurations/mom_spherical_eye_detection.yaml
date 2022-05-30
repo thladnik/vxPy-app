@@ -1,6 +1,16 @@
-CONF_CALIBRATION_PATH: calibrations/mom_mini_display.yaml
+CONF_CALIBRATION_PATH: calibrations/mom_spherical.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
+  fish_embedded:
+    api: vxpy.devices.camera.tis_linux_gst
+    serial: 49410244
+    model: DMK 23U618
+    dtype: GRAY8
+    width: 640
+    height: 480
+    framerate: 60
+    exposure: 15.0
+    gain: 800
   faraday_control_cam:
     api: vxpy.devices.camera.tis_linux_gst
     serial: 7610475
@@ -8,12 +18,12 @@ CONF_CAMERA_DEVICES:
     dtype: GRAY8
     width: 640
     height: 480
-    framerate: 80
-    exposure: 5.0
+    framerate: 20
+    exposure: 40.0
     gain: 240
 CONF_CAMERA_ROUTINES:
   - vxpy.routines.camera_capture.Frames
-  - plugins.calculate_pixel_sum.CalculateControlCamPixelSum
+  - vxpy.routines.zf_tracking.EyePositionDetection
 CONF_DISPLAY_USE: true
 CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
@@ -23,6 +33,7 @@ CONF_GUI_SCREEN: 0
 CONF_GUI_ADDONS:
   Camera:
   - vxpy.addons.frames_widgets.FrameStream
+  - vxpy.addons.zf_tracking_widgets.EyePositionDetector
   Display:
   - vxpy.addons.display_widgets.VisualInteractor
 CONF_IO_USE: true
@@ -46,3 +57,4 @@ CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
 - var_param*
 - y_mirror_in
+- eyepos*

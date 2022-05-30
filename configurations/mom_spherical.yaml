@@ -8,22 +8,22 @@ CONF_CAMERA_DEVICES:
     dtype: GRAY8
     width: 640
     height: 480
-    framerate: 80
-    exposure: 10.0
-    gain: 120
+    framerate: 20
+    exposure: 40.0
+    gain: 240
 CONF_CAMERA_ROUTINES:
-  - vxpy.routines.camera.camera_capture.Frames
+  - vxpy.routines.camera_capture.Frames
 CONF_DISPLAY_USE: true
 CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
-- vxpy.routines.display.display_capture.Parameters
+- vxpy.routines.display_capture.Parameters
 CONF_GUI_USE: true
 CONF_GUI_SCREEN: 0
 CONF_GUI_ADDONS:
   Camera:
-  - vxpy.gui.camera.frames_widgets.FrameStream
+  - vxpy.addons.frames_widgets.FrameStream
   Display:
-  - vxpy.gui.display.display_widgets.VisualInteractor
+  - vxpy.addons.display_widgets.VisualInteractor
 CONF_IO_USE: true
 CONF_IO_PINS:
   y_mirror_in:
@@ -37,7 +37,7 @@ CONF_IO_DEVICES:
     model: ArduinoBoard
     port: /dev/ttyACM0
 CONF_IO_ROUTINES:
-- vxpy.routines.io.read_inputs.ReadAll
+- vxpy.routines.read_inputs.ReadAll
 CONF_WORKER_USE: false
 CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
