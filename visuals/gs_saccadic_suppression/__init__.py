@@ -1,1 +1,2 @@
 from .gs_flash_tests import TextureModulateContrLum, TextureSinusLumModulation, TextureFlash, TextureRotation
+from .gs_simu_saccade_sine_flash import SimuSaccadeWithSineFlash

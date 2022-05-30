@@ -6,6 +6,28 @@ from vxpy.visuals import pause
 from visuals.sphere_simu_saccade import GaussianConvNoiseSphereSimuSaccade
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 from visuals.spherical_grating import SphericalBlackWhiteGrating
+from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash
+
+
+class SimuSaccadeWithSines(StaticPhasicProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+
+        for i in range(5):
+
+            p = Phase(duration=5)
+            p.set_visual(SimuSaccadeWithSineFlash,
+                         {SimuSaccadeWithSineFlash.saccade_duration: 180,
+                          SimuSaccadeWithSineFlash.saccade_start_time: 1000,
+                          SimuSaccadeWithSineFlash.saccade_target_angle: 20.,
+                          SimuSaccadeWithSineFlash.sine_start_time: 2000,
+                          SimuSaccadeWithSineFlash.sine_duration: 1000,
+                          SimuSaccadeWithSineFlash.sine_amp: 0.25,
+                          SimuSaccadeWithSineFlash.sine_freq: 2.0,
+                          SimuSaccadeWithSineFlash.baseline_lum: 0.5,
+                          SimuSaccadeWithSineFlash.contrast: 0.5})
+            self.add_phase(p)
 
 
 class Protocol01(StaticPhasicProtocol):
