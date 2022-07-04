@@ -18,11 +18,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 from vispy import gloo
 import numpy as np
 
-from vxpy.core import visual
+import vxpy.core.visual as vxvisual
 from vxpy.utils import plane
 
 
-class Clear(visual.PlanarVisual):
+class Clear(vxvisual.PlanarVisual):
     description = 'A blank screen of arbitrary uniform color.'
 
     p_color = 'p_color'
@@ -30,7 +30,7 @@ class Clear(visual.PlanarVisual):
     parameters = {p_color: None}
 
     def __init__(self, *args, **params):
-        visual.PlanarVisual.__init__(self, *args)
+        vxvisual.PlanarVisual.__init__(self, *args)
 
         self.plane = plane.XYPlane()
         self.index_buffer = gloo.IndexBuffer(np.ascontiguousarray(self.plane.indices, dtype=np.uint32))
@@ -43,7 +43,7 @@ class Clear(visual.PlanarVisual):
         gloo.clear(self.parameters[self.p_color])
 
 
-class Blank(visual.PlanarVisual):
+class PlanarBlank(vxvisual.PlanarVisual):
     description = 'A blank screen of arbitrary uniform color.'
 
     _vert = """
@@ -68,12 +68,10 @@ class Blank(visual.PlanarVisual):
 
     """
 
-    u_color = 'p_color'
-
-    parameters = {u_color: None}
+    color = vxvisual.Vec3Parameter('color', static=True)
 
     def __init__(self, *args, **params):
-        visual.PlanarVisual.__init__(self, *args)
+        vxvisual.PlanarVisual.__init__(self, *args)
 
         self.plane = plane.XYPlane()
         self.index_buffer = gloo.IndexBuffer(np.ascontiguousarray(self.plane.indices, dtype=np.uint32))
@@ -81,6 +79,8 @@ class Blank(visual.PlanarVisual):
         self.blank = gloo.Program(self.parse_vertex_shader(self._vert),
                                   self._frag)
         self.blank['a_position'] = self.position_buffer
+
+        self.color.connect(self.blank)
 
     def initialize(self, *args, **kwargs):
         pass
@@ -90,11 +90,56 @@ class Blank(visual.PlanarVisual):
         self.blank.draw('triangles', self.index_buffer)
 
 
-class ClearBlack(visual.PlanarVisual):
+class SphericalBlank(vxvisual.SphericalVisual):
+    description = 'A blank screen of arbitrary uniform color.'
+
+    _vert = """
+    attribute vec3 a_position;
+
+    varying vec2 v_position;
+    varying vec2 v_nposition;
+
+    void main() {
+        gl_Position = transform_position(a_position);
+    }
+    """
+
+    _frag = """
+    //uniform vec3 u_color;
+
+    void main() {
+        gl_FragColor = vec4(vec3(1.0), 1.0);
+    }
+
+    """
+
+    color = vxvisual.Vec3Parameter('color', static=True)
+
+    def __init__(self, *args, **params):
+        vxvisual.SphericalVisual.__init__(self, *args)
+
+        self.plane = plane.XYPlane()
+        self.index_buffer = gloo.IndexBuffer(np.ascontiguousarray(self.plane.indices, dtype=np.uint32))
+        self.position_buffer = gloo.VertexBuffer(np.ascontiguousarray(self.plane.a_position, dtype=np.float32))
+        self.blank = gloo.Program(self.parse_vertex_shader(self._vert),
+                                  self._frag)
+        self.blank['a_position'] = self.position_buffer
+
+        self.color.connect(self.blank)
+
+    def initialize(self, *args, **kwargs):
+        pass
+
+    def render(self, frame_time):
+        self.apply_transform(self.blank)
+        self.blank.draw('triangles', self.index_buffer)
+
+
+class ClearBlack(vxvisual.PlanarVisual):
     description = 'A blank screen of arbitrary uniform color.'
 
     def __init__(self, *args, **params):
-        visual.PlanarVisual.__init__(self, *args)
+        vxvisual.PlanarVisual.__init__(self, *args)
 
     def initialize(self, *args, **kwargs):
         pass
@@ -103,7 +148,7 @@ class ClearBlack(visual.PlanarVisual):
         gloo.clear(0., 0., 0.)
 
 
-class Noise(visual.PlanarVisual):
+class Noise(vxvisual.PlanarVisual):
 
     _vert = """
     attribute vec3 a_position;
@@ -133,7 +178,7 @@ class Noise(visual.PlanarVisual):
     parameters = {u_color: None}
 
     def __init__(self, *args, **params):
-        visual.PlanarVisual.__init__(self, *args)
+        vxvisual.PlanarVisual.__init__(self, *args)
 
         self.plane = plane.XYPlane()
         self.index_buffer = gloo.IndexBuffer(np.ascontiguousarray(self.plane.indices, dtype=np.uint32))
