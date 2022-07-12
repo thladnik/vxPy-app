@@ -23,10 +23,11 @@ from visuals.partial_spherical_grating import PartialSphericalBlackWhiteGrating
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 
-def create_partially_mov_grating_params(period, velocity, az_center, az_range, el_center, el_range):
+def create_partially_mov_grating_params(period, velocity, az_center, az_range, el_center, el_range, roll_angle):
     return {PartialSphericalBlackWhiteGrating.waveform: 'rectangular',
             PartialSphericalBlackWhiteGrating.motion_axis: 'vertical',
             PartialSphericalBlackWhiteGrating.motion_type: 'rotation',
+            PartialSphericalBlackWhiteGrating.roll_angle: roll_angle,
             PartialSphericalBlackWhiteGrating.angular_period: period,
             PartialSphericalBlackWhiteGrating.angular_velocity: velocity,
             PartialSphericalBlackWhiteGrating.mask_azimuth_center: az_center,
@@ -44,7 +45,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                          lower_el: float = -45, upper_el: float = 45,
                          lower_az: float = 0, upper_az: float = 180,
                          large_rows: int = 2, large_cols: int = 2,
-                         small_rows: int = 6, small_cols: int = 6):
+                         small_rows: int = 6, small_cols: int = 6,
+                         roll_angle: float = 0):
 
         elevation_full_center = np.mean([lower_el, upper_el])
         elevation_full_range = upper_el - lower_el
@@ -72,7 +74,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                          create_partially_mov_grating_params(angular_period_degrees,
                                                              angular_velocity_degrees,
                                                              0, 0,
-                                                             0, 0))
+                                                             0, 0,
+                                                             roll_angle))
             self.add_phase(p)
             # Pause
             self.keep_last_frame_for(pause_duration)
@@ -83,7 +86,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                          create_partially_mov_grating_params(angular_period_degrees,
                                                              angular_velocity_degrees,
                                                              azimuth_full_center, azimuth_full_range,
-                                                             elevation_full_center, elevation_full_range))
+                                                             elevation_full_center, elevation_full_range,
+                                                             roll_angle))
             self.add_phase(p)
             # Pause
             self.keep_last_frame_for(pause_duration)
@@ -104,7 +108,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  azimuth_full_center, azimuth_full_range,
-                                                                 el_center, el_range))
+                                                                 el_center, el_range,
+                                                                 roll_angle))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
@@ -124,7 +129,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  az_center, az_range,
-                                                                 elevation_full_center, elevation_full_range))
+                                                                 elevation_full_center, elevation_full_range,
+                                                                 roll_angle))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
@@ -143,7 +149,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                                  create_partially_mov_grating_params(angular_period_degrees,
                                                                      angular_velocity_degrees,
                                                                      az_center, az_range,
-                                                                     el_center, el_range))
+                                                                     el_center, el_range,
+                                                                     roll_angle))
                     self.add_phase(p)
                     # Pause
                     self.keep_last_frame_for(pause_duration)
@@ -164,7 +171,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  azimuth_full_center, azimuth_full_range,
-                                                                 el_center, el_range))
+                                                                 el_center, el_range,
+                                                                 roll_angle))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
@@ -179,7 +187,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                              create_partially_mov_grating_params(angular_period_degrees,
                                                                  angular_velocity_degrees,
                                                                  az_center, az_range,
-                                                                 elevation_full_center, elevation_full_range))
+                                                                 elevation_full_center, elevation_full_range,
+                                                                 roll_angle))
                 self.add_phase(p)
                 # Pause
                 self.keep_last_frame_for(pause_duration)
@@ -198,7 +207,8 @@ class BaseProtocol(vxprotocol.StaticPhasicProtocol):
                                  create_partially_mov_grating_params(angular_period_degrees,
                                                                      angular_velocity_degrees,
                                                                      az_center, az_range,
-                                                                     el_center, el_range))
+                                                                     el_center, el_range,
+                                                                     roll_angle))
                     self.add_phase(p)
 
                     # Pause
@@ -231,6 +241,17 @@ class ProtocolN45toP45CCW(BaseProtocol):
         angular_velocity_degrees = -30
 
         self._create_protocol(angular_period_degrees, angular_velocity_degrees)
+
+
+class ProtocolN45toP45CCW_45tilt(BaseProtocol):
+
+    def __init__(self):
+        BaseProtocol.__init__(self)
+
+        angular_period_degrees = 30
+        angular_velocity_degrees = -30
+
+        self._create_protocol(angular_period_degrees, angular_velocity_degrees, roll_angle=45)
 
 
 class ProtocolN90toP45CW(BaseProtocol):

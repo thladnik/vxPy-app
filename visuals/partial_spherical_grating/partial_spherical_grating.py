@@ -25,12 +25,13 @@ from vxpy.utils import sphere
 
 class MotionAxis(visual.Mat4Parameter):
     """Example for a custom mapping with different methods, based on input data to the parameter"""
+
     def __init__(self, *args, **kwargs):
         visual.Mat4Parameter.__init__(self, *args, **kwargs)
 
-        self.value_map = {'forward': self._rotate_forward,
-                          'sideways': self._rotate_sideways,
-                          'vertical': np.eye(4)}
+        self.value_map = {'vertical': np.eye(4),
+                          'forward': self._rotate_forward,
+                          'sideways': self._rotate_sideways, }
 
     @staticmethod
     def _rotate_forward():
@@ -39,6 +40,16 @@ class MotionAxis(visual.Mat4Parameter):
     @staticmethod
     def _rotate_sideways():
         return transforms.rotate(90, (1, 0, 0))
+
+
+class RollRotation(visual.Mat4Parameter):
+    def __init__(self, *args, **kwargs):
+        visual.Mat4Parameter.__init__(self, *args, **kwargs)
+
+    def upstream_updated(self):
+        roll_angle = PartialSphericalBlackWhiteGrating.roll_angle.data[0]
+
+        self.data = transforms.rotate(roll_angle, (1, 0, 0))
 
 
 class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
@@ -52,10 +63,16 @@ class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
     motion_axis = MotionAxis('motion_axis', static=True)
     angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(0, 360), step_size=5, static=True)
     angular_period = visual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
-    mask_azimuth_center = visual.FloatParameter('mask_azimuth_center', default=0, limits=(-180, 180), step_size=5, static=True)
-    mask_azimuth_range = visual.FloatParameter('mask_azimuth_range', default=30, limits=(0, 360), step_size=5, static=True)
-    mask_elevation_center = visual.FloatParameter('mask_elevation_center', default=0, limits=(-180, 180), step_size=5, static=True)
-    mask_elevation_range = visual.FloatParameter('mask_elevation_range', default=30, limits=(0, 360), step_size=5, static=True)
+    mask_azimuth_center = visual.FloatParameter('mask_azimuth_center', default=0, limits=(-180, 180), step_size=5,
+                                                static=True)
+    mask_azimuth_range = visual.FloatParameter('mask_azimuth_range', default=30, limits=(0, 360), step_size=5,
+                                               static=True)
+    mask_elevation_center = visual.FloatParameter('mask_elevation_center', default=0, limits=(-180, 180), step_size=5,
+                                                  static=True)
+    mask_elevation_range = visual.FloatParameter('mask_elevation_range', default=30, limits=(0, 360), step_size=5,
+                                                 static=True)
+    roll_angle = visual.FloatParameter('roll_angle', default=0, limits=(-180, 180), step_size=5, static=True)
+    roll_rotation = RollRotation('roll_rotation', internal=True, static=True)
 
     # Paths to shaders
     VERT_PATH = './partial_spherical_grating.vert'
@@ -65,11 +82,14 @@ class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up 3d model of sphere
-        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi/2)
+        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi / 2)
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
         self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree2)
         self.elevation_buffer = gloo.VertexBuffer(self.sphere.elevation_degree)
+
+        # Update rotation matrix when roll angle changes
+        self.roll_angle.add_downstream_link(self.roll_rotation)
 
         # Set up program
         self.grating = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
@@ -85,9 +105,12 @@ class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
         self.mask_azimuth_range.connect(self.grating)
         self.mask_elevation_center.connect(self.grating)
         self.mask_elevation_range.connect(self.grating)
+        self.roll_rotation.connect(self.grating)
 
         # Alternative way of setting value_map: during instance creation
-        self.motion_type.value_map = {'translation': 1, 'rotation': 2}
+        self.motion_type.value_map = {'rotation': 2, 'translation': 1}
+
+        # self.roll_rotation.data = np.eye(4)
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
