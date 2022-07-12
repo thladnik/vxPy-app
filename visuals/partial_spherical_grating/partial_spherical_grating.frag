@@ -37,6 +37,7 @@ void main() {
     float el_hrange = mask_elevation_range / 2.0;
     float el_center = mask_elevation_center;
 
+    // Check if within movement area
     bool move = (az_center - az_hrange <= angular_azimuth) && (angular_azimuth <= az_center + az_hrange);
     move = move && (el_center - el_hrange <= angular_elevation) && (angular_elevation <= el_center + el_hrange);
 

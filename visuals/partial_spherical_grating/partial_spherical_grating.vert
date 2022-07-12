@@ -1,4 +1,5 @@
 uniform mat4 motion_axis;
+uniform mat4 roll_rotation;
 
 // Input
 attribute vec3 a_position;
@@ -12,7 +13,7 @@ varying vec3 v_position;
 
 // Main
 void main() {
-    vec3 pos = (motion_axis * vec4(a_position, 1.0)).xyz;
+    vec3 pos = (roll_rotation * motion_axis * vec4(a_position, 1.0)).xyz;
     gl_Position = transform_position(pos);
     angular_azimuth = a_angular_azimuth;
     angular_elevation = a_angular_elevation;
