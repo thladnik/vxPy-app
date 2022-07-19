@@ -85,7 +85,8 @@ class PartialSphericalBlackWhiteGrating(visual.SphericalVisual):
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi / 2)
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
-        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree2)
+        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree_zero_front_pos_cw)
+
         self.elevation_buffer = gloo.VertexBuffer(self.sphere.elevation_degree)
 
         # Update rotation matrix when roll angle changes

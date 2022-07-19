@@ -45,7 +45,7 @@ void main() {
     float phase = angular_pos  / angular_period;
     // Only add to phase if within movement mask
     if(move) {
-        phase += time * angular_velocity / angular_period;
+        phase -= time * angular_velocity / angular_period;
     }
     // Calcualte brightness based on phase
     float c = sin(2.0 * PI * phase);
