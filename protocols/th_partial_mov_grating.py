@@ -30,7 +30,7 @@ def create_partially_mov_grating_params(period, velocity, az_center, az_range, e
             PartialSphericalBlackWhiteGrating.roll_angle: roll_angle,
             PartialSphericalBlackWhiteGrating.angular_period: period,
             PartialSphericalBlackWhiteGrating.angular_velocity: velocity,
-            PartialSphericalBlackWhiteGrating.mask_azimuth_center: az_center,
+            PartialSphericalBlackWhiteGrating.mask_azimuth_center: -az_center,
             PartialSphericalBlackWhiteGrating.mask_azimuth_range: az_range,
             PartialSphericalBlackWhiteGrating.mask_elevation_center: el_center,
             PartialSphericalBlackWhiteGrating.mask_elevation_range: el_range}
@@ -243,7 +243,7 @@ class ProtocolN45toP45CCW(BaseProtocol):
         self._create_protocol(angular_period_degrees, angular_velocity_degrees)
 
 
-class ProtocolN45toP45CCW_45tilt(BaseProtocol):
+class ProtocolN45toP45CCW_90tilt(BaseProtocol):
 
     def __init__(self):
         BaseProtocol.__init__(self)
@@ -251,7 +251,7 @@ class ProtocolN45toP45CCW_45tilt(BaseProtocol):
         angular_period_degrees = 30
         angular_velocity_degrees = -30
 
-        self._create_protocol(angular_period_degrees, angular_velocity_degrees, roll_angle=45)
+        self._create_protocol(angular_period_degrees, angular_velocity_degrees, roll_angle=90)
 
 
 class ProtocolN90toP45CW(BaseProtocol):
