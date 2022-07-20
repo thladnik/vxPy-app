@@ -24,23 +24,23 @@ CONF_CAMERA_DEVICES:
     gain: 5.5
     preload_file: False
 CONF_CAMERA_ROUTINES:
-- vxpy.routines.camera.camera_capture.Frames
-- vxpy.routines.camera.zf_tracking.EyePositionDetection
+- vxpy.routines.camera_capture.Frames
+- vxpy.routines.zf_tracking.EyePositionDetection
 CONF_DISPLAY_USE: true
 CONF_DISPLAY_FPS: 60
 CONF_DISPLAY_ROUTINES:
-- vxpy.routines.display.display_capture.Frames
-- vxpy.routines.display.display_capture.Parameters
+- vxpy.routines.display_capture.Frames
+- vxpy.routines.display_capture.Parameters
 CONF_GUI_USE: true
 CONF_GUI_SCREEN: 0
 CONF_GUI_ADDONS:
   Camera:
-  - vxpy.gui.camera.frames_widgets.FrameStream
-  - vxpy.gui.camera.zf_tracking_widgets.EyePositionDetector
+  - vxpy.addons.frames_widgets.FrameStream
+  - vxpy.addons.zf_tracking_widgets.EyePositionDetector
   Display:
-  - vxpy.gui.display.display_widgets.VisualInteractor
+  - vxpy.addons.display_widgets.VisualInteractor
   Io:
-  - vxpy.gui.io.io_core_widgets.DisplayPSD
+  - vxpy.addons.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
 CONF_IO_PINS:
   sawtooth_analogin:
@@ -66,17 +66,19 @@ CONF_IO_DEVICES:
     model: VirtualDaqDevice
     port: COM6
 CONF_IO_ROUTINES:
-- vxpy.routines.io.read_inputs.ReadAll
-- vxpy.routines.io.write_test_attributes.SinesAddedWhiteNoise
-- vxpy.routines.io.write_test_attributes.WriteRandoms
+- vxpy.routines.read_inputs.ReadAll
+- vxpy.routines.write_test_attributes.SinesAddedWhiteNoise
+- vxpy.routines.write_test_attributes.WriteRandoms
 CONF_WORKER_USE: true
 CONF_WORKER_ROUTINES:
-- vxpy.routines.worker.calculate_csd.CalculatePSD
+- vxpy.routines.calculate_csd.CalculatePSD
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
 - var_param*
 - eyepos_*
-- ~*_frame
+- fish_embedded_frame
+- multiple_fish_frame
 - test_sines_whitenoise
 - sawtooth_analogin
+- particle_*

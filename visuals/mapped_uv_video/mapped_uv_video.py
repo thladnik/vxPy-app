@@ -74,7 +74,8 @@ class VideoTexture(visual.TextureUInt2D):
         self.last_time = current_time
 
 
-class NaturalVideo(visual.SphericalVisual):
+# class NaturalVideo(visual.SphericalVisual):
+class NaturalVideo(visual.BaseVisual):
 
     input_video_path = ''
 
@@ -88,7 +89,8 @@ class NaturalVideo(visual.SphericalVisual):
     FRAG_PATH = './texture_sphere.frag'
 
     def __init__(self, *args, **kwargs):
-        visual.SphericalVisual.__init__(self, *args, **kwargs)
+        # visual.SphericalVisual.__init__(self, *args, **kwargs)
+        visual.BaseVisual.__init__(self, *args, **kwargs)
 
         # Set up 3d model of sphere
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi/2)
