@@ -1,4 +1,4 @@
-CONF_CALIBRATION_PATH: calibrations/default_tis_camera.yaml
+CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   fish_embedded:
