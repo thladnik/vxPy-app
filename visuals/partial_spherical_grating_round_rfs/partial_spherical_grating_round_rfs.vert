@@ -12,7 +12,14 @@ varying vec3 v_position;
 
 // Main
 void main() {
-    vec3 pos = vec4(a_position, 1.0).xyz;
+
+    mat4 rot = mat4(0.0, 1.0, 0.0, 0.0,
+                    -1.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 1.0, 0.0,
+                    0.0, 0.0, 0.0, 1.0);
+
+
+    vec3 pos = (rot * vec4(a_position, 1.0)).xyz;
     gl_Position = transform_position(pos);
     v_azimuth = a_azimuth;
     v_elevation = a_elevation;

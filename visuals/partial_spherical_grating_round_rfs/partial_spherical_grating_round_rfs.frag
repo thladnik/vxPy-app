@@ -18,10 +18,12 @@ varying vec3 v_position;
 // Main
 void main() {
 
-    bool move = distance(rf_center_location, v_position) < (rf_diameter / (180.0 * 2.0)) * PI;
-//    bool move = true;
 
-    float phase = v_azimuth  / angular_period;
+    bool move = distance(rf_center_location, v_position) < (rf_diameter / (180.0 * 2.0)) * PI;
+    //    bool move = true;
+
+    //    float phase = v_azimuth  / angular_period;
+    float phase = 180.0 * v_position.y  / angular_period;
     if(move) {
         phase += time * angular_velocity / angular_period;
     }
