@@ -38,6 +38,8 @@ class RFCenterLocation(visual.Vec3Parameter):
                          np.sin(elev)])
         self.data = vec3
 
+        print(azim, elev)
+
 
 class PartialSphericalGratingWithRoundRFs(visual.SphericalVisual):
     # (optional) Add a short description
@@ -49,7 +51,7 @@ class PartialSphericalGratingWithRoundRFs(visual.SphericalVisual):
     angular_period = visual.FloatParameter('angular_period', default=45, limits=(1, 360), step_size=5, static=True)
     rf_center_azimuth = visual.FloatParameter('rf_center_azimuth', default=0, limits=(-180, 180), step_size=1, static=True)
     rf_center_elevation = visual.FloatParameter('rf_center_elevation', default=0, limits=(-90, 90), step_size=1, static=True)
-    rf_diameter = visual.FloatParameter('rf_diameter', default=0, limits=(1, 180), step_size=1, static=True)
+    rf_diameter = visual.FloatParameter('rf_diameter', default=30, limits=(1, 180), step_size=1, static=True)
     rf_center_location = RFCenterLocation('rf_center_location', internal=True, static=True)
 
     # Paths to shaders
@@ -63,7 +65,7 @@ class PartialSphericalGratingWithRoundRFs(visual.SphericalVisual):
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi / 2)
         self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
         self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
-        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree)
+        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree_zero_front_pos_cw)
         self.elevation_buffer = gloo.VertexBuffer(self.sphere.elevation_degree)
 
         # Set up program

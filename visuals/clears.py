@@ -46,6 +46,18 @@ class ClearBlack(visual.PlainVisual):
         pass
 
 
+class ClearWhite(visual.PlainVisual):
+
+    def __init__(self, *args, **kwargs):
+        visual.PlainVisual.__init__(self, *args, **kwargs)
+
+    def initialize(self, *args, **kwargs):
+        gloo.clear('white')
+
+    def render(self, frame_time):
+        pass
+
+
 class Clear(visual.PlainVisual):
 
     class Saturation(visual.FloatParameter):
