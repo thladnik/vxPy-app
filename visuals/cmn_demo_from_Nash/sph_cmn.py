@@ -23,6 +23,7 @@ import vxpy.utils.geometry as Geometry
 from vxpy.core import visual
 from vxpy.utils import sphere
 
+
 class SphGlobalFlow(visual.SphericalVisual):
 
     time = visual.FloatParameter('time', internal=True)
@@ -76,16 +77,15 @@ class SphGlobalFlow(visual.SphericalVisual):
         self.sphere_program['a_texcoord'] = self._texcoord
 
     def gen_motmat(self):
-        trans_motmat = Geometry.qcross(self.tile_center_q[:, None], Geometry.qn(
-            [self.p_trans_azi.data[0] / 180 * np.pi, self.p_trans_elv.data[0] / 180 * np.pi])) / 30000 * \
-                       self.p_trans_speed.data[0]
-        rot_motmat = Geometry.projection(self.tile_center_q[:, None], Geometry.qn(
-            [self.p_rot_azi.data[0] / 180 * np.pi, self.p_rot_elv.data[0] / 180 * np.pi])) / 30000 * \
-                     self.p_rot_speed.data[0]
-        motmat = trans_motmat+rot_motmat
-        self.motmat = np.repeat(
-            Geometry.qdot(self.tile_hori_dir, motmat) - 1.j * Geometry.qdot(self.tile_vert_dir,
-                                                                                  motmat), 3, axis=0)
+        center = self.tile_center_q[:, None]
+        trans_direction = Geometry.qn([self.p_trans_azi.data[0] / 180 * np.pi, self.p_trans_elv.data[0] / 180 * np.pi])
+        trans_motmat = Geometry.qcross(center, trans_direction) / 30000 * self.p_trans_speed.data[0]
+
+        rot_direction = Geometry.qn([self.p_rot_azi.data[0] / 180 * np.pi, self.p_rot_elv.data[0] / 180 * np.pi])
+        rot_motmat = Geometry.projection(center, rot_direction) / 30000 * self.p_rot_speed.data[0]
+        motion_matrix = trans_motmat + rot_motmat
+        self.motmat = np.repeat(Geometry.qdot(self.tile_hori_dir, motion_matrix) - 1.j
+                                * Geometry.qdot(self.tile_vert_dir, motion_matrix), 3, axis=0)
 
     def render(self, dt):
         self.gen_motmat()

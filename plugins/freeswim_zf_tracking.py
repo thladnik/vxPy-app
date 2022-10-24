@@ -6,10 +6,10 @@ import pyqtgraph as pg
 from PySide6 import QtWidgets, QtGui, QtCore
 
 from vxpy import config
-from vxpy.api.ui import register_with_plotter
+from vxpy.core.ui import register_with_plotter
 from vxpy.api.attribute import write_to_file
 import vxpy.core.attribute as vxattribute
-import vxpy.core.gui as vxgui
+import vxpy.core.ui as vxgui
 import vxpy.core.ipc as vxipc
 import vxpy.core.routine as vxroutine
 from vxpy.definitions import *
@@ -229,42 +229,52 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
     filter_size = 31
     calibration_rect_pos = np.array([0, 0])
     calibration_rect_size = np.array([1, 1])
-    max_particle_number = 10
+    max_particle_num = 10
 
-    def setup(self):
+    attr_name_frame = ''
+
+    def __init__(self, *args, **kwargs):
+        vxroutine.CameraRoutine.__init__(self, *args, **kwargs)
+
+        # Create mixture of gaussian BG subtractor
+        self.mog = cv2.createBackgroundSubtractorMOG2(200, detectShadows=False)
+
+    @classmethod
+    def require(cls):
 
         # Get camera properties
-        camera_config = config.CONF_CAMERA_DEVICES.get(self.camera_device_id)
-        self.res_x = camera_config['width']
-        self.res_y = camera_config['height']
+        camera_config = config.CONF_CAMERA_DEVICES.get(cls.camera_device_id)
+        cls.res_x = camera_config['width']
+        cls.res_y = camera_config['height']
 
-        self.freeswim_tracked_zf_frame = vxattribute.ArrayAttribute('freeswim_tracked_zf_frame',
-                                                                    (self.res_x, self.res_y, 3),
-                                                                    vxattribute.ArrayType.uint8)
-        self.freeswim_tracked_zf_filtered = vxattribute.ArrayAttribute('freeswim_tracked_zf_filtered',
-                                                                       (self.res_x, self.res_y),
-                                                                       vxattribute.ArrayType.uint8)
-        self.freeswim_tracked_zf_binary = vxattribute.ArrayAttribute('freeswim_tracked_zf_binary',
-                                                                     (self.res_x, self.res_y),
-                                                                     vxattribute.ArrayType.uint8)
-        self.particle_rois = vxattribute.ArrayAttribute('particle_rois',
-                                                        (self.max_particle_number, *self.rect_size),
-                                                        dtype=vxattribute.ArrayType.uint8,
-                                                        chunked=True)
+        vxattribute.ArrayAttribute('freeswim_tracked_zf_frame',
+                                   (cls.res_x, cls.res_y),
+                                   vxattribute.ArrayType.uint8)
+        vxattribute.ArrayAttribute('freeswim_tracked_zf_filtered',
+                                   (cls.res_x, cls.res_y),
+                                   vxattribute.ArrayType.uint8)
+        vxattribute.ArrayAttribute('freeswim_tracked_zf_binary',
+                                   (cls.res_x, cls.res_y),
+                                   vxattribute.ArrayType.uint8)
+        vxattribute.ArrayAttribute('particle_rois',
+                                   (cls.max_particle_num, *cls.rect_size),
+                                   dtype=vxattribute.ArrayType.uint8,
+                                   chunked=True)
 
-        self.particle_count_total = vxattribute.ArrayAttribute('particle_count_total',
-                                                               (1,),
-                                                               dtype=vxattribute.ArrayType.uint64)
-        self.particle_count_filtered = vxattribute.ArrayAttribute('particle_count_filtered',
-                                                                  (1,),
-                                                                  dtype=vxattribute.ArrayType.uint64)
-        self.particle_mapped_position = vxattribute.ArrayAttribute('particle_mapped_position',
-                                                                   (self.max_particle_number, 2,),
-                                                                   dtype=vxattribute.ArrayType.float64)
+        vxattribute.ArrayAttribute('particle_count_total',
+                                   (1,),
+                                   dtype=vxattribute.ArrayType.uint64)
+        vxattribute.ArrayAttribute('particle_count_filtered',
+                                   (1,),
+                                   dtype=vxattribute.ArrayType.uint64)
+        vxattribute.ArrayAttribute('particle_pixel_position',
+                                   (cls.max_particle_num, 2,),
+                                   dtype=vxattribute.ArrayType.float64)
+        vxattribute.ArrayAttribute('particle_mapped_position',
+                                   (cls.max_particle_num, 2,),
+                                   dtype=vxattribute.ArrayType.float64)
 
     def initialize(self):
-        # Create mixture of gaussian BG subtractor
-        self.mog = cv2.createBackgroundSubtractorMOG2(400, detectShadows=False)
 
         # Add expposed methods
         self.exposed.append(FreeswimTrackerRoutine.set_calibration_rect_pos)
@@ -323,15 +333,15 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
             frame = frame[:, :, 0].T
         frame = frame.T
 
-        display_frame = np.repeat(frame[:, :, np.newaxis], 3, axis=-1)
-        display_frame = cv2.rotate(cv2.flip(display_frame, 0), cv2.ROTATE_90_CLOCKWISE)
+        # display_frame = np.repeat(frame[:, :, np.newaxis], 3, axis=-1)
+        # display_frame = cv2.rotate(cv2.flip(display_frame, 0), cv2.ROTATE_90_CLOCKWISE)
 
         # Calculate background distribution and foreground mask
         foreground_mask = self.mog.apply(frame)
 
         # Smooth mask
         filtered_frame = cv2.GaussianBlur(foreground_mask, (self.filter_size,) * 2, cv2.BORDER_DEFAULT)
-        self.freeswim_tracked_zf_filtered.write(filtered_frame)
+        vxattribute.write_attribute('freeswim_tracked_zf_filtered', filtered_frame)
 
         # Apply threshold
         _, thresh_frame = cv2.threshold(filtered_frame, self.binary_thresh_val, 255, cv2.THRESH_BINARY)
@@ -342,7 +352,8 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         xdiff, ydiff = self.rect_size[0] // 2, self.rect_size[1] // 2
         particle_rectangles = []
         particle_areas = []
-        particle_positions = []
+        particle_pixel_positions = []
+        particle_mapped_positions = []
         # print('---')
         # print('Pos', self.calibration_rect_pos)
         # print('Size', self.calibration_rect_size)
@@ -364,46 +375,51 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
                 # Crop rectangular ROI
                 rect = frame[centroid[1] - ydiff:centroid[1] + ydiff, centroid[0] - xdiff:centroid[0] + xdiff]
 
-                # Mark ROIs on display frame
-                cv2.rectangle(display_frame,
-                              [c_rev[0] - xdiff, c_rev[1] - ydiff], [c_rev[0] + xdiff, c_rev[1] + ydiff],
-                              (255, 0, 0), 2)
-
-                text_args = (cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                cv2.putText(display_frame,
-                            f'x: {mapped_position[0]:.1f}',
-                            (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2), *text_args)
-                cv2.putText(display_frame,
-                            f'y: {mapped_position[1]:.1f}',
-                            (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2 + 25), *text_args)
+                # # Mark ROIs on display frame
+                # cv2.rectangle(display_frame,
+                #               [c_rev[0] - xdiff, c_rev[1] - ydiff], [c_rev[0] + xdiff, c_rev[1] + ydiff],
+                #               (255, 0, 0), 2)
+                #
+                # text_args = (cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                # cv2.putText(display_frame,
+                #             f'x: {mapped_position[0]:.1f}',
+                #             (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2), *text_args)
+                # cv2.putText(display_frame,
+                #             f'y: {mapped_position[1]:.1f}',
+                #             (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2 + 25), *text_args)
 
                 if rect.shape == self.rect_size:
                     particle_rectangles.append(rect)
                     particle_areas.append((area, i))
-                    particle_positions.append(mapped_position)
+                    particle_pixel_positions.append(c_rev)
+                    particle_mapped_positions.append(mapped_position)
                     i += 1
 
         self.particle_count_filtered.write(len(particle_areas))
 
-        if len(particle_areas) > 0:
-            # Sort particles by size
-            particle_areas = sorted(particle_areas)[::-1]
-            if len(particle_areas) > 10:
-                particle_areas = particle_areas[:10]
+        self.freeswim_tracked_zf_frame.write(frame)
 
-            # Write particle ROIs to attribute
-            new_rects = np.zeros(self.particle_rois.shape)
-            new_positions = -np.ones(self.particle_mapped_position.shape)
-            for k, (_, i) in enumerate(particle_areas):
-                new_rects[k] = particle_rectangles[i]
-                new_positions[k] = particle_positions[i]
+        # If no suitable particles were detected
+        if len(particle_areas) == 0:
+            return
 
-            # Write particle boxes
-            self.particle_rois.write(new_rects)
+        # Sort particles by size
+        particle_areas = sorted(particle_areas)[::-1]
+        if len(particle_areas) > 10:
+            particle_areas = particle_areas[:10]
 
-            # Write centroid positions
-            # print(new_positions)
-            self.particle_mapped_position.write(new_positions)
+        # Write particle ROIs to attribute
+        new_rects = np.zeros(self.particle_rois.shape)
+        new_mapped_positions = -np.ones(self.particle_mapped_position.shape)
+        new_pixel_positions = -np.ones(self.particle_mapped_position.shape)
+        for k, (_, i) in enumerate(particle_areas):
+            new_rects[k] = particle_rectangles[i]
+            new_mapped_positions[k] = particle_mapped_positions[i]
+            new_pixel_positions[k] = particle_pixel_positions[i]
 
-        display_frame = cv2.flip(cv2.rotate(display_frame, cv2.ROTATE_90_COUNTERCLOCKWISE), 0)
-        self.freeswim_tracked_zf_frame.write(display_frame)
+        # Write particle boxes
+        self.particle_rois.write(new_rects)
+
+        # Write centroid positions
+        # print(new_positions)
+        self.particle_mapped_position.write(new_mapped_positions)

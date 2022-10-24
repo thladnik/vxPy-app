@@ -26,37 +26,13 @@ CONF_GUI_ADDONS:
   - plugins.freeswim_zf_tracking.FreeswimTrackerWidget
   Display:
   - vxpy.addons.display_widgets.VisualInteractor
-  Io:
-  - vxpy.addons.io_core_widgets.DisplayPSD
-CONF_IO_USE: true
+CONF_IO_USE: false
 CONF_IO_PINS:
-  sawtooth_analogin:
-    device: Dev1
-    type: ai
-    map: ai2
-  saccade_trigger_out:
-    device: Dev1
-    type: do
-    map: do5
-  rectangular_analogin:
-    device: Dev2
-    type: ai
-    map: ai01
-CONF_IO_MAX_SR: 1000
+CONF_IO_MAX_SR: 200
 CONF_IO_DEVICES:
-  Dev1:
-    type: virtual_daq
-    model: VirtualDaqDevice
-    port: COM3
-  Dev2:
-    type: virtual_daq
-    model: VirtualDaqDevice
-    port: COM6
 CONF_IO_ROUTINES:
 - vxpy.routines.read_inputs.ReadAll
-- vxpy.routines.write_test_attributes.SinesAddedWhiteNoise
-- vxpy.routines.write_test_attributes.WriteRandoms
-CONF_WORKER_USE: true
+CONF_WORKER_USE: false
 CONF_WORKER_ROUTINES:
 - vxpy.routines.calculate_csd.CalculatePSD
 CONF_REC_ENABLE: true
@@ -65,6 +41,4 @@ CONF_REC_ATTRIBUTES:
 - var_param*
 - eyepos_*
 - ~*_frame
-- test_sines_whitenoise
-- sawtooth_analogin
 - particle_*

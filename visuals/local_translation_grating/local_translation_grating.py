@@ -65,7 +65,6 @@ class StimulationPatchRotation(visual.Mat4Parameter):
 
 
 class LocalTranslationGrating_RoundArea(visual.SphericalVisual):
-# class LocalTranslationGrating_RoundArea(visual.BaseVisual):
     # (optional) Add a short description
     description = ''
 
