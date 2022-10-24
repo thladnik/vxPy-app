@@ -100,3 +100,64 @@ class PartialSphericalGratingWithRoundRFs(visual.SphericalVisual):
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
+
+
+class LocalTranslationGrating(visual.SphericalVisual):
+    # (optional) Add a short description
+    description = ''
+
+    # Define parameters
+    time = visual.FloatParameter('time', internal=True)
+    angular_velocity = visual.FloatParameter('angular_velocity', default=30, limits=(-150, 150), step_size=5, static=True)
+    angular_period = visual.FloatParameter('angular_period', default=45, limits=(1, 360), step_size=5, static=True)
+    rf_center_azimuth = visual.FloatParameter('rf_center_azimuth', default=0, limits=(-180, 180), step_size=1, static=True)
+    rf_center_elevation = visual.FloatParameter('rf_center_elevation', default=0, limits=(-90, 90), step_size=1, static=True)
+    rf_diameter = visual.FloatParameter('rf_diameter', default=0, limits=(1, 180), step_size=1, static=True)
+    rf_center_location = RFCenterLocation('rf_center_location', internal=True, static=True)
+
+    # Paths to shaders
+    VERT_PATH = './partial_spherical_grating_round_rfs.vert'
+    FRAG_PATH = './partial_spherical_grating_round_rfs.frag'
+
+    def __init__(self, *args, **kwargs):
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
+
+        # Set up 3d model of sphere
+        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi / 2)
+        self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
+        self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
+        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.azimuth_degree)
+        self.elevation_buffer = gloo.VertexBuffer(self.sphere.elevation_degree)
+
+        # Set up program
+        self.grating = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
+
+        # Connect parameters (this makes them be automatically updated in the connected programs)
+        self.time.connect(self.grating)
+        self.angular_velocity.connect(self.grating)
+        self.angular_period.connect(self.grating)
+        self.rf_diameter.connect(self.grating)
+        self.rf_center_location.connect(self.grating)
+
+        # Connect to location coordinates
+        self.rf_center_azimuth.add_downstream_link(self.rf_center_location)
+        self.rf_center_elevation.add_downstream_link(self.rf_center_location)
+
+    def initialize(self, **params):
+        # Reset u_time to 0 on each visual initialization
+        self.time.data = 0.0
+
+        # Set positions with buffers
+        self.grating['a_position'] = self.position_buffer
+        self.grating['a_azimuth'] = self.azimuth_buffer
+        self.grating['a_elevation'] = self.elevation_buffer
+
+    def render(self, dt):
+        # Add elapsed time to u_time
+        self.time.data += dt
+
+        # Apply default transforms to the program for mapping according to hardware calibration
+        self.apply_transform(self.grating)
+
+        # Draw the actual visual stimulus using the indices of the  triangular faces
+        self.grating.draw('triangles', self.index_buffer)

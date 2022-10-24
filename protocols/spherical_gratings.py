@@ -28,6 +28,7 @@ class MiniTestProtocol(StaticPhasicProtocol):
     def __init__(self, *args, **kwargs):
         StaticPhasicProtocol.__init__(self, *args, **kwargs)
 
+        mylist = [2, 0.5, 0.2]
         for i in range(3):
             sp = 10 * 2 ** i
             p = Phase(duration=4)

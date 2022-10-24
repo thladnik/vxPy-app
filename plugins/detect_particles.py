@@ -22,7 +22,7 @@ import pyqtgraph as pg
 
 from vxpy.api.attribute import ArrayAttribute, ArrayType, read_attribute
 from vxpy.api.camera import get_config_for_camera, Format
-from vxpy.api.dependency import require_camera_device
+from vxpy.core.dependency import require_camera_device
 from vxpy.api.routine import CameraRoutine
 from vxpy.api.ui import AddonWidget
 

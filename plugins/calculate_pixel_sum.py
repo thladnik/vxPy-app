@@ -15,15 +15,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import cv2
-import numpy as np
-from PySide6 import QtWidgets
-import pyqtgraph as pg
 
-from vxpy.api.attribute import ArrayAttribute, ArrayType, read_attribute
-from vxpy.api.dependency import require_camera_device
+import vxpy.core.ui
+from vxpy.api.attribute import ArrayAttribute, ArrayType
+from vxpy.core.dependency import require_camera_device
 from vxpy.api.routine import CameraRoutine
-from vxpy.api import ui
 
 
 class CalculateControlCamPixelSum(CameraRoutine):
@@ -43,7 +39,7 @@ class CalculateControlCamPixelSum(CameraRoutine):
     def initialize(self):
         # Mark output array attribute as something to be written to file
         self.camera_pixel_sum.add_to_file()
-        ui.register_with_plotter('control_cam_pixel_sum')
+        vxpy.core.gui.register_with_plotter('control_cam_pixel_sum')
 
     def main(self, *args, **frames):
         # Read frame
