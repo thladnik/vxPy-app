@@ -19,6 +19,7 @@ from vispy import gloo
 from vispy.util import transforms
 import numpy as np
 
+from vxpy.api import get_time
 from vxpy.core import visual
 from vxpy.utils import sphere
 
@@ -80,8 +81,16 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
         self.angular_velocity.connect(self.grating)
         self.angular_period.connect(self.grating)
 
+        # import vxpy.core.event as vxevent
+        # self.trigger = vxevent.RisingEdgeTrigger('test_poisson_1p200')
+        # self.trigger.add_callback(self.moep)
+
         # Alternative way of setting value_map: during instance creation
         self.motion_type.value_map = {'translation': 1, 'rotation': 2}
+
+    def moep(self, *args):
+        import vxpy.core.ipc as vxipc
+        print(f'{vxipc.Process.name}: Hoehoe {args} {get_time()}')
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
@@ -103,15 +112,61 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
         self.grating.draw('triangles', self.index_buffer)
 
 
-class SphericalColorGrating(SphericalBlackWhiteGrating):
+class RGB01(visual.Vec3Parameter):
 
-    FRAG_PATH = './spherical_color_grating.frag'
+    def __init__(self, *args, **kwargs):
+        visual.Vec3Parameter.__init__(self, *args, **kwargs)
 
-    color = visual.Vec3Parameter('color')
+    def upstream_updated(self):
+        self.data = [SphericalColorContrastGrating.red01.data[0],
+                     SphericalColorContrastGrating.green01.data[0],
+                     SphericalColorContrastGrating.blue01.data[0]]
+
+
+class RGB02(visual.Vec3Parameter):
+
+    def __init__(self, *args, **kwargs):
+        visual.Vec3Parameter.__init__(self, *args, **kwargs)
+
+    def upstream_updated(self):
+        self.data = [SphericalColorContrastGrating.red02.data[0],
+                     SphericalColorContrastGrating.green02.data[0],
+                     SphericalColorContrastGrating.blue02.data[0]]
+
+
+class SphericalColorContrastGrating(SphericalBlackWhiteGrating):
+    """Color contrast grating stimulus on a sphere
+    """
+    # (optional) Add a short description
+    description = 'Spherical color contrast grating stimulus'
+
+    # Define parameters
+    rgb01 = RGB01('rgb01', static=True, internal=True)
+    red01 = visual.FloatParameter('red01', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)
+    green01 = visual.FloatParameter('green01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+    blue01 = visual.FloatParameter('blue01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+    rgb02 = RGB02('rgb02', static=True, internal=True)
+    red02 = visual.FloatParameter('red02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+    green02 = visual.FloatParameter('green02', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)
+    blue02 = visual.FloatParameter('blue02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+
+    # Paths to shaders
+    FRAG_PATH = './spherical_color_contrast_grating.frag'
 
     def __init__(self, *args, **kwargs):
         SphericalBlackWhiteGrating.__init__(self, *args, **kwargs)
 
-        self.color.connect(self.grating)
+        # Connect parameters (this makes them be automatically updated in the connected programs)
+        self.red01.add_downstream_link(self.rgb01)
+        self.green01.add_downstream_link(self.rgb01)
+        self.blue01.add_downstream_link(self.rgb01)
+        self.red02.add_downstream_link(self.rgb02)
+        self.green02.add_downstream_link(self.rgb02)
+        self.blue02.add_downstream_link(self.rgb02)
 
-        # self.color.data = (1., 0., 0.)
+        self.rgb01.connect(self.grating)
+        self.rgb02.connect(self.grating)
+
+    def initialize(self, **params):
+        SphericalBlackWhiteGrating.initialize(self, **params)
+
