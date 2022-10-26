@@ -1,1 +1,1 @@
-from .spherical_grating import SphericalBlackWhiteGrating, SphericalColorGrating
+from .spherical_grating import SphericalBlackWhiteGrating, SphericalColorContrastGrating
