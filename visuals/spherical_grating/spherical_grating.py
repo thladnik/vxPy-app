@@ -19,7 +19,7 @@ from vispy import gloo
 from vispy.util import transforms
 import numpy as np
 
-from vxpy.api import get_time
+import vxpy.core.ipc as vxipc
 from vxpy.core import visual
 from vxpy.utils import sphere
 
@@ -83,14 +83,13 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
 
         # import vxpy.core.event as vxevent
         # self.trigger = vxevent.RisingEdgeTrigger('test_poisson_1p200')
-        # self.trigger.add_callback(self.moep)
+        # self.trigger.add_callback(self.triggered_fun)
 
         # Alternative way of setting value_map: during instance creation
         self.motion_type.value_map = {'translation': 1, 'rotation': 2}
 
-    def moep(self, *args):
-        import vxpy.core.ipc as vxipc
-        print(f'{vxipc.Process.name}: Hoehoe {args} {get_time()}')
+    def triggered_fun(self, *args):
+        print(f'{vxipc.Process.name}: Hoehoe {args} {vxipc.get_time()}')
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
