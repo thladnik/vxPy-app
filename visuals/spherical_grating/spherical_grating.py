@@ -89,7 +89,7 @@ class SphericalBlackWhiteGrating(visual.SphericalVisual):
         self.motion_type.value_map = {'translation': 1, 'rotation': 2}
 
     def triggered_fun(self, *args):
-        print(f'{vxipc.Process.name}: Hoehoe {args} {vxipc.get_time()}')
+        print(f'{vxipc.LocalProcess.name}: Hoehoe {args} {vxipc.get_time()}')
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
