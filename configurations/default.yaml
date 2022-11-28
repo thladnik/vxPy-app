@@ -75,10 +75,7 @@ CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
-- var_param*
 - eyepos_*
-- fish_embedded_frame
-- multiple_fish_frame
+- ~*_frame
 - test_sines_whitenoise
 - sawtooth_analogin
-- particle_*
