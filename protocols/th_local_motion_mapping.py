@@ -36,10 +36,10 @@ def create_params(period, velocity, center_az, center_el, field_diameter):
     }
 
 
-class ProtocolRE(vxprotocol.StaticPhasicProtocol):
+class ProtocolRE(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         period = 20
         velocity = -30
@@ -83,10 +83,10 @@ class ProtocolRE(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolLE(vxprotocol.StaticPhasicProtocol):
+class ProtocolLE(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         period = 20
         velocity = 30

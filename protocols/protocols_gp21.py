@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import numpy as np
-from vxpy.core.protocol import StaticPhasicProtocol
+from vxpy.core.protocol import StaticProtocol
 from visuals.sph_shader import Translation, Dot, TranslationWithDot, Blank
 
 
@@ -24,10 +24,10 @@ dot_sizes = [2, 5, 10, 20, 40]
 trans_speeds = [-80, 80]
 
 
-class GP21TranslationsWithDot(StaticPhasicProtocol):
+class GP21TranslationsWithDot(StaticProtocol):
     # 2 * 5 * 3 * 15 + 20 + 20 = 490
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         # Translations
         np.random.seed(1)

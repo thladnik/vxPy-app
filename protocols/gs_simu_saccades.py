@@ -1,6 +1,6 @@
 import numpy as np
 
-from vxpy.core.protocol import Phase, StaticPhasicProtocol
+from vxpy.core.protocol import Phase, StaticProtocol
 from vxpy.visuals import pause
 
 from visuals.sphere_simu_saccade import GaussianConvNoiseSphereSimuSaccade
@@ -52,7 +52,7 @@ from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash4000
             self.add_phase(p)'''
 
 
-class SimuSaccadeWithSines(StaticPhasicProtocol):
+class SimuSaccadeWithSines(StaticProtocol):
 
     # Define parameters saccade size in degrees (0, -20, 20), sine flicker delay in ms (-500, 20, 100, 250, 500, 1000,
     # 2000, no flicker), flicker amplitude (35% oder 0%)
@@ -63,7 +63,7 @@ class SimuSaccadeWithSines(StaticPhasicProtocol):
 
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         # Fix seed
         np.random.seed(1)

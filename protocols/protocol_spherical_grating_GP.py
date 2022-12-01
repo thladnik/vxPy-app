@@ -16,14 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import numpy as np
-from vxpy.core.protocol import StaticPhasicProtocol
+from vxpy.core.protocol import StaticProtocol
 from visuals.sph_shader import Translation, Rotation, Blank
 
 
-class sphDotProtocol(StaticPhasicProtocol):
+class sphDotProtocol(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         # Translations
         np.random.seed(1)

@@ -1,15 +1,15 @@
 import numpy as np
 
-from vxpy.core.protocol import Phase, StaticPhasicProtocol
+from vxpy.core.protocol import Phase, StaticProtocol
 from vxpy.visuals import pause
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 from visuals import gs_saccadic_suppression as gsft
 
 
-class Protocol01(StaticPhasicProtocol):
+class Protocol01(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         contrast = 0.5
         default_lum = 0.5

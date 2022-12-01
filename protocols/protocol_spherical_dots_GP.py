@@ -16,14 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import numpy as np
-from vxpy.core.protocol import StaticPhasicProtocol
+from vxpy.core.protocol import StaticProtocol
 from visuals.sph_shader import Dot,Blank
 
 
-class sphDotProtocol(StaticPhasicProtocol):
+class sphDotProtocol(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
         angSize = np.array([np.random.permutation([2,5,10,20,40]) for k in range(3)]).flatten()
         self.add_visual_phase(Blank, 20, {"u_color":(0, 0, 0)})
         for i in range(len(angSize)):

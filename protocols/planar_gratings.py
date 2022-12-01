@@ -15,16 +15,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from vxpy.core.protocol import Phase, StaticPhasicProtocol
+from vxpy.core.protocol import Phase, StaticProtocol
 from vxpy.visuals import pause
 
 from visuals.planar_grating import BlackAndWhiteGrating
 
 
-class GratingsKeepUntilEnd(StaticPhasicProtocol):
+class GratingsKeepUntilEnd(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
             sp = (i + 1) * 5
@@ -54,10 +54,10 @@ class GratingsKeepUntilEnd(StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class GratingsBlankPauses(StaticPhasicProtocol):
+class GratingsBlankPauses(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
             sp = (i + 1) * 10
@@ -87,10 +87,10 @@ class GratingsBlankPauses(StaticPhasicProtocol):
             self.add_phase(p)
 
 
-class GratingsKeepForever(StaticPhasicProtocol):
+class GratingsKeepForever(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(4):
             sp = (i + 1) * 10

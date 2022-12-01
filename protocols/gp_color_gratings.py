@@ -23,10 +23,10 @@ from visuals.spherical_grating import SphericalColorContrastGrating
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 
-class Protocol01(vxprotocol.StaticPhasicProtocol):
+class Protocol01(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         angular_period_degrees = 30
         angular_velocity_degrees = 30
@@ -84,10 +84,10 @@ class Protocol01(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolGP(vxprotocol.StaticPhasicProtocol):
+class ProtocolGP(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         angular_period_degrees = 30
         angular_velocity_degrees = 30
