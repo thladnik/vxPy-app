@@ -13,6 +13,22 @@ CONF_CAMERA_DEVICES:
     exposure: 5000
     gain: 12.0
     preload_file: False
+  multiple_fish_vertical_swim:
+    api: vxpy.devices.camera.virtual_camera.VirtualCamera
+    data_source: HDF5
+    data_path: Multi_Fish_Vertical_Swim_10fps
+    preload_data: False
+    width: 1920
+    height: 1080
+    frame_rate: 10
+  multiple_fish_embedded:
+    api: vxpy.devices.camera.virtual_camera.VirtualCamera
+    data_source: HDF5
+    data_path: Multi_Fish_Eyes_Cam_20fps
+    preload_data: False
+    width: 752
+    height: 480
+    frame_rate: 20
 CONF_CAMERA_ROUTINES:
 - vxpy.routines.camera_capture.Frames
 - vxpy.routines.zf_tracking.EyePositionDetection
