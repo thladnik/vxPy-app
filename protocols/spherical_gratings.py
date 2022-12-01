@@ -17,16 +17,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import numpy as np
 
-from vxpy.core.protocol import StaticPhasicProtocol, Phase
+from vxpy.core.protocol import StaticProtocol, Phase
 from vxpy.visuals import pause
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 
 
-class MiniTestProtocol(StaticPhasicProtocol):
+class MiniTestProtocol(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         mylist = [2, 0.5, 0.2]
         for i in range(3):
@@ -41,10 +41,10 @@ class MiniTestProtocol(StaticPhasicProtocol):
             self.add_phase(p)
 
 
-class StaticGratings(StaticPhasicProtocol):
+class StaticGratings(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):
             sp = 10 * 2 ** i
@@ -58,10 +58,10 @@ class StaticGratings(StaticPhasicProtocol):
             self.add_phase(p)
 
 
-class MovingGratings(StaticPhasicProtocol):
+class MovingGratings(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         mov_duration = 3
 

@@ -8,10 +8,10 @@ from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 
 
-class Protocol01(vxprotocol.StaticPhasicProtocol):
+class Protocol01(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         # Fix seed
         np.random.seed(1)
@@ -123,10 +123,10 @@ class Protocol01(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolJustDots(vxprotocol.StaticPhasicProtocol):
+class ProtocolJustDots(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -193,10 +193,10 @@ class ProtocolJustDots(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolJustDots01(vxprotocol.StaticPhasicProtocol):
+class ProtocolJustDots01(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -262,10 +262,10 @@ class ProtocolJustDots01(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolJustDots360deg(vxprotocol.StaticPhasicProtocol):
+class ProtocolJustDots360deg(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -331,10 +331,10 @@ class ProtocolJustDots360deg(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolLastResort(vxprotocol.StaticPhasicProtocol):
+class ProtocolLastResort(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -380,10 +380,10 @@ class ProtocolLastResort(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolLastResortAlternatingDirections(vxprotocol.StaticPhasicProtocol):
+class ProtocolLastResortAlternatingDirections(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         p = vxprotocol.Phase(duration=15)
         p.set_visual(SphereUniformBackground,
@@ -430,10 +430,10 @@ class ProtocolLastResortAlternatingDirections(vxprotocol.StaticPhasicProtocol):
         self.add_phase(p)
 
 
-class ProtocolLastResortAlternatingDirectionsRandomSizes(vxprotocol.StaticPhasicProtocol):
+class ProtocolLastResortAlternatingDirectionsRandomSizes(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         np.random.seed(1)
 
@@ -482,10 +482,10 @@ class ProtocolLastResortAlternatingDirectionsRandomSizes(vxprotocol.StaticPhasic
         self.add_phase(p)
 
 
-class ProtocolLastResortAlternatingDirectionsFinal(vxprotocol.StaticPhasicProtocol):
+class ProtocolLastResortAlternatingDirectionsFinal(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         np.random.seed(1)
 

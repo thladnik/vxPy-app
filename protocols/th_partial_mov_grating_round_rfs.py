@@ -36,10 +36,10 @@ def create_params(period, velocity, center_az, center_el, field_diameter):
     }
 
 
-class Protocol01(vxprotocol.StaticPhasicProtocol):
+class Protocol01(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         period = 30
         velocity = -30

@@ -3,10 +3,10 @@ import vxpy.core.protocol as vxprotocol
 from visuals.cmn_demo_from_Nash.sph_cmn import SphGlobalFlow
 
 
-class MixedOFlowVaryingRotationTranslationSpeed(vxprotocol.StaticPhasicProtocol):
+class MixedOFlowVaryingRotationTranslationSpeed(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         translation_speeds = [-40, -40, -40, -40, -40, 40,  40, 40,  40, 40]
         rotation_speeds    = [  0, -20,  20, -40,  40,  0, -20, 20, -40, 40]

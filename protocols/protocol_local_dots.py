@@ -15,15 +15,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from vxpy.core.protocol import Phase, StaticPhasicProtocol
+from vxpy.core.protocol import Phase, StaticProtocol
 
 from visuals.local_dot import IcoDot
 
 
-class TestLocalDotProtocol(StaticPhasicProtocol):
+class TestLocalDotProtocol(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(3):
             p = Phase()

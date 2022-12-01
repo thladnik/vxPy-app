@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-from vxpy.core.protocol import StaticPhasicProtocol, Phase
+from vxpy.core.protocol import StaticProtocol, Phase
 from vxpy.visuals import pause
 
 from visuals.sphere_visual_field_mapping import \
@@ -24,10 +24,10 @@ from visuals.sphere_visual_field_mapping import \
     BinaryNoiseVisualFieldMapping32deg
 
 
-class BinaryNoise(StaticPhasicProtocol):
+class BinaryNoise(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for inv in [False, True]:
             for bias in [0.1, 0.2]:

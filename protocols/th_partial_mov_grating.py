@@ -36,10 +36,10 @@ def create_partially_mov_grating_params(period, velocity, az_center, az_range, e
             PartialSphericalBlackWhiteGrating.mask_elevation_range: el_range}
 
 
-class BaseProtocol(vxprotocol.StaticPhasicProtocol):
+class BaseProtocol(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        vxprotocol.StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
     def _create_protocol(self, angular_period_degrees: float, angular_velocity_degrees: float,
                          lower_el: float = -45, upper_el: float = 45,
