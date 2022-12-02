@@ -60,24 +60,11 @@ class Roi(pg.RectROI):
         self.active_calibration = False
 
     def set_calibration_mode(self, active):
+        # self.translatable = False
 
-        self.active_calibration = active
-        self.translatable = self.active_calibration
-        self.resizable = self.active_calibration
-
-        self.update_handles()
-
-    def update_handles(self):
-        pass
-        # for h in self.handles:
-        #     if self.active_calibration:
-        #         h['item'].show()
-        #     else:
-        #         h['item'].hide()
-
-    # def mouseDragEvent(self, ev):
-    #     self.update_handles()
-    #     ev.accept()
+        # self.active_calibration = active
+        self.translatable = active
+        self.resizable = active  # TODO: resizable seems to have no effect as of pyqtgraph 0.13.1
 
 
 class FrameView(pg.GraphicsLayoutWidget):
@@ -113,7 +100,7 @@ class FrameView(pg.GraphicsLayoutWidget):
             self.image_plot.vb.addItem(self._tracking_rois[-1])
 
             # Add text
-            text = pg.TextItem('Test')
+            text = pg.TextItem('')
             self._tracking_texts.append(text)
             self.image_plot.vb.addItem(self._tracking_texts[-1])
 
@@ -156,7 +143,7 @@ class FrameView(pg.GraphicsLayoutWidget):
                 continue
 
             # Move pos to center of ROI
-            pos = (pos[0] - rect_size[0]/2, pos[1] - rect_size[1]/2)
+            pos = (pos[0] - rect_size[0] / 2, pos[1] - rect_size[1] / 2)
 
             # Update ROI
             rect.setPos(pos)
@@ -164,7 +151,7 @@ class FrameView(pg.GraphicsLayoutWidget):
 
             # Update text
             mapped_pos = mapped_positions[i]
-            text.setPos(QtCore.QPoint(*pos))
+            text.setPos(QtCore.QPoint(pos[0], pos[1]+rect_size[0]))
             text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')
 
 
@@ -194,18 +181,24 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.console.setLayout(QtWidgets.QVBoxLayout())
         self.console.setMaximumWidth(300)
         self.layout().addWidget(self.console)
+
         # Display choice
+        self.console.layout().addWidget(QtWidgets.QLabel('Display frame:'))
         self.display_choice = widgets.ComboBox(self)
         self.display_choice.connect_callback(self.frame_view.set_attribute)
         self.display_choice.add_items(['freeswim_tracked_zf_frame',
                                        'freeswim_tracked_zf_filtered',
                                        'freeswim_tracked_zf_binary'])
         self.console.layout().addWidget(self.display_choice)
+
         # Calibration mode
+        self.console.layout().addWidget(QtWidgets.QLabel('Calibration mode:'))
         self.calibration = widgets.ComboBox(self)
         self.calibration.connect_callback(self.set_calibration_mode)
         self.calibration.add_items(['Open', 'Locked'])
         self.console.layout().addWidget(self.calibration)
+
+        # Uniform width for labels (make it pretty)
         uniform_width = widgets.UniformWidth()
 
         # Threshold
@@ -260,9 +253,8 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.console.layout().addWidget(self.reset_btn)
 
         # Spacer
-        self.console.layout().addItem(QtWidgets.QSpacerItem(1, 1,
-                                                            QtWidgets.QSizePolicy.Minimum,
-                                                            QtWidgets.QSizePolicy.MinimumExpanding))
+        spacer = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.console.layout().addItem(spacer)
 
     def set_calibration_mode(self, mode):
         self.frame_view.rect_roi.set_calibration_mode(mode == 'Open')
