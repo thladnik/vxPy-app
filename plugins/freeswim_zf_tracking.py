@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 import cv2
 import numpy as np
@@ -39,7 +39,7 @@ class RoiView(pg.GraphicsLayoutWidget):
 
     def _update_image(self):
         # Read last frame
-        idx, time, frame = vxattribute.read_attribute('freeswim_tracked_particle_rois')
+        idx, time, frame = vxattribute.read_attribute('freeswim_tracked_particle_rects')
 
         if idx[0] is None:
             return
@@ -50,9 +50,11 @@ class RoiView(pg.GraphicsLayoutWidget):
 
 class Roi(pg.RectROI):
     def __init__(self):
+        self.default_pen = pg.mkPen(color='darkgreen', width=4)
         pg.RectROI.__init__(self, FreeswimTrackerRoutine.calibration_rect_pos,
                             [100, 100], sideScalers=True,
-                            pen=pg.mkPen(color='orange', width=2),
+                            pen=self.default_pen, hoverPen=self.default_pen,
+                            handlePen=self.default_pen, handleHoverPen=self.default_pen,
                             maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
 
         self.active_calibration = False
@@ -66,11 +68,12 @@ class Roi(pg.RectROI):
         self.update_handles()
 
     def update_handles(self):
-        for h in self.handles:
-            if self.active_calibration:
-                h['item'].show()
-            else:
-                h['item'].hide()
+        pass
+        # for h in self.handles:
+        #     if self.active_calibration:
+        #         h['item'].show()
+        #     else:
+        #         h['item'].hide()
 
     # def mouseDragEvent(self, ev):
     #     self.update_handles()
@@ -98,15 +101,31 @@ class FrameView(pg.GraphicsLayoutWidget):
         self.rect_roi = Roi()
         self.image_plot.vb.addItem(self.rect_roi)
 
+        # Create ROIs to mark tracked particles
+        self._tracking_rois: List[pg.RectROI] = []
+        self._tracking_texts: List[pg.TextItem] = []
+        self.default_pen = pg.mkPen('red', width=5)
+        for _ in range(FreeswimTrackerRoutine.max_particle_num):
+            # Add ROI
+            rect = pg.RectROI((50, 50), FreeswimTrackerRoutine.rect_size,
+                              pen=self.default_pen, handlePen=pg.mkPen(None), hoverPen=self.default_pen)
+            self._tracking_rois.append(rect)
+            self.image_plot.vb.addItem(self._tracking_rois[-1])
+
+            # Add text
+            text = pg.TextItem('Test')
+            self._tracking_texts.append(text)
+            self.image_plot.vb.addItem(self._tracking_texts[-1])
+
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self._update_image)
+        self.timer.timeout.connect(self._update)
         self.timer.setInterval(50)
         self.timer.start()
 
     def set_attribute(self, frame_name):
         self._attribute = vxattribute.get_attribute(frame_name)
 
-    def _update_image(self):
+    def _update(self):
         if self._attribute is None:
             return
 
@@ -118,6 +137,35 @@ class FrameView(pg.GraphicsLayoutWidget):
 
         # Set frame data on image plot
         self.image_item.setImage(frame[0])
+
+        # Fetch ROI positions
+        _, _, pixel_positions = vxattribute.read_attribute('freeswim_tracked_particle_pixel_position')
+        _, _, mapped_positions = vxattribute.read_attribute('freeswim_tracked_particle_mapped_position')
+        pixel_positions = pixel_positions[0]
+        mapped_positions = mapped_positions[0]
+
+        # Update ROI positions
+        rect_size = FreeswimTrackerRoutine.rect_size
+        for i, (rect, text) in enumerate(zip(self._tracking_rois, self._tracking_texts)):
+
+            # Update ROI and text
+            pos = pixel_positions[i]
+            if pos[0] < 0:
+                rect.setPen(pg.mkPen(None))
+                text.setText('')
+                continue
+
+            # Move pos to center of ROI
+            pos = (pos[0] - rect_size[0]/2, pos[1] - rect_size[1]/2)
+
+            # Update ROI
+            rect.setPos(pos)
+            rect.setPen(self.default_pen)
+
+            # Update text
+            mapped_pos = mapped_positions[i]
+            text.setPos(QtCore.QPoint(*pos))
+            text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')
 
 
 class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
@@ -133,7 +181,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.layout().addWidget(self.plots)
         # Frame
         self.frame_view = FrameView(self)
-        self.frame_view.rect_roi.sigRegionChangeFinished.connect(self._update_roi_parameters)
+        self.frame_view.rect_roi.sigRegionChangeFinished.connect(self._update_calibration_roi_parameters)
         self.plots.layout().addWidget(self.frame_view)
 
         # ROIs
@@ -158,36 +206,53 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.calibration.connect_callback(self.set_calibration_mode)
         self.calibration.add_items(['Open', 'Locked'])
         self.console.layout().addWidget(self.calibration)
+        uniform_width = widgets.UniformWidth()
+
         # Threshold
         self.binary_threshold = widgets.IntSliderWidget(self.console, label='Threshold [au]',
                                                         default=FreeswimTrackerRoutine.binary_thresh_val,
                                                         limits=(1, 254))
         self.binary_threshold.connect_callback(self.set_binary_threshold)
+        uniform_width.add_widget(self.binary_threshold.label)
         self.console.layout().addWidget(self.binary_threshold)
+
         # Filter size
         self.filter_size = widgets.IntSliderWidget(self.console, label='Filter size [au]',
                                                    default=FreeswimTrackerRoutine.filter_size,
                                                    limits=(1, 255))
         self.filter_size.connect_callback(self.set_filter_size)
+        uniform_width.add_widget(self.filter_size.label)
         self.console.layout().addWidget(self.filter_size)
+
         # Min area
         self.min_area = widgets.IntSliderWidget(self.console, label='Min. area [au]',
                                                 default=FreeswimTrackerRoutine.min_area,
                                                 limits=(1, 255))
         self.min_area.connect_callback(self.set_min_area)
+        uniform_width.add_widget(self.min_area.label)
         self.console.layout().addWidget(self.min_area)
         # X dim
         self.x_dimension_length = widgets.IntSliderWidget(self.console, label='X dimension [mm]',
                                                           default=FreeswimTrackerRoutine.dimension_size[0],
                                                           limits=(1, 1000))
         self.x_dimension_length.connect_callback(self.set_x_dimension_size)
+        uniform_width.add_widget(self.x_dimension_length.label)
         self.console.layout().addWidget(self.x_dimension_length)
         # Y dim
         self.y_dimension_length = widgets.IntSliderWidget(self.console, label='Y dimension [mm]',
                                                           default=FreeswimTrackerRoutine.dimension_size[1],
                                                           limits=(1, 1000))
         self.y_dimension_length.connect_callback(self.set_y_dimension_size)
+        uniform_width.add_widget(self.y_dimension_length.label)
         self.console.layout().addWidget(self.y_dimension_length)
+
+        # MOG history length
+        self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
+                                                   default=FreeswimTrackerRoutine.mog_history_len,
+                                                   limits=(1, 1000))
+        self.mog_history.connect_callback(self.set_mog_history_len)
+        uniform_width.add_widget(self.mog_history.label)
+        self.console.layout().addWidget(self.mog_history)
 
         # Reset button
         self.reset_btn = QtWidgets.QPushButton('Reset MOG model')
@@ -205,15 +270,17 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
     def reset_mog_model(self):
         self.call_routine(FreeswimTrackerRoutine.reset_mog_model)
 
+    def set_mog_history_len(self):
+        self.call_routine(FreeswimTrackerRoutine.set_mog_history_len, self.mog_history.get_value())
+
     def set_filter_size(self):
         self.call_routine(FreeswimTrackerRoutine.set_filter_size, self.filter_size.get_value())
 
     def set_min_area(self):
         self.call_routine(FreeswimTrackerRoutine.set_min_area, self.min_area.get_value())
 
-    def set_binary_threshold(self, value):
-        vxipc.rpc(PROCESS_CAMERA, FreeswimTrackerRoutine.set_binary_threshold, value)
-        # self.call_routine(FreeswimTrackerRoutine.set_binary_threshold, self.binary_threshold.get_value())
+    def set_binary_threshold(self):
+        self.call_routine(FreeswimTrackerRoutine.set_binary_threshold, self.binary_threshold.get_value())
 
     def set_x_dimension_size(self):
         self.call_routine(FreeswimTrackerRoutine.set_x_dimension_size, self.x_dimension_length.get_value())
@@ -221,7 +288,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
     def set_y_dimension_size(self):
         self.call_routine(FreeswimTrackerRoutine.set_y_dimension_size, self.y_dimension_length.get_value())
 
-    def _update_roi_parameters(self):
+    def _update_calibration_roi_parameters(self):
         pos = self.frame_view.rect_roi.pos()
         self.call_routine(FreeswimTrackerRoutine.set_calibration_rect_pos, (pos.x(), pos.y()))
         size = self.frame_view.rect_roi.size()
@@ -237,6 +304,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
     binary_thresh_val = 25
     min_area = 10
     filter_size = 31
+    mog_history_len = 100
     calibration_rect_pos = np.array([0, 0])
     calibration_rect_size = np.array([1, 1])
     max_particle_num = 10
@@ -268,7 +336,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         vxattribute.ArrayAttribute('freeswim_tracked_zf_binary',
                                    (width, height),
                                    vxattribute.ArrayType.uint8)
-        vxattribute.ArrayAttribute('freeswim_tracked_particle_rois',
+        vxattribute.ArrayAttribute('freeswim_tracked_particle_rects',
                                    (cls.max_particle_num, *cls.rect_size),
                                    dtype=vxattribute.ArrayType.uint8,
                                    chunked=True)
@@ -291,14 +359,19 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         register_with_plotter('freeswim_tracked_particle_count_total', axis='particle_count')
         register_with_plotter('freeswim_tracked_particle_count_filtered', axis='particle_count')
 
-        write_to_file(self, 'freeswim_tracked_particle_rois')
+        write_to_file(self, 'freeswim_tracked_particle_rects')
         write_to_file(self, 'freeswim_tracked_particle_count_total')
         write_to_file(self, 'freeswim_tracked_particle_count_filtered')
+        write_to_file(self, 'freeswim_tracked_particle_pixel_position')
         write_to_file(self, 'freeswim_tracked_particle_mapped_position')
 
     @vxroutine.CameraRoutine.callback
     def reset_mog_model(self):
-        self._mog = cv2.createBackgroundSubtractorMOG2(500, detectShadows=False)
+        self._mog = cv2.createBackgroundSubtractorMOG2(int(self.mog_history_len), detectShadows=False)
+
+    @vxroutine.CameraRoutine.callback
+    def set_mog_history_len(self, value):
+        self.mog_history_len = np.array(value)
 
     @vxroutine.CameraRoutine.callback
     def set_calibration_rect_pos(self, value):
@@ -391,19 +464,6 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
                 # Crop rectangular ROI
                 rect = frame[centroid[1] - ydiff:centroid[1] + ydiff, centroid[0] - xdiff:centroid[0] + xdiff]
 
-                # # Mark ROIs on display frame
-                # cv2.rectangle(display_frame,
-                #               [c_rev[0] - xdiff, c_rev[1] - ydiff], [c_rev[0] + xdiff, c_rev[1] + ydiff],
-                #               (255, 0, 0), 2)
-                #
-                # text_args = (cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                # cv2.putText(display_frame,
-                #             f'x: {mapped_position[0]:.1f}',
-                #             (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2), *text_args)
-                # cv2.putText(display_frame,
-                #             f'y: {mapped_position[1]:.1f}',
-                #             (c_rev[0] + xdiff + 5, c_rev[1] - ydiff // 2 + 25), *text_args)
-
                 if rect.shape == self.rect_size:
                     particle_rectangles.append(rect)
                     particle_areas.append((area, i))
@@ -423,11 +483,12 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
             particle_areas = particle_areas[:10]
 
         # Write particle ROIs to attribute
-        particle_rois_attr = vxattribute.get_attribute('freeswim_tracked_particle_rois')
-        particle_mapped_position = vxattribute.get_attribute('freeswim_tracked_particle_mapped_position')
+        particle_rois_attr = vxattribute.get_attribute('freeswim_tracked_particle_rects')
+        particle_mapped_position_attr = vxattribute.get_attribute('freeswim_tracked_particle_mapped_position')
+        particle_pixel_position_attr = vxattribute.get_attribute('freeswim_tracked_particle_pixel_position')
         new_rects = np.zeros(particle_rois_attr.shape)
-        new_mapped_positions = -np.ones(particle_mapped_position.shape)
-        new_pixel_positions = -np.ones(particle_mapped_position.shape)
+        new_mapped_positions = -np.ones(particle_mapped_position_attr.shape)
+        new_pixel_positions = -np.ones(particle_mapped_position_attr.shape)
         for k, (_, i) in enumerate(particle_areas):
             new_rects[k] = particle_rectangles[i]
             new_mapped_positions[k] = particle_mapped_positions[i]
@@ -437,15 +498,5 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         particle_rois_attr.write(new_rects)
 
         # Write centroid positions
-        particle_mapped_position.write(new_mapped_positions)
-
-
-# class BackgroundModelCreator(vxroutine.WorkerRoutine):
-#
-#     def __init__(self, *args, **kwargs):
-#         vxroutine.WorkerRoutine.__init__(self, *args, **kwargs)
-#
-#     @classmethod
-#     def require(cls):
-#         vxattribute.ArrayAttribute('freeswim_background_frame', )
-
+        particle_pixel_position_attr.write(new_pixel_positions)
+        particle_mapped_position_attr.write(new_mapped_positions)

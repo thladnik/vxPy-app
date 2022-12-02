@@ -1,4 +1,4 @@
-CONF_CALIBRATION_PATH: calibrations/freeswim_larvae_calib.yaml
+CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   multiple_fish_vertical_swim:
@@ -35,6 +35,5 @@ CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
-- var_param*
 - ~*_frame
 - freeswim_tracked_particle*
