@@ -1,6 +1,17 @@
 CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
+  real_camera_feed:
+    api: vxpy.devices.camera.basler_pylon.BaslerCamera
+    serial: 40112359
+    model: a2A3840-45umPRO
+    dtype: Mono8
+    width: 3860
+    height: 2178
+    binning_mode: average
+    frame_rate: 25
+    exposure: 5000
+    gain: 12.0
   fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: HDF5
@@ -45,15 +56,31 @@ CONF_GUI_ADDONS:
   - vxpy.addons.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
 CONF_IO_DEVICES:
+  real_device_arduino:
+    api: vxpy.devices.daq.arduino
+    model: ArduinoUno
+    port: COM3
   Dev1_virtual:
-    api: vxpy.devices.virtual_daq.VirtualDaqDevice
-    pins:
-      sawtooth_analogin:
-        type: analog_in
-      saccade_trigger_out:
-        type: digital_out
-      rectangular_analogin:
-        type: analog_in
+    type: virtual_daq
+    model: VirtualDaqDevice
+    port: COM3
+  Dev2_virtual:
+    type: virtual_daq
+    model: VirtualDaqDevice
+    port: COM6
+CONF_IO_PINS:
+  sawtooth_analogin:
+    device: Dev1_virtual
+    type: ai
+    map: ai2
+  saccade_trigger_out:
+    device: Dev1_virtual
+    type: do
+    map: do5
+  rectangular_analogin:
+    device: Dev2_virtual
+    type: ai
+    map: ai01
 CONF_IO_MAX_SR: 1000
 CONF_IO_ROUTINES:
 - vxpy.routines.read_inputs.ReadAll
