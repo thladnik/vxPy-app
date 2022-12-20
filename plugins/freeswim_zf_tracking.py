@@ -1,9 +1,27 @@
+"""
+vxPy-app ./plugins/freeswim_zf_tracking.py
+Copyright (C) 2022 Tim Hladnik
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""
 from typing import Tuple, List
 
 import cv2
 import numpy as np
 import pyqtgraph as pg
 from PySide6 import QtWidgets, QtGui, QtCore
+from PySide6.QtWidgets import QLabel
 
 from vxpy import config
 from vxpy.core.ui import register_with_plotter
@@ -182,25 +200,38 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.console.setMaximumWidth(300)
         self.layout().addWidget(self.console)
 
-        # Display choice
-        self.console.layout().addWidget(QtWidgets.QLabel('Display frame:'))
-        self.display_choice = widgets.ComboBox(self)
-        self.display_choice.connect_callback(self.frame_view.set_attribute)
-        self.display_choice.add_items(['freeswim_tracked_zf_frame',
-                                       'freeswim_tracked_zf_filtered',
-                                       'freeswim_tracked_zf_binary'])
-        self.console.layout().addWidget(self.display_choice)
-
-        # Calibration mode
-        self.console.layout().addWidget(QtWidgets.QLabel('Calibration mode:'))
-        self.calibration = widgets.ComboBox(self)
-        self.calibration.connect_callback(self.set_calibration_mode)
-        self.calibration.add_items(['Open', 'Locked'])
-        self.console.layout().addWidget(self.calibration)
-
         # Uniform width for labels (make it pretty)
         uniform_width = widgets.UniformWidth()
 
+        # MOG MODEL
+        self.console.layout().addWidget(QLabel('<b>Background MOG model</b>'))
+        # MOG history length
+        self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
+                                                   default=FreeswimTrackerRoutine.mog_history_len,
+                                                   limits=(1, 1000))
+        self.mog_history.connect_callback(self.set_mog_history_len)
+        uniform_width.add_widget(self.mog_history.label)
+        self.console.layout().addWidget(self.mog_history)
+
+        # Reset button
+        self.reset_btn = QtWidgets.QPushButton('Reset')
+        self.reset_btn.clicked.connect(self.reset_mog_model)
+        self.reset_mog = widgets.ParameterWidget('Reset MOG model', self.reset_btn)
+        uniform_width.add_widget(self.reset_mog.label)
+        self.console.layout().addWidget(self.reset_mog)
+
+        # FILTERING
+        # Display choice
+        self.display_choice_cb = widgets.ComboBox(self)
+        self.display_choice_cb.connect_callback(self.frame_view.set_attribute)
+        self.display_choice_cb.add_items(['freeswim_tracked_zf_frame',
+                                       'freeswim_tracked_zf_filtered',
+                                       'freeswim_tracked_zf_binary'])
+        self.display_choice = widgets.ParameterWidget('Display frame', self.display_choice_cb)
+        uniform_width.add_widget(self.display_choice.label)
+        self.console.layout().addWidget(self.display_choice)
+
+        self.console.layout().addWidget(QLabel('<b>Filter parameters</b>'))
         # Threshold
         self.binary_threshold = widgets.IntSliderWidget(self.console, label='Threshold [au]',
                                                         default=FreeswimTrackerRoutine.binary_thresh_val,
@@ -224,6 +255,16 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.min_area.connect_callback(self.set_min_area)
         uniform_width.add_widget(self.min_area.label)
         self.console.layout().addWidget(self.min_area)
+
+        # SUBFRAME CALIBRATION
+        self.console.layout().addWidget(QLabel('<b>Subframe calibration</b>'))
+        # Calibration mode
+        self.calibration_cb = widgets.ComboBox(self)
+        self.calibration_cb.add_items(['Open', 'Locked'])
+        self.calibration_cb.connect_callback(self.set_calibration_mode)
+        self.calibration = widgets.ParameterWidget('Calibration', self.calibration_cb)
+        uniform_width.add_widget(self.calibration.label)
+        self.console.layout().addWidget(self.calibration)
         # X dim
         self.x_dimension_length = widgets.IntSliderWidget(self.console, label='X dimension [mm]',
                                                           default=FreeswimTrackerRoutine.dimension_size[0],
@@ -239,25 +280,15 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         uniform_width.add_widget(self.y_dimension_length.label)
         self.console.layout().addWidget(self.y_dimension_length)
 
-        # MOG history length
-        self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
-                                                   default=FreeswimTrackerRoutine.mog_history_len,
-                                                   limits=(1, 1000))
-        self.mog_history.connect_callback(self.set_mog_history_len)
-        uniform_width.add_widget(self.mog_history.label)
-        self.console.layout().addWidget(self.mog_history)
-
-        # Reset button
-        self.reset_btn = QtWidgets.QPushButton('Reset MOG model')
-        self.reset_btn.clicked.connect(self.reset_mog_model)
-        self.console.layout().addWidget(self.reset_btn)
-
         # Spacer
         spacer = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
         self.console.layout().addItem(spacer)
 
     def set_calibration_mode(self, mode):
-        self.frame_view.rect_roi.set_calibration_mode(mode == 'Open')
+        mode_is_open = mode == 'Open'
+        self.frame_view.rect_roi.set_calibration_mode(mode_is_open)
+        self.x_dimension_length.setEnabled(mode_is_open)
+        self.y_dimension_length.setEnabled(mode_is_open)
 
     def reset_mog_model(self):
         self.call_routine(FreeswimTrackerRoutine.reset_mog_model)
