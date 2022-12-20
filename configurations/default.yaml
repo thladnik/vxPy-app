@@ -45,20 +45,20 @@ CONF_GUI_ADDONS:
   - vxpy.addons.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
 CONF_IO_DEVICES:
-  Dev1_virtual:
-    api: vxpy.devices.virtual_daq.VirtualDaqDevice
+  Dev2_arduino:
+    api: vxpy.devices.arduino_daq.ArduinoDaq
+    model: ArduinoNano
+    port: /dev/ttyUSB0
     pins:
-      sawtooth_analogin:
-        type: analog_in
       saccade_trigger_out:
         type: digital_out
-      rectangular_analogin:
-        type: analog_in
+        map: d:4:o
+      Ext_trigger01:
+        type: digital_in
+        map: d:10:i
 CONF_IO_MAX_SR: 1000
 CONF_IO_ROUTINES:
 - vxpy.routines.read_inputs.ReadAll
-- vxpy.routines.write_test_attributes.SinesAddedWhiteNoise
-- vxpy.routines.write_test_attributes.WriteRandoms
 CONF_WORKER_USE: true
 CONF_WORKER_ROUTINES:
 - vxpy.routines.calculate_csd.CalculatePSD

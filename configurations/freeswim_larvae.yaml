@@ -8,8 +8,8 @@ CONF_CAMERA_DEVICES:
     dtype: GRAY8
     width: 1920
     height: 1080
-    framerate: 115
-    exposure: 20.0
+    framerate: 20.0
+    exposure: 20000
     gain: 32.0
     preload_file: False
 CONF_CAMERA_ROUTINES:
