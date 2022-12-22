@@ -45,6 +45,15 @@ CONF_GUI_ADDONS:
   - vxpy.addons.io_core_widgets.DisplayPSD
 CONF_IO_USE: true
 CONF_IO_DEVICES:
+  Dev1_virtual:
+    api: vxpy.devices.virtual_daq.VirtualDaqDevice
+    pins:
+      on_off_1s_di:
+        signal: di
+        fun: on_off
+        args:
+          freq: 0.5
+          t_offset: 0.0
   Dev2_arduino:
     api: vxpy.devices.arduino_daq.ArduinoDaq
     model: ArduinoNano

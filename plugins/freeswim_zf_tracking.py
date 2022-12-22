@@ -169,7 +169,7 @@ class FrameView(pg.GraphicsLayoutWidget):
 
             # Update text
             mapped_pos = mapped_positions[i]
-            text.setPos(QtCore.QPoint(pos[0], pos[1]+rect_size[0]))
+            text.setPos(QtCore.QPoint(pos[0], pos[1] + rect_size[0]))
             text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')
 
 
@@ -225,8 +225,8 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.display_choice_cb = widgets.ComboBox(self)
         self.display_choice_cb.connect_callback(self.frame_view.set_attribute)
         self.display_choice_cb.add_items(['freeswim_tracked_zf_frame',
-                                       'freeswim_tracked_zf_filtered',
-                                       'freeswim_tracked_zf_binary'])
+                                          'freeswim_tracked_zf_filtered',
+                                          'freeswim_tracked_zf_binary'])
         self.display_choice = widgets.ParameterWidget('Display frame', self.display_choice_cb)
         uniform_width.add_widget(self.display_choice.label)
         self.console.layout().addWidget(self.display_choice)
@@ -350,9 +350,9 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
         width, height = camera.width, camera.height
 
-        vxattribute.ArrayAttribute('freeswim_tracked_zf_frame',
-                                   (width, height),
-                                   vxattribute.ArrayType.uint8)
+        vxattribute.VideoStreamAttribute(camera.frame_rate, 'freeswim_tracked_zf_frame',
+                                         (width, height),
+                                         vxattribute.ArrayType.uint8)
         vxattribute.ArrayAttribute('freeswim_tracked_zf_filtered',
                                    (width, height),
                                    vxattribute.ArrayType.uint8)
@@ -382,6 +382,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         register_with_plotter('freeswim_tracked_particle_count_total', axis='particle_count')
         register_with_plotter('freeswim_tracked_particle_count_filtered', axis='particle_count')
 
+        write_to_file(self, 'freeswim_tracked_zf_frame')
         write_to_file(self, 'freeswim_tracked_particle_rects')
         write_to_file(self, 'freeswim_tracked_particle_count_total')
         write_to_file(self, 'freeswim_tracked_particle_count_filtered')
