@@ -35,5 +35,5 @@ CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
-- ~*_frame
 - freeswim_tracked_particle*
+- freeswim_tracked_zf_frame
