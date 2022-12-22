@@ -41,6 +41,32 @@ class MiniTestProtocol(StaticProtocol):
             self.add_phase(p)
 
 
+class RepeatsTestProtocol(StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticProtocol.__init__(self, *args, **kwargs)
+
+        # Go through all 3 repeats
+        for r in range(3):
+            # Start repeat
+            self.start_repeat()
+
+            # Add phases in repeat
+            for i in range(3):
+                sp = 10 * 2 ** i
+                p = Phase(duration=4)
+                p.set_visual(SphericalBlackWhiteGrating,
+                             {SphericalBlackWhiteGrating.waveform: 'rectangular',
+                              SphericalBlackWhiteGrating.motion_axis: 'vertical',
+                              SphericalBlackWhiteGrating.motion_type: 'rotation',
+                              SphericalBlackWhiteGrating.angular_period: sp,
+                              SphericalBlackWhiteGrating.angular_velocity: 0})
+                self.add_phase(p)
+
+            # End repeat
+            self.end_repeat()
+
+
 class StaticGratings(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
