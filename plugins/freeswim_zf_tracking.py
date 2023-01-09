@@ -208,7 +208,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         # MOG history length
         self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
                                                    default=FreeswimTrackerRoutine.mog_history_len,
-                                                   limits=(1, 1000))
+                                                   limits=(1, 5000))
         self.mog_history.connect_callback(self.set_mog_history_len)
         uniform_width.add_widget(self.mog_history.label)
         self.console.layout().addWidget(self.mog_history)
@@ -226,6 +226,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.display_choice_cb.connect_callback(self.frame_view.set_attribute)
         self.display_choice_cb.add_items(['freeswim_tracked_zf_frame',
                                           'freeswim_tracked_zf_filtered',
+                                          'freeswim_tracked_zf_foreground',
                                           'freeswim_tracked_zf_binary'])
         self.display_choice = widgets.ParameterWidget('Display frame', self.display_choice_cb)
         uniform_width.add_widget(self.display_choice.label)
@@ -327,7 +328,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
     binary_thresh_val = 25
     min_area = 10
     filter_size = 31
-    mog_history_len = 100
+    mog_history_len = 3000
     calibration_rect_pos = np.array([0, 0])
     calibration_rect_size = np.array([1, 1])
     max_particle_num = 10
@@ -353,6 +354,9 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         vxattribute.VideoStreamAttribute(camera.frame_rate, 'freeswim_tracked_zf_frame',
                                          (width, height),
                                          vxattribute.ArrayType.uint8)
+        vxattribute.ArrayAttribute('freeswim_tracked_zf_foreground',
+                                   (width, height),
+                                   vxattribute.ArrayType.uint8)
         vxattribute.ArrayAttribute('freeswim_tracked_zf_filtered',
                                    (width, height),
                                    vxattribute.ArrayType.uint8)
@@ -391,7 +395,8 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
     @vxroutine.CameraRoutine.callback
     def reset_mog_model(self):
-        self._mog = cv2.createBackgroundSubtractorMOG2(int(self.mog_history_len), detectShadows=False)
+        # self._mog = cv2.createBackgroundSubtractorMOG2(int(self.mog_history_len), detectShadows=False)
+        self._mog = cv2.createBackgroundSubtractorKNN(int(self.mog_history_len), detectShadows=False)
 
     @vxroutine.CameraRoutine.callback
     def set_mog_history_len(self, value):
@@ -445,15 +450,16 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         frame = frame.T
         vxattribute.write_attribute('freeswim_tracked_zf_frame', frame)
 
-        # Calculate background distribution and foreground mask
-        foreground_mask = self._mog.apply(frame)
-
-        # Smooth mask
-        filtered_frame = cv2.GaussianBlur(foreground_mask, (self.filter_size,) * 2, cv2.BORDER_DEFAULT)
+        # Smooth frame
+        filtered_frame = cv2.GaussianBlur(frame, (self.filter_size,) * 2, cv2.BORDER_DEFAULT)
         vxattribute.write_attribute('freeswim_tracked_zf_filtered', filtered_frame)
 
+        # Calculate background distribution and foreground mask
+        foreground_mask = self._mog.apply(filtered_frame)
+        vxattribute.write_attribute('freeswim_tracked_zf_foreground', foreground_mask)
+
         # Apply threshold
-        _, thresh_frame = cv2.threshold(filtered_frame, self.binary_thresh_val, 255, cv2.THRESH_BINARY)
+        _, thresh_frame = cv2.threshold(foreground_mask, self.binary_thresh_val, 255, cv2.THRESH_BINARY)
         vxattribute.write_attribute('freeswim_tracked_zf_binary', thresh_frame)
 
         # Detect and filter contours
@@ -468,17 +474,18 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         vxattribute.write_attribute('freeswim_tracked_particle_count_total', len(contours))
 
         # Go through all contours now and filter them
+        print('---')
         if len(contours) > 0:
             i = 0
             for cnt in contours:
-
-                # Calculate moments
-                M = cv2.moments(cnt)
 
                 # Filter by particle area
                 area = cv2.contourArea(cnt)
                 if area < self.min_area:
                     continue
+
+                # Calculate moments
+                M = cv2.moments(cnt)
 
                 # Calculate centroid
                 centroid = np.array([int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])])
@@ -488,12 +495,23 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
                 # Crop rectangular ROI
                 rect = frame[centroid[1] - ydiff:centroid[1] + ydiff, centroid[0] - xdiff:centroid[0] + xdiff]
 
-                if rect.shape == self.rect_size:
-                    particle_rectangles.append(rect)
-                    particle_areas.append((area, i))
-                    particle_pixel_positions.append(c_rev)
-                    particle_mapped_positions.append(mapped_position)
-                    i += 1
+                # Skip if one dimension is empty
+                # if np.any(rect.shape == 0):
+                #     continue
+
+                # Fix rects overlapping source image boundary
+                if rect.shape != self.rect_size:
+                    print(rect.sum())
+                    right_rect = np.zeros(self.rect_size)
+                    right_rect[:rect.shape[0], :rect.shape[1]] = rect[:,:]
+                    rect = right_rect
+                    print(rect.sum())
+
+                particle_rectangles.append(rect)
+                particle_areas.append((area, i))
+                particle_pixel_positions.append(c_rev)
+                particle_mapped_positions.append(mapped_position)
+                i += 1
 
         vxattribute.write_attribute('freeswim_tracked_particle_count_filtered', len(particle_areas))
 
