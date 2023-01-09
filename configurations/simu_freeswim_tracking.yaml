@@ -1,14 +1,14 @@
-CONF_CALIBRATION_PATH: calibrations/default_spherical.yaml
+CONF_CALIBRATION_PATH: calibrations/freeswim_larvae_calib.yaml.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   multiple_fish_vertical_swim:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
-    data_source: HDF5
-    data_path: Multi_Fish_Vertical_Swim_10fps
+    data_source: AVI
+    data_path: samples/fish_freeswim_20_fps_1920x1080.avi
     preload_data: False
     width: 1920
     height: 1080
-    frame_rate: 30
+    frame_rate: 20
 CONF_CAMERA_ROUTINES:
 - plugins.freeswim_zf_tracking.FreeswimTrackerRoutine
 CONF_DISPLAY_USE: true
