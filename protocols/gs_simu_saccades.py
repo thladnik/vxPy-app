@@ -6,14 +6,15 @@ from vxpy.visuals import pause
 from visuals.sphere_simu_saccade import GaussianConvNoiseSphereSimuSaccade
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 from visuals.spherical_grating import SphericalBlackWhiteGrating
+from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash1000
 from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash2000
 from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash4000
 
 
-'''class SimuSaccadeWithSinesZeroFlicker(StaticPhasicProtocol):
+'''class SimuSaccadeWithSinesZeroFlicker(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):
 
@@ -31,10 +32,10 @@ from visuals.gs_saccadic_suppression import SimuSaccadeWithSineFlash4000
             self.add_phase(p)'''
 
 
-'''class SimuSaccadeWithSinesZeroSaccade(StaticPhasicProtocol):
+'''class SimuSaccadeWithSinesZeroSaccade(StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):
 
@@ -56,9 +57,9 @@ class SimuSaccadeWithSines(StaticProtocol):
 
     # Define parameters saccade size in degrees (0, -20, 20), sine flicker delay in ms (-500, 20, 100, 250, 500, 1000,
     # 2000, no flicker), flicker amplitude (35% oder 0%)
-    saccade_params = [(-20, -500, 0.35), (-20, 20, 0.35),(-20, 100, 0.35), (-20, 250, 0.35), (-20, 500, 0.35),
-                      (-20, 1000, 0.35), (-20, 2000, 0.35), (20, -500, 0.35), (20, 20, 0.35),(20, 100, 0.35),
-                      (20, 250, 0.35), (20, 500, 0.35), (20, 1000, 0.35), (20, 2000, 0.35), (0, 0, 0.35), (0, 0, 0.35),
+    saccade_params = [(-20, -500, 0.5), (-20, 20, 0.5),(-20, 100, 0.5), (-20, 250, 0.5), (-20, 500, 0.5),
+                      (-20, 1000, 0.5), (-20, 2000, 0.5), (20, -500, 0.5), (20, 20, 0.5),(20, 100, 0.5),
+                      (20, 250, 0.5), (20, 500, 0.5), (20, 1000, 0.5), (20, 2000, 0.5), (0, 0, 0.5), (0, 0, 0.5),
                       (-20, 500, 0), (-20, 500, 0), (20, 500, 0), (20, 500, 0)]
 
 
@@ -76,20 +77,21 @@ class SimuSaccadeWithSines(StaticProtocol):
         # Repeat paradigm twice for coarse and fine texture
         for i in range(2):
 
-            # Texture displacement saccade protocol for fine texture (4000 blobs)
+            # Texture displacement saccade protocol for fine texture (3000 blobs)
             for sacc_target, sine_delay, sine_amp in np.random.permutation(self.saccade_params):
+
                 p = Phase(duration=8)
                 sine_start = sine_delay + 1500
-                p.set_visual(SimuSaccadeWithSineFlash4000,
-                         {SimuSaccadeWithSineFlash4000.saccade_duration: 100,
-                          SimuSaccadeWithSineFlash4000.saccade_start_time: 1500,
-                          SimuSaccadeWithSineFlash4000.saccade_target_angle: sacc_target,
-                          SimuSaccadeWithSineFlash4000.sine_start_time: sine_start,
-                          SimuSaccadeWithSineFlash4000.sine_duration: 500,
-                          SimuSaccadeWithSineFlash4000.sine_amp: sine_amp,
-                          SimuSaccadeWithSineFlash4000.sine_freq: 15.0,
-                          SimuSaccadeWithSineFlash4000.baseline_lum: 0.5,
-                          SimuSaccadeWithSineFlash4000.contrast: 0.3})
+                p.set_visual(SimuSaccadeWithSineFlash3000,
+                         {SimuSaccadeWithSineFlash3000.saccade_duration: 100,
+                          SimuSaccadeWithSineFlash3000.saccade_start_time: 1500,
+                          SimuSaccadeWithSineFlash3000.saccade_target_angle: sacc_target,
+                          SimuSaccadeWithSineFlash3000.sine_start_time: sine_start,
+                          SimuSaccadeWithSineFlash3000.sine_duration: 500,
+                          SimuSaccadeWithSineFlash3000.sine_amp: sine_amp,
+                          SimuSaccadeWithSineFlash3000.sine_freq: 2,
+                          SimuSaccadeWithSineFlash3000.baseline_lum: 0.75,
+                          SimuSaccadeWithSineFlash3000.contrast: 0.5})
                 self.add_phase(p)
 
             # Texture displacement saccade protocol for coarse texture (2000 blobs)
@@ -104,10 +106,28 @@ class SimuSaccadeWithSines(StaticProtocol):
                           SimuSaccadeWithSineFlash2000.sine_start_time: sine_start,
                           SimuSaccadeWithSineFlash2000.sine_duration: 500,
                           SimuSaccadeWithSineFlash2000.sine_amp: sine_amp,
-                          SimuSaccadeWithSineFlash2000.sine_freq: 15.0,
-                          SimuSaccadeWithSineFlash2000.baseline_lum: 0.5,
-                          SimuSaccadeWithSineFlash2000.contrast: 0.3})
+                          SimuSaccadeWithSineFlash2000.sine_freq: 2,
+                          SimuSaccadeWithSineFlash2000.baseline_lum: 0.75,
+                          SimuSaccadeWithSineFlash2000.contrast: 0.5})
                 self.add_phase(p)
+
+            # Texture displacement saccade protocol for coarse texture (1000 blobs)
+            for sacc_target, sine_delay, sine_amp in np.random.permutation(self.saccade_params):
+
+                p = Phase(duration=8)
+                sine_start = sine_delay + 1500
+                p.set_visual(SimuSaccadeWithSineFlash1000,
+                         {SimuSaccadeWithSineFlash1000.saccade_duration: 100,
+                          SimuSaccadeWithSineFlash1000.saccade_start_time: 1500,
+                          SimuSaccadeWithSineFlash1000.saccade_target_angle: sacc_target,
+                          SimuSaccadeWithSineFlash1000.sine_start_time: sine_start,
+                          SimuSaccadeWithSineFlash1000.sine_duration: 500,
+                          SimuSaccadeWithSineFlash1000.sine_amp: sine_amp,
+                          SimuSaccadeWithSineFlash1000.sine_freq: 2,
+                          SimuSaccadeWithSineFlash1000.baseline_lum: 0.75,
+                          SimuSaccadeWithSineFlash1000.contrast: 0.5})
+                self.add_phase(p)
+
 
         # Blank at end of protocol
         p = Phase(duration=15)
@@ -115,7 +135,7 @@ class SimuSaccadeWithSines(StaticProtocol):
         self.add_phase(p)
 
 
-'''class Protocol01(StaticPhasicProtocol):
+'''class Protocol01(StaticProtocol):
     # Pre-2022-03-15 parameters:
     # saccade_params = [(1, -1, -150), (1, -1, 17), (1, -1, 50), (1, -1, 100), (1, -1, 250), (1, -1, 500), (1, -1, 2000),
     #                   (1, 1, -150), (1, 1, 17), (1, 1, 50), (1, 1, 100), (1, 1, 250), (1, 1, 500), (1, 1, 2000),
@@ -130,7 +150,7 @@ class SimuSaccadeWithSines(StaticProtocol):
                       (-1, 1, 2000), (0, -1, 2000), (0, 1, 2000), (1, 0, 0), (-1, 0, 0)]
 
     def __init__(self, *args, **kwargs):
-        StaticPhasicProtocol.__init__(self, *args, **kwargs)
+        StaticProtocol.__init__(self, *args, **kwargs)
 
         # Fix seed
         np.random.seed(1)

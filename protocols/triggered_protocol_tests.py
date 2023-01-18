@@ -22,6 +22,7 @@ import vxpy.core.protocol as vxprotocol
 from vxpy.visuals import pause
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
+from vxpy.routines.zf_tracking import EyePositionDetection
 
 
 class MiniTriggerProtocol(vxprotocol.TriggeredProtocol):
@@ -30,12 +31,12 @@ class MiniTriggerProtocol(vxprotocol.TriggeredProtocol):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
 
         # Set trigger that controls progression of this protocol
-        trigger = vxevent.RisingEdgeTrigger('test_poisson_p2Hz')
+        trigger = vxevent.RisingEdgeTrigger(EyePositionDetection.sacc_trigger_name)
         self.set_phase_trigger(trigger)
 
         for i in range(3):
             sp = 10 * 2 ** i
-            p = vxprotocol.Phase(duration=4)
+            p = vxprotocol.Phase(duration=10)
             p.set_visual(SphericalBlackWhiteGrating,
                          {SphericalBlackWhiteGrating.waveform: 'rectangular',
                           SphericalBlackWhiteGrating.motion_axis: 'vertical',

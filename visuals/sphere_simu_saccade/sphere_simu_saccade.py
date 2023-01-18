@@ -403,7 +403,7 @@ class TextureRotation4000(vxvisual.SphericalVisual):
         # Additional parameters
         lum_decrease = 0.2
         lum_increase = 0.2
-        texture_file = 'visuals/gs_flash_tests/stimulus_data/texture_brightness_0_1_4000_blobs.hdf5'
+        texture_file = 'visuals/gs_saccadic_suppression/stimulus_data/texture_brightness_0_1_4000_blobs.hdf5'
 
         # Set initial rotation matrix
         self.u_rotate = np.eye(4)

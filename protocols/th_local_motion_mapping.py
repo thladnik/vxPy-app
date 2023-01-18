@@ -130,5 +130,57 @@ class ProtocolLE(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
+class ProtocolRE20221223(vxprotocol.StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
+
+        period = 20
+        velocity = -30
+
+        sphere = IcosahedronSphere(2)
+        verts = sphere.get_vertices()
+        az, el = cart2sph1(*verts.T)
+        az = az / np.pi * 180
+        el = el / np.pi * 180
+
+        diameters = [5, 35]
+        selected = np.logical_and(az > -22.5, el <= (45 - min(diameters) / 2))
+        selected_az = az[selected]
+        selected_el = el[selected]
+
+        combos = []
+        for coords in zip(selected_az, selected_el):
+            # Skip 0/0, as that is a singularity
+            if coords[0] == 0.0 and coords[1] == 0.0:
+                continue
+
+            for dia in diameters:
+                combos.append((dia, *coords))
+
+        np.random.seed(1)
+        shuffled_combos = np.random.permutation(combos)
+
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
+        for i in range(2):
+            for size, az, el in shuffled_combos:
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, 0, az, el, size))
+                self.add_phase(p)
+
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, velocity, az, el, size))
+                self.add_phase(p)
+
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
+
 if __name__ == '__main__':
-    p = Protocol01()
+    pass

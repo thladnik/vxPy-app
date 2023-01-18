@@ -9,8 +9,8 @@ CONF_CAMERA_DEVICES:
     width: 640
     height: 480
     framerate: 60
-    exposure: 15.0
-    gain: 800
+    exposure: 6.5
+    gain: 750
   faraday_control_cam:
     api: vxpy.devices.camera.tis_linux_gst
     serial: 7610475
@@ -47,7 +47,7 @@ CONF_IO_DEVICES:
   Dev1:
     type: arduino
     model: ArduinoBoard
-    port: /dev/ttyACM0
+    port: /dev/ttyACM1
 CONF_IO_ROUTINES:
 - vxpy.routines.read_inputs.ReadAll
 CONF_WORKER_USE: false
