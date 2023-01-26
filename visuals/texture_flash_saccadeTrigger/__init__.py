@@ -1,0 +1,2 @@
+from .saccade_flash_saccadeTrigger import SaccadeFlash_SaccadeTriggerStimulation4000, SaccadeFlash_SaccadeTriggerStimulation2000
+# need additional initiation of flash_no_saccade????ß
