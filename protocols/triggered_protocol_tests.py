@@ -15,17 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import numpy as np
-
 import vxpy.core.event as vxevent
 import vxpy.core.protocol as vxprotocol
-from vxpy.visuals import pause
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 from vxpy.routines.zf_tracking import EyePositionDetection
 
 
-class MiniTriggerProtocol(vxprotocol.TriggeredProtocol):
+class TriggeredGratingProtocol(vxprotocol.TriggeredProtocol):
 
     def __init__(self, *args, **kwargs):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
@@ -34,8 +31,9 @@ class MiniTriggerProtocol(vxprotocol.TriggeredProtocol):
         trigger = vxevent.RisingEdgeTrigger(EyePositionDetection.sacc_trigger_name)
         self.set_phase_trigger(trigger)
 
+        # Add spherical gratings with varying spatial period
         for i in range(3):
-            sp = 10 * 2 ** i
+            sp = 15 * 2 ** i
             p = vxprotocol.Phase(duration=10)
             p.set_visual(SphericalBlackWhiteGrating,
                          {SphericalBlackWhiteGrating.waveform: 'rectangular',

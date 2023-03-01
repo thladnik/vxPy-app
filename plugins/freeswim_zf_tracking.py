@@ -24,11 +24,9 @@ from PySide6 import QtWidgets, QtGui, QtCore
 from PySide6.QtWidgets import QLabel
 
 from vxpy import config
-from vxpy.core.ui import register_with_plotter
-from vxpy.api.attribute import write_to_file
 import vxpy.core.attribute as vxattribute
 import vxpy.core.devices.camera as vxcamera
-import vxpy.core.ui as vxgui
+import vxpy.core.ui as vxui
 import vxpy.core.ipc as vxipc
 import vxpy.core.routine as vxroutine
 from vxpy.definitions import *
@@ -173,17 +171,17 @@ class FrameView(pg.GraphicsLayoutWidget):
             text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')
 
 
-class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
+class FreeswimTrackerWidget(vxui.CameraAddonWidget):
     display_name = 'FreeswimTracker'
 
     def __init__(self, *args, **kwargs):
-        vxgui.AddonWidget.__init__(self, *args, **kwargs)
-        self.setLayout(QtWidgets.QHBoxLayout())
+        vxui.CameraAddonWidget.__init__(self, *args, **kwargs)
+        self.central_widget.setLayout(QtWidgets.QHBoxLayout())
 
         # Add plots
         self.plots = QtWidgets.QWidget(self)
         self.plots.setLayout(QtWidgets.QVBoxLayout())
-        self.layout().addWidget(self.plots)
+        self.central_widget.layout().addWidget(self.plots)
         # Frame
         self.frame_view = FrameView(self)
         self.frame_view.rect_roi.sigRegionChangeFinished.connect(self._update_calibration_roi_parameters)
@@ -198,7 +196,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         self.console = QtWidgets.QWidget(self)
         self.console.setLayout(QtWidgets.QVBoxLayout())
         self.console.setMaximumWidth(300)
-        self.layout().addWidget(self.console)
+        self.central_widget.layout().addWidget(self.console)
 
         # Uniform width for labels (make it pretty)
         uniform_width = widgets.UniformWidth()
@@ -383,15 +381,15 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
     def initialize(self):
 
-        register_with_plotter('freeswim_tracked_particle_count_total', axis='particle_count')
-        register_with_plotter('freeswim_tracked_particle_count_filtered', axis='particle_count')
+        vxui.register_with_plotter('freeswim_tracked_particle_count_total', axis='particle_count')
+        vxui.register_with_plotter('freeswim_tracked_particle_count_filtered', axis='particle_count')
 
-        write_to_file(self, 'freeswim_tracked_zf_frame')
-        write_to_file(self, 'freeswim_tracked_particle_rects')
-        write_to_file(self, 'freeswim_tracked_particle_count_total')
-        write_to_file(self, 'freeswim_tracked_particle_count_filtered')
-        write_to_file(self, 'freeswim_tracked_particle_pixel_position')
-        write_to_file(self, 'freeswim_tracked_particle_mapped_position')
+        vxattribute.write_to_file(self, 'freeswim_tracked_zf_frame')
+        vxattribute.write_to_file(self, 'freeswim_tracked_particle_rects')
+        vxattribute.write_to_file(self, 'freeswim_tracked_particle_count_total')
+        vxattribute.write_to_file(self, 'freeswim_tracked_particle_count_filtered')
+        vxattribute.write_to_file(self, 'freeswim_tracked_particle_pixel_position')
+        vxattribute.write_to_file(self, 'freeswim_tracked_particle_mapped_position')
 
     @vxroutine.CameraRoutine.callback
     def reset_mog_model(self):
