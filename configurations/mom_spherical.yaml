@@ -1,16 +1,27 @@
-CONF_CALIBRATION_PATH: calibrations/mom_spherical.yaml
-CONF_CAMERA_USE: true
-CONF_CAMERA_DEVICES:
-  fish_embedded:
+CALIBRATION_PATH: calibrations/mom_spherical.yaml
+CAMERA_USE: true
+CAMERA_DEVICES:
+  fish_asdembedded:
     api: vxpy.devices.camera.basler_pylon.BaslerCamera
     serial: 40279452
     model: a2A1920-160umBAS
-    width: 1920
-    height: 1080
+    width: 1936
+    height: 1216
     frame_rate: 80
-    exposure: 10000
-    gain: 16.0
-  basler_test:
+    basler_props:
+      ReverseX: False
+      ReverseY: False
+      BinningHorizontalMode: Average
+      BinningHorizontal: 1
+      BinningVerticalMode: Average
+      BinningVertical: 1
+      OffsetX: 0
+      OffsetY: 0
+      GainAuto: Off
+      Gain: 20
+      ExposureAuto: Off
+      ExposureTime: 10000
+  fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: HDF5
     data_path: Single_Fish_Spontaneous_1_115fps
@@ -31,12 +42,12 @@ GUI_ADDONS:
   vxpy.addons.zf_tracking_widgets.EyePositionDetector: {}
   vxpy.addons.frames_widgets.FrameStream: {}
   vxpy.addons.display_widgets.VisualInteractor:
-    detached: True
+    detached: Truedispl
     preferred_size: [600, 400]
     preferred_pos: [1200, 400]
-CONF_IO_USE: true
-CONF_IO_MAX_SR: 200
-CONF_IO_DEVICES:
+IO_USE: true
+IO_MAX_SR: 200
+IO_DEVICES:
   Dev1_arduino_uno:
     api: vxpy.devices.arduino_daq.ArduinoDaq
     model: Arduino
@@ -45,7 +56,6 @@ CONF_IO_DEVICES:
       y_mirror_in:
         type: analog_in
         map: a:2:i
-IO_MAX_SR: 1000
 WORKER_USE: true
 REC_ENABLE: true
 REC_OUTPUT_FOLDER: ./recordings/
