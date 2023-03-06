@@ -14,8 +14,8 @@ class RealSaccadeTriggered_Fine(vxprotocol.TriggeredProtocol):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
 
         # set parameters (phases saccade triggered)
-        flash_conditions_list = [0.02, 0.1, 0.25, 0.5, 1, 2, 4, -1] # -1 for flash whithout saccade (wie oft soll das gezeigt werden?)
-        flash_conditions_numIter = 4  # eigentlich 4 -> da links und rechts oder noch mehr
+        flash_conditions_list = [0.02, 0.1, 0.25, 0.5, 1, 2, 4, -1, 6.5, 6.5] # -1 for flash whithout saccade (wie oft soll das gezeigt werden?)
+        flash_conditions_numIter = 1  # eigentlich 4 -> da links und rechts oder noch mehr
 
         flash_conditions_fullList = np.repeat(flash_conditions_list, flash_conditions_numIter)  # np.array with all iterations of stimulus conditions
         np.random.seed(0)  # fix seed
@@ -45,7 +45,7 @@ class RealSaccadeTriggered_Fine(vxprotocol.TriggeredProtocol):
         # loop through flash-presentations (phases)
         for delay in flash_conditions_shuffeled:
             # if first delay -> duration = 30s
-            p = vxprotocol.Phase(duration=6)
+            p = vxprotocol.Phase(duration=8)
             params = {SaccadeFlash_SaccadeTriggerStimulation4000.base_luminance: 0.75,
                       SaccadeFlash_SaccadeTriggerStimulation4000.flash_delay: delay,
                       SaccadeFlash_SaccadeTriggerStimulation4000.flash_duration: 0.5,
@@ -69,8 +69,8 @@ class RealSaccadeTriggered_Coarse(vxprotocol.TriggeredProtocol):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
 
         # set parameters (phases saccade triggered)
-        flash_conditions_list = [0.02, 0.1, 0.25, 0.5, 1, 2, 4, -1] # -1 for flash whithout saccade (wie oft soll das gezeigt werden?)
-        flash_conditions_numIter = 4  # eigentlich 4 -> da links und rechts oder noch mehr
+        flash_conditions_list = [0.02, 0.1, 0.25, 0.5, 1, 2, 4, -1, 6.5, 6.5] # -1 for flash whithout saccade (wie oft soll das gezeigt werden?)
+        flash_conditions_numIter = 1  # eigentlich 4 -> da links und rechts oder noch mehr
 
         flash_conditions_fullList = np.repeat(flash_conditions_list, flash_conditions_numIter)  # np.array with all iterations of stimulus conditions
         np.random.seed(0)  # fix seed
@@ -100,7 +100,7 @@ class RealSaccadeTriggered_Coarse(vxprotocol.TriggeredProtocol):
         # loop through flash-presentations (phases)
         for delay in flash_conditions_shuffeled:
             # if first delay -> duration = 30s
-            p = vxprotocol.Phase(duration=6)
+            p = vxprotocol.Phase(duration=8)
             params = {SaccadeFlash_SaccadeTriggerStimulation2000.base_luminance: 0.75,
                       SaccadeFlash_SaccadeTriggerStimulation2000.flash_delay: delay,
                       SaccadeFlash_SaccadeTriggerStimulation2000.flash_duration: 0.5,

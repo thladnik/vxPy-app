@@ -82,16 +82,16 @@ class SimuSaccadeWithSines(StaticProtocol):
 
                 p = Phase(duration=8)
                 sine_start = sine_delay + 1500
-                p.set_visual(SimuSaccadeWithSineFlash3000,
-                         {SimuSaccadeWithSineFlash3000.saccade_duration: 100,
-                          SimuSaccadeWithSineFlash3000.saccade_start_time: 1500,
-                          SimuSaccadeWithSineFlash3000.saccade_target_angle: sacc_target,
-                          SimuSaccadeWithSineFlash3000.sine_start_time: sine_start,
-                          SimuSaccadeWithSineFlash3000.sine_duration: 500,
-                          SimuSaccadeWithSineFlash3000.sine_amp: sine_amp,
-                          SimuSaccadeWithSineFlash3000.sine_freq: 2,
-                          SimuSaccadeWithSineFlash3000.baseline_lum: 0.75,
-                          SimuSaccadeWithSineFlash3000.contrast: 0.5})
+                p.set_visual(SimuSaccadeWithSineFlash4000,
+                         {SimuSaccadeWithSineFlash4000.saccade_duration: 100,
+                          SimuSaccadeWithSineFlash4000.saccade_start_time: 1500,
+                          SimuSaccadeWithSineFlash4000.saccade_target_angle: sacc_target,
+                          SimuSaccadeWithSineFlash4000.sine_start_time: sine_start,
+                          SimuSaccadeWithSineFlash4000.sine_duration: 500,
+                          SimuSaccadeWithSineFlash4000.sine_amp: sine_amp,
+                          SimuSaccadeWithSineFlash4000.sine_freq: 2,
+                          SimuSaccadeWithSineFlash4000.baseline_lum: 0.75,
+                          SimuSaccadeWithSineFlash4000.contrast: 0.5})
                 self.add_phase(p)
 
             # Texture displacement saccade protocol for coarse texture (2000 blobs)
