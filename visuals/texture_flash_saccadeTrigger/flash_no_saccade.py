@@ -8,7 +8,7 @@ from vispy.geometry import create_sphere
 # vxpy stuff
 from vxpy.core import visual as vxvisual
 import vxpy.core.event as vxevent
-from vxpy.routines.zf_tracking import EyePositionDetection
+from vxpy.plugins.zf_eyeposition_tracking import EyePositionDetectionRoutine
 import vxpy.core.ipc as vxipc
 
 class SaccadeFlash_Flash_without_saccade(vxvisual.SphericalVisual):
@@ -56,7 +56,7 @@ class SaccadeFlash_Flash_without_saccade(vxvisual.SphericalVisual):
         self.flash_cos_amplitude.connect(self.progam)
         self.flash_cos_freq.connect(self.progam)
 
-        self.saccade_trigger = vxevent.OnTrigger(EyePositionDetection.sacc_trigger_name)
+        self.saccade_trigger = vxevent.OnTrigger(EyePositionDetectionRoutine.sacc_trigger_name)
 
         self.flash_start = None
         self.luminance_overTime.data = 1

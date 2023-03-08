@@ -19,7 +19,7 @@ import vxpy.core.event as vxevent
 import vxpy.core.protocol as vxprotocol
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
-from vxpy.routines.zf_tracking import EyePositionDetection
+from vxpy.plugins.zf_eyeposition_tracking import EyePositionDetectionRoutine
 
 
 class TriggeredGratingProtocol(vxprotocol.TriggeredProtocol):
@@ -28,7 +28,7 @@ class TriggeredGratingProtocol(vxprotocol.TriggeredProtocol):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
 
         # Set trigger that controls progression of this protocol
-        trigger = vxevent.RisingEdgeTrigger(EyePositionDetection.sacc_trigger_name)
+        trigger = vxevent.RisingEdgeTrigger(EyePositionDetectionRoutine.sacc_trigger_name)
         self.set_phase_trigger(trigger)
 
         # Add spherical gratings with varying spatial period
