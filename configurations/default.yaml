@@ -27,7 +27,7 @@ CAMERA_DEVICES:
     frame_rate: 20
 ROUTINES:
   vxpy.routines.camera_capture.Frames: {}
-  vxpy.routines.zf_tracking.EyePositionDetection: {roi_maxnum: 1, min_size: 45}
+  vxpy.plugins.zf_eyeposition_tracking.EyePositionDetectionRoutine: {roi_maxnum: 1, min_size: 45}
   vxpy.routines.display_capture.Frames: {}
   vxpy.routines.display_capture.Parameters: {}
   vxpy.routines.calculate_csd.CalculatePSD: {}
@@ -38,13 +38,13 @@ GUI_REFRESH: 30
 GUI_FPS: 20
 GUI_SCREEN: 0
 GUI_ADDONS:
-  vxpy.addons.frames_widgets.FrameStream: {}
-  vxpy.addons.zf_tracking_widgets.EyePositionDetector: {}
-  vxpy.addons.display_widgets.VisualInteractor:
+  vxpy.plugins.frames_widgets.FrameStream: {}
+  vxpy.plugins.zf_eyeposition_tracking.EyePositionDetectionAddon: {}
+  vxpy.plugins.display_widgets.VisualInteractor:
     detached: True
     preferred_size: [600, 400]
     preferred_pos: [1200, 400]
-  vxpy.addons.io_core_widgets.DisplayPSD: {}
+  vxpy.plugins.io_core_widgets.DisplayPSD: {}
 IO_USE: true
 IO_DEVICES:
   Dev1_virtual:
