@@ -15,23 +15,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
-import numpy as np
-
-from vxpy.core.protocol import StaticProtocol, Phase
-from vxpy.visuals import pause
+import vxpy.core.protocol as vxprotocol
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 
 
-class MiniTestProtocol(StaticProtocol):
+class GratingProtocol(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
-        mylist = [2, 0.5, 0.2]
+        # Add spherical gratings with varying spatial period
         for i in range(3):
-            sp = 10 * 2 ** i
-            p = Phase(duration=4)
+            sp = 15 * 2 ** i
+            p = vxprotocol.Phase(duration=10)
             p.set_visual(SphericalBlackWhiteGrating,
                          {SphericalBlackWhiteGrating.waveform: 'rectangular',
                           SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -41,10 +38,10 @@ class MiniTestProtocol(StaticProtocol):
             self.add_phase(p)
 
 
-class RepeatsTestProtocol(StaticProtocol):
+class RepeatsTestProtocol(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         # Go through all 3 repeats
         for r in range(3):
@@ -54,7 +51,7 @@ class RepeatsTestProtocol(StaticProtocol):
             # Add phases in repeat
             for i in range(3):
                 sp = 10 * 2 ** i
-                p = Phase(duration=4)
+                p = vxprotocol.Phase(duration=4)
                 p.set_visual(SphericalBlackWhiteGrating,
                              {SphericalBlackWhiteGrating.waveform: 'rectangular',
                               SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -67,14 +64,14 @@ class RepeatsTestProtocol(StaticProtocol):
             self.end_repeat()
 
 
-class StaticGratings(StaticProtocol):
+class StaticGratings(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):
             sp = 10 * 2 ** i
-            p = Phase(4)
+            p = vxprotocol.Phase(4)
             p.set_visual(SphericalBlackWhiteGrating,
                          {SphericalBlackWhiteGrating.waveform: 'rectangular',
                           SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -84,10 +81,10 @@ class StaticGratings(StaticProtocol):
             self.add_phase(p)
 
 
-class MovingGratings(StaticProtocol):
+class MovingGratings(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
-        StaticProtocol.__init__(self, *args, **kwargs)
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         mov_duration = 3
 
@@ -96,7 +93,7 @@ class MovingGratings(StaticProtocol):
             for j in range(5):
                 v = (j + 1) * sp / mov_duration
 
-                p = Phase(2)
+                p = vxprotocol.Phase(2)
                 p.set_visual(SphericalBlackWhiteGrating,
                              {SphericalBlackWhiteGrating.waveform: 'rectangular',
                               SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -105,7 +102,7 @@ class MovingGratings(StaticProtocol):
                               SphericalBlackWhiteGrating.angular_velocity: 0})
                 self.add_phase(p)
 
-                p = Phase(mov_duration)
+                p = vxprotocol.Phase(mov_duration)
                 p.set_visual(SphericalBlackWhiteGrating,
                              {SphericalBlackWhiteGrating.waveform: 'rectangular',
                               SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -114,7 +111,7 @@ class MovingGratings(StaticProtocol):
                               SphericalBlackWhiteGrating.angular_velocity: v})
                 self.add_phase(p)
 
-                p = Phase(mov_duration)
+                p = vxprotocol.Phase(mov_duration)
                 p.set_visual(SphericalBlackWhiteGrating,
                              {SphericalBlackWhiteGrating.waveform: 'rectangular',
                               SphericalBlackWhiteGrating.motion_axis: 'vertical',
@@ -124,7 +121,4 @@ class MovingGratings(StaticProtocol):
                 self.add_phase(p)
 
                 self.keep_last_frame_for(2)
-
-        p = Phase(2, visual=pause.ClearBlack)
-        self.add_phase(p)
 

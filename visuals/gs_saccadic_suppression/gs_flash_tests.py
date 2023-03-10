@@ -1,6 +1,7 @@
 from __future__ import annotations
 import h5py
 import numpy as np
+import scipy.io
 from vispy import gloo
 from vispy.util import transforms
 
@@ -14,6 +15,59 @@ def _import_texture_from_hdf(texture_file):
         intensity = f['intensity'][:]
 
     return vertices, indices, intensity
+
+# def _convert_mat_texture_to_hdf(path: str):
+#     # Load model data
+#     d = scipy.io.loadmat(path)
+#     x, y, z = d['grid']['x'][0][0], \
+#               d['grid']['y'][0][0], \
+#               d['grid']['z'][0][0]
+#
+#     vertices = np.array([x.flatten(), y.flatten(), z.flatten()]).T
+#
+#     idcs = list()
+#     azim_lvls = x.shape[1]
+#     elev_lvls = x.shape[0]
+#     for i in np.arange(elev_lvls):
+#         for j in np.arange(azim_lvls):
+#             idcs.append([i * azim_lvls + j, i * azim_lvls + j + 1, (i + 1) * azim_lvls + j + 1])
+#             idcs.append([i * azim_lvls + j, (i + 1) * azim_lvls + j, (i + 1) * azim_lvls + j + 1])
+#
+#     indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
+#     indices = indices[indices < azim_lvls * elev_lvls]
+#
+#     return
+
+
+def _convert_mat_texture_to_hdf(mat_path: str, hdf_path: str):
+    d = scipy.io.loadmat(mat_path)
+    x, y, z = d['grid']['x'][0][0], \
+              d['grid']['y'][0][0], \
+              d['grid']['z'][0][0]
+
+    # az, el = d['grid']['azim'][0][0].flatten(), \
+    #          d['grid']['elev'][0][0].flatten()
+
+    v = np.array([x.flatten(), y.flatten(), z.flatten()])
+    vertices = np.ascontiguousarray(v.T, dtype=np.float32)
+
+    idcs = list()
+    azim_lvls = x.shape[1]
+    elev_lvls = x.shape[0]
+    for i in np.arange(elev_lvls):
+        for j in np.arange(azim_lvls):
+            idcs.append([i * azim_lvls + j, i * azim_lvls + j + 1, (i + 1) * azim_lvls + j + 1])
+            idcs.append([i * azim_lvls + j, (i + 1) * azim_lvls + j, (i + 1) * azim_lvls + j + 1])
+    indices = np.ascontiguousarray(np.array(idcs).flatten(), dtype=np.uint32)
+    indices = indices[indices < azim_lvls * elev_lvls]
+
+    states = np.ascontiguousarray(d['totalintensity'].flatten(), dtype=np.float32)
+
+    with h5py.File(hdf_path, 'w') as f:
+        f.create_dataset('vertices', data=vertices)
+        f.create_dataset('indices', data=indices)
+        f.create_dataset('intensity', data=states)
+
 
 
 class TextureModulateContrLum(vxvisual.SphericalVisual):

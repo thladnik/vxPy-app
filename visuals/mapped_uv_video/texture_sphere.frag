@@ -1,10 +1,10 @@
-#version 460
+#version 410
 
 uniform sampler2D video_texture;
 
 // Input
-varying vec3 v_position;
-varying vec2 v_texture_coord;
+in vec3 v_position;
+in vec2 v_texture_coord;
 
 // Main
 void main() {
