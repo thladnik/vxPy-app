@@ -1,17 +1,17 @@
-CONF_CALIBRATION_PATH: calibrations/freeswim_larvae_calib.yaml
+CONF_CALIBRATION_PATH: calibrations/freeswim_tracking.yaml
 CONF_CAMERA_USE: true
 CONF_CAMERA_DEVICES:
   multiple_fish_vertical_swim:
-    api: vxpy.devices.camera.basler_pylon
+    api: vxpy.devices.camera.basler_pylon.BaslerCamera
     serial: 40112359
     model: a2A3840-45umPRO
-    dtype: GRAY8
-    width: 1920
-    height: 1080
-    framerate: 20.0
-    exposure: 20000
-    gain: 32.0
-    preload_file: False
+    dtype: Mono8
+    width: 3860
+    height: 2178
+    binning_mode: average
+    frame_rate: 20
+    exposure: 40000
+    gain: 14.0
 CONF_CAMERA_ROUTINES:
 - vxpy.routines.camera_capture.Frames
 - plugins.freeswim_zf_tracking.FreeswimTrackerRoutine
@@ -37,8 +37,5 @@ CONF_WORKER_ROUTINES:
 CONF_REC_ENABLE: true
 CONF_REC_OUTPUT_FOLDER: recordings
 CONF_REC_ATTRIBUTES:
-- var_param*
-- eyepos_*
-- ~*_frame
-- test_sines_whitenoise
-- sawtooth_analogin
+- freeswim_tracked_particle*
+- freeswim_tracked_zf_frame
