@@ -69,11 +69,14 @@ class RoiView(pg.GraphicsLayoutWidget):
 class Roi(pg.RectROI):
     def __init__(self):
         self.default_pen = pg.mkPen(color='darkgreen', width=4)
+
+        frame_attr = vxattribute.get_attribute('freeswim_tracked_zf_frame')
+
         pg.RectROI.__init__(self, FreeswimTrackerRoutine.calibration_rect_pos,
                             [100, 100], sideScalers=True,
                             pen=self.default_pen, hoverPen=self.default_pen,
                             handlePen=self.default_pen, handleHoverPen=self.default_pen,
-                            maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
+                            maxBounds=QtCore.QRectF(0, 0, *frame_attr.shape[:2]))
 
         self.active_calibration = False
 
@@ -208,7 +211,7 @@ class FreeswimTrackerWidget(vxgui.CameraAddonWidget):
         # MOG history length
         self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
                                                    default=FreeswimTrackerRoutine.mog_history_len,
-                                                   limits=(1, 1000))
+                                                   limits=(500, 5000))
         self.mog_history.connect_callback(self.set_mog_history_len)
         uniform_width.add_widget(self.mog_history.label)
         self.console.layout().addWidget(self.mog_history)
@@ -327,7 +330,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
     binary_thresh_val = 25
     min_area = 10
     filter_size = 31
-    mog_history_len = 100
+    mog_history_len = 2000
     calibration_rect_pos = np.array([0, 0])
     calibration_rect_size = np.array([1, 1])
     max_particle_num = 10
