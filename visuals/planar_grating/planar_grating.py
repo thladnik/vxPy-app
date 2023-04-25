@@ -1,19 +1,7 @@
-"""
-vxpy ./visuals/planar/grating.py
-Copyright (C) 2020 Tim Hladnik
+# -*- coding: utf-8 -*-
+"""Collection of grating stimuli
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 from vispy import gloo
 
@@ -23,6 +11,8 @@ import vxpy.core.visual as vxvisual
 
 
 class BlackAndWhiteGrating(PlanarVisual):
+    """Display a black and white grating stimulus on a planar surface
+    """
     # (optional) Add a short description
     description = 'Black und white contrast grating stimulus'
 
@@ -52,6 +42,10 @@ class BlackAndWhiteGrating(PlanarVisual):
         frag = self.load_shader('./planar_grating.frag')
         self.grating = gloo.Program(vert, frag)
 
+        # Set positions with vertex buffer
+        self.grating['a_position'] = self.position_buffer
+
+        # Connect
         self.time.connect(self.grating)
         self.waveform.connect(self.grating)
         self.direction.connect(self.grating)
@@ -59,11 +53,8 @@ class BlackAndWhiteGrating(PlanarVisual):
         self.spatial_period.connect(self.grating)
 
     def initialize(self, *args, **kwargs):
-        # Reset u_time to 0 on each visual initialization
+        # Reset time to 0.0 on each visual initialization
         self.time.data = 0.0
-
-        # Set positions with vertex buffer
-        self.grating['a_position'] = self.position_buffer
 
     def render(self, dt):
         # Add elapsed time to u_time
