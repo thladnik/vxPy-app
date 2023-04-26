@@ -1,7 +1,7 @@
 CALIBRATION_PATH: calibrations/mom_spherical.yaml
 CAMERA_USE: true
 CAMERA_DEVICES:
-  fish_asdembedded:
+  fish_embedded:
     api: vxpy.devices.camera.basler_pylon.BaslerCamera
     serial: 40279452
     model: a2A1920-160umBAS
@@ -21,7 +21,7 @@ CAMERA_DEVICES:
       Gain: 20
       ExposureAuto: Off
       ExposureTime: 10000
-  fish_embedded:
+  fish_asdembedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: HDF5
     data_path: Single_Fish_Spontaneous_1_115fps
@@ -46,12 +46,12 @@ GUI_ADDONS:
     preferred_size: [600, 400]
     preferred_pos: [1200, 400]
 IO_USE: true
-IO_MAX_SR: 200
+IO_MAX_SR: 2000
 IO_DEVICES:
   Dev1_arduino_uno:
     api: vxpy.devices.arduino_daq.ArduinoDaq
     model: Arduino
-    port: /dev/ttyACM1
+    port: /dev/ttyACM2
     pins:
       y_mirror_in:
         type: analog_in
