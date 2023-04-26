@@ -28,7 +28,7 @@ class RealSaccadeTriggered_Fine(vxprotocol.TriggeredProtocol):
 
         # delay für 1. phase
         # 30 seconds just texture (no flash)
-        p = vxprotocol.Phase(duration=30)
+        p = vxprotocol.Phase(duration=10)
         p.set_visual(SimuSaccadeWithSineFlash4000,
                      {SimuSaccadeWithSineFlash4000.saccade_duration: 100,
                       SimuSaccadeWithSineFlash4000.saccade_start_time: 1500,
@@ -83,7 +83,7 @@ class RealSaccadeTriggered_Coarse(vxprotocol.TriggeredProtocol):
 
         # delay für 1. phase
         # 30 seconds just texture (no flash)
-        p = vxprotocol.Phase(duration=30)
+        p = vxprotocol.Phase(duration=10)
         p.set_visual(SimuSaccadeWithSineFlash2000,
                      {SimuSaccadeWithSineFlash2000.saccade_duration: 100,
                       SimuSaccadeWithSineFlash2000.saccade_start_time: 1500,
