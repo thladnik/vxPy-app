@@ -107,7 +107,6 @@ class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):
     motion_axis = MotionAxis('motion_axis', static=True)
     angular_velocity = vxvisual.FloatParameter('angular_velocity', default=30, limits=(-180, 180), step_size=5, static=True)
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
-    test123 = vxvisual.FloatParameter('test123', internal=True)
 
     # Paths to shaders
     VERT_PATH = './spherical_grating.vert'
@@ -146,8 +145,6 @@ class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
-
-        self.test123.data = self.angular_period.data[0]
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)

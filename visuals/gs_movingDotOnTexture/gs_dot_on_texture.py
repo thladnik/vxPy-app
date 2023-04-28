@@ -164,15 +164,16 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
         start_ang = self.dot_start_angle.data[0]
         ang_vel = self.dot_angular_velocity.data[0]
         dot_offset = self.dot_offset_angle.data[0]
+        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
 
         t_switch = 500
         t_stop = 1500
         if time < t_switch:
-            dot_azim = start_ang + (time / 1000) * ang_vel / 180.0 * np.pi
+            dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
         elif t_switch < time < t_stop:
-            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi) - \
+            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
                        ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
@@ -267,15 +268,16 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
         start_ang = self.dot_start_angle.data[0]
         ang_vel = self.dot_angular_velocity.data[0]
         dot_offset = self.dot_offset_angle.data[0]
+        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
 
         t_switch = 500
         t_stop = 1500
         if time < t_switch:
-            dot_azim = start_ang + (time / 1000) * ang_vel / 180.0 * np.pi
+            dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
         elif t_switch < time < t_stop:
-            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi) - \
+            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
                        ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
@@ -285,3 +287,4 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.rotating_dot.draw('triangles', indices=self.index_buffer)
+
