@@ -32,6 +32,7 @@ ROUTINES:
   vxpy.routines.calculate_csd.CalculatePSD: {}
 DISPLAY_USE: true
 DISPLAY_FPS: 60
+DISPLAY_TRANSFORM: PlanarTransform
 GUI_USE: true
 GUI_REFRESH: 30
 GUI_FPS: 20
@@ -72,6 +73,10 @@ WORKER_USE: true
 REC_ENABLE: true
 REC_OUTPUT_FOLDER: ./recordings/
 REC_ATTRIBUTES:
+  ai*: {}
+  ao*: {}
+  di*: {}
+  do*: {}
   eyepos_*: {}
   fish_embedded_frame: {videoformat: avi, codec: xvid}
   display_frame: {videoformat: mpeg, codec: h265, bitrate: 5000}
