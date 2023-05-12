@@ -90,8 +90,8 @@ class TextureDisplacementMovingDot(StaticProtocol):
         dot_offset = 10
 
         # experimental conditions, (sacc_target, delay)
-        conditions = [(-30, 100), (-30, 250), (-30, 500), (-30, 1000), (-30, 3000), (-30, 4000),
-                      (30, 100), (30, 250), (30, 500), (30, 1000), (30, 3000), (30, 4000), (0, 500), (0, 500)]
+        conditions = [(-30, 100), (-30, 250), (-30, 500), (-30, 1000), (-30, 2000), (-30, 4000),
+                      (30, 100), (30, 250), (30, 500), (30, 1000), (30, 2000), (30, 4000), (0, 500), (0, 500)]
 
         # 4 repeats af all delay conditions coarse and fine alternating
         for i in range(4):
