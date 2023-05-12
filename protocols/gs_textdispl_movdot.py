@@ -117,7 +117,7 @@ class TextureDisplacementMovingDot(StaticProtocol):
 
             # 10 seconds just texture (fine)
             p = Phase(duration=5)
-            p.set_visual(SimuSaccadeWithSineFlash4000, saccade4000(sacc_duration, sacc_start, 0, sine_delay, sine_dur,
+            p.set_visual(SimuSaccadeWithSineFlash4000, saccade4000(sacc_duration, sacc_start, 0, 500, sine_dur,
                                                                    sine_amp, sine_freq, baseline_lum, contrast))
             self.add_phase(p)
 
