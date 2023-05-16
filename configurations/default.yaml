@@ -1,4 +1,4 @@
-CALIBRATION_PATH: calibrations/default.yaml
+CALIBRATION_PATH: calibrations/spherical_4_screen_cylinder.yaml
 CAMERA_USE: true
 CAMERA_DEVICES:
   fish_embedded:
@@ -8,8 +8,7 @@ CAMERA_DEVICES:
     preload_data: False
     width: 720
     height: 480
-    frame_rate: 115
-  multiple_fish_vertical_swim:
+    frame_rate: 1151
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: HDF5
     data_path: Multi_Fish_Vertical_Swim_10fps
@@ -32,7 +31,7 @@ ROUTINES:
   vxpy.routines.calculate_csd.CalculatePSD: {}
 DISPLAY_USE: true
 DISPLAY_FPS: 60
-DISPLAY_TRANSFORM: PlanarTransform
+DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
 GUI_USE: true
 GUI_REFRESH: 30
 GUI_FPS: 20
