@@ -69,7 +69,7 @@ class TextureDisplacementMovingDot(StaticProtocol):
         self.global_visual_props['azim_angle'] = 0.
 
         # Fix seed
-        np.random.seed(1)
+        np.random.seed(0)
 
         # set fixed saccade parameters
         sacc_duration = 100
@@ -90,8 +90,8 @@ class TextureDisplacementMovingDot(StaticProtocol):
         dot_offset = 10
 
         # experimental conditions, (sacc_target, delay)
-        conditions = [(-30, 100), (-30, 250), (-30, 500), (-30, 1000), (-30, 2000), (-30, 4000),
-                      (30, 100), (30, 250), (30, 500), (30, 1000), (30, 2000), (30, 4000), (0, 500), (0, 500)]
+        conditions = [(-30, 100), (-30, 250), (-30, 500), (-30, 1000), (-30, 2000), (-30, 4000), (-30, 6000),
+                      (30, 100), (30, 250), (30, 500), (30, 1000), (30, 2000), (30, 4000), (30, 6000), (0, 500), (0, 500)]
 
         # 4 repeats af all delay conditions coarse and fine alternating
         for i in range(4):
@@ -135,3 +135,7 @@ class TextureDisplacementMovingDot(StaticProtocol):
                 p.set_visual(MovingDotOnTexture4000, dot4000(luminance, contrast, motion_axis, dot_polarity,
                                                              dot_start_ang, dot_ang_vel, dot_ang_diameter, dot_offset))
                 self.add_phase(p)
+
+        p = Phase(duration=5)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
+        self.add_phase(p)
