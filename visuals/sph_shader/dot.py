@@ -39,8 +39,8 @@ class Dot(visual.SphericalVisual):
                  (u_period, 10., -40., 40., {'step_size': 1.}),
                  (u_elv, 0., -45., 45., {'step_size': 1.})]
 
-    def __init__(self, *args):
-        visual.SphericalVisual.__init__(self, *args)
+    def __init__(self, *args, **kwargs):
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up sphere
         self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30)
