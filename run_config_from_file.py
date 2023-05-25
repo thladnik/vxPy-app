@@ -1,4 +1,4 @@
-from vxpy import main
+from vxpy import run
 
 if __name__ == '__main__':
-    main('configurations/default.yaml')
+    run('configurations/default.yaml')

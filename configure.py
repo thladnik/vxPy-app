@@ -1,4 +1,4 @@
-from vxpy.configure import main
+from vxpy import configure
 
 if __name__ == '__main__':
-    main()
+    configure('./configurations/default.yaml')

@@ -19,7 +19,7 @@ import vxpy.core.event as vxevent
 import vxpy.core.protocol as vxprotocol
 
 from visuals.spherical_grating import SphericalBlackWhiteGrating
-from vxpy.plugins.zf_eyeposition_tracking import EyePositionDetectionRoutine
+from vxpy.extras.zf_eyeposition_tracking import EyePositionDetectionRoutine
 
 
 class TriggeredGratingProtocol(vxprotocol.TriggeredProtocol):
