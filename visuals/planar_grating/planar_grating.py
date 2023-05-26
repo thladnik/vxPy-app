@@ -5,12 +5,11 @@
 """
 from vispy import gloo
 
-from vxpy.api.visual import PlanarVisual
-from vxpy.utils import plane
 import vxpy.core.visual as vxvisual
+from vxpy.utils import plane
 
 
-class BlackAndWhiteGrating(PlanarVisual):
+class BlackAndWhiteGrating(vxvisual.PlanarVisual):
     """Display a black and white grating stimulus on a planar surface
     """
     # (optional) Add a short description
@@ -24,7 +23,7 @@ class BlackAndWhiteGrating(PlanarVisual):
     spatial_period = vxvisual.FloatParameter('spatial_period', default=10, limits=(-100, 100), step_size=5, static=True)
 
     def __init__(self, *args, **kwargs):
-        PlanarVisual.__init__(self, *args, **kwargs)
+        vxvisual.PlanarVisual.__init__(self, *args, **kwargs)
 
         # Set up model of a 2d plane
         self.plane_2d = plane.XYPlane()
@@ -59,9 +58,6 @@ class BlackAndWhiteGrating(PlanarVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
-
-        # Apply default transforms to the program for mapping according to hardware calibration
-        self.apply_transform(self.grating)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)

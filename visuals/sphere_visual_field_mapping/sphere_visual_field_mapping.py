@@ -56,7 +56,7 @@ class Rotation(visual.Mat4Parameter):
         self.lt = self.t
 
 
-class BinaryNoiseVisualFieldMapping(visual.BaseVisual):
+class BinaryNoiseVisualFieldMapping(visual.SphericalVisual):
 
     time = visual.FloatParameter('time', internal=True)
     rotation = Rotation(internal=True)
@@ -69,7 +69,7 @@ class BinaryNoiseVisualFieldMapping(visual.BaseVisual):
     FRAG_LOC = './binary_sphere.frag'
 
     def __init__(self, subdiv_lvl, *args, **kwargs):
-        visual.BaseVisual.__init__(self, *args, **kwargs)
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Set up sphere
         self.ico_sphere = sphere.IcosahedronSphere(subdiv_lvl=subdiv_lvl)
