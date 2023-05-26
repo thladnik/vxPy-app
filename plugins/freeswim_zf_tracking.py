@@ -33,291 +33,14 @@ from vxpy.definitions import *
 from vxpy.utils import widgets
 
 
-class RoiView(pg.GraphicsLayoutWidget):
-    def __init__(self, parent, **kwargs):
-        pg.GraphicsLayoutWidget.__init__(self, parent=parent, **kwargs)
-
-        self.setFixedHeight(120)
-
-        # Set up plot image item
-        self.image_plot = self.addPlot(0, 0, 1, 10)
-        self.image_item = pg.ImageItem()
-        self.image_plot.hideAxis('left')
-        self.image_plot.hideAxis('bottom')
-        self.image_plot.setAspectLocked(True)
-        self.image_plot.invertY(True)
-        self.image_plot.addItem(self.image_item)
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self._update_image)
-        self.timer.setInterval(50)
-        self.timer.start()
-
-    def _update_image(self):
-        # Read last frame
-        idx, time, frame = vxattribute.read_attribute('freeswim_tracked_particle_rects')
-
-        if idx[0] is None:
-            return
-
-        # Set frame data on image plot
-        self.image_item.setImage(np.vstack(frame[0]))
-
-
-class Roi(pg.RectROI):
-    def __init__(self):
-        self.default_pen = pg.mkPen(color='darkgreen', width=4)
-        pg.RectROI.__init__(self, FreeswimTrackerRoutine.calibration_rect_pos,
-                            [100, 100], sideScalers=True,
-                            pen=self.default_pen, hoverPen=self.default_pen,
-                            handlePen=self.default_pen, handleHoverPen=self.default_pen,
-                            maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
-
-        self.active_calibration = False
-
-    def set_calibration_mode(self, active):
-        # self.translatable = False
-
-        # self.active_calibration = active
-        self.translatable = active
-        self.resizable = active  # TODO: resizable seems to have no effect as of pyqtgraph 0.13.1
-
-
-class FrameView(pg.GraphicsLayoutWidget):
-    def __init__(self, parent, **kwargs):
-        pg.GraphicsLayoutWidget.__init__(self, parent=parent, **kwargs)
-
-        self._calibrate = False
-        self._points = []
-        self._attribute = None
-
-        # Set up plot image item
-        self.image_plot = self.addPlot(0, 0, 1, 10)
-        self.image_item = pg.ImageItem()
-        self.image_plot.hideAxis('left')
-        self.image_plot.hideAxis('bottom')
-        self.image_plot.setAspectLocked(True)
-        self.image_plot.invertY(True)
-        self.image_plot.addItem(self.image_item)
-
-        # Add calibration ROI
-        self.rect_roi = Roi()
-        self.image_plot.vb.addItem(self.rect_roi)
-
-        # Create ROIs to mark tracked particles
-        self._tracking_rois: List[pg.RectROI] = []
-        self._tracking_texts: List[pg.TextItem] = []
-        self.default_pen = pg.mkPen('red', width=5)
-        for _ in range(FreeswimTrackerRoutine.max_particle_num):
-            # Add ROI
-            rect = pg.RectROI((50, 50), FreeswimTrackerRoutine.rect_size,
-                              pen=self.default_pen, handlePen=pg.mkPen(None), hoverPen=self.default_pen)
-            self._tracking_rois.append(rect)
-            self.image_plot.vb.addItem(self._tracking_rois[-1])
-
-            # Add text
-            text = pg.TextItem('')
-            self._tracking_texts.append(text)
-            self.image_plot.vb.addItem(self._tracking_texts[-1])
-
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self._update)
-        self.timer.setInterval(50)
-        self.timer.start()
-
-    def set_attribute(self, frame_name):
-        self._attribute = vxattribute.get_attribute(frame_name)
-
-    def _update(self):
-        if self._attribute is None:
-            return
-
-        # Read last frame
-        idx, time, frame = self._attribute.read()
-
-        if idx[0] is None:
-            return
-
-        # Set frame data on image plot
-        self.image_item.setImage(frame[0])
-
-        # Fetch ROI positions
-        _, _, pixel_positions = vxattribute.read_attribute('freeswim_tracked_particle_pixel_position')
-        _, _, mapped_positions = vxattribute.read_attribute('freeswim_tracked_particle_mapped_position')
-        pixel_positions = pixel_positions[0]
-        mapped_positions = mapped_positions[0]
-
-        # Update ROI positions
-        rect_size = FreeswimTrackerRoutine.rect_size
-        for i, (rect, text) in enumerate(zip(self._tracking_rois, self._tracking_texts)):
-
-            # Update ROI and text
-            pos = pixel_positions[i]
-            if pos[0] < 0:
-                rect.setPen(pg.mkPen(None))
-                text.setText('')
-                continue
-
-            # Move pos to center of ROI
-            pos = (pos[0] - rect_size[0] / 2, pos[1] - rect_size[1] / 2)
-
-            # Update ROI
-            rect.setPos(pos)
-            rect.setPen(self.default_pen)
-
-            # Update text
-            mapped_pos = mapped_positions[i]
-            text.setPos(QtCore.QPoint(pos[0], pos[1] + rect_size[0]))
-            text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')
-
-
-class FreeswimTrackerWidget(vxui.CameraAddonWidget):
-    display_name = 'FreeswimTracker'
-
-    def __init__(self, *args, **kwargs):
-        vxui.CameraAddonWidget.__init__(self, *args, **kwargs)
-        self.central_widget.setLayout(QtWidgets.QHBoxLayout())
-
-        # Add plots
-        self.plots = QtWidgets.QWidget(self)
-        self.plots.setLayout(QtWidgets.QVBoxLayout())
-        self.central_widget.layout().addWidget(self.plots)
-        # Frame
-        self.frame_view = FrameView(self)
-        self.frame_view.rect_roi.sigRegionChangeFinished.connect(self._update_calibration_roi_parameters)
-        self.plots.layout().addWidget(self.frame_view)
-
-        # ROIs
-        self.roi_view = RoiView(self)
-        self.plots.layout().addWidget(self.roi_view)
-        # Add paraemters
-
-        # Add parameter console
-        self.console = QtWidgets.QWidget(self)
-        self.console.setLayout(QtWidgets.QVBoxLayout())
-        self.console.setMaximumWidth(300)
-        self.central_widget.layout().addWidget(self.console)
-
-        # Uniform width for labels (make it pretty)
-        uniform_width = widgets.UniformWidth()
-
-        # MOG MODEL
-        self.console.layout().addWidget(QLabel('<b>Background MOG model</b>'))
-        # MOG history length
-        self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
-                                                   default=FreeswimTrackerRoutine.mog_history_len,
-                                                   limits=(1, 5000))
-        self.mog_history.connect_callback(self.set_mog_history_len)
-        uniform_width.add_widget(self.mog_history.label)
-        self.console.layout().addWidget(self.mog_history)
-
-        # Reset button
-        self.reset_btn = QtWidgets.QPushButton('Reset')
-        self.reset_btn.clicked.connect(self.reset_mog_model)
-        self.reset_mog = widgets.ParameterWidget('Reset MOG model', self.reset_btn)
-        uniform_width.add_widget(self.reset_mog.label)
-        self.console.layout().addWidget(self.reset_mog)
-
-        # FILTERING
-        # Display choice
-        self.display_choice_cb = widgets.ComboBox(self)
-        self.display_choice_cb.connect_callback(self.frame_view.set_attribute)
-        self.display_choice_cb.add_items(['freeswim_tracked_zf_frame',
-                                          'freeswim_tracked_zf_filtered',
-                                          'freeswim_tracked_zf_foreground',
-                                          'freeswim_tracked_zf_binary'])
-        self.display_choice = widgets.ParameterWidget('Display frame', self.display_choice_cb)
-        uniform_width.add_widget(self.display_choice.label)
-        self.console.layout().addWidget(self.display_choice)
-
-        self.console.layout().addWidget(QLabel('<b>Filter parameters</b>'))
-        # Threshold
-        self.binary_threshold = widgets.IntSliderWidget(self.console, label='Threshold [au]',
-                                                        default=FreeswimTrackerRoutine.binary_thresh_val,
-                                                        limits=(1, 254))
-        self.binary_threshold.connect_callback(self.set_binary_threshold)
-        uniform_width.add_widget(self.binary_threshold.label)
-        self.console.layout().addWidget(self.binary_threshold)
-
-        # Filter size
-        self.filter_size = widgets.IntSliderWidget(self.console, label='Filter size [au]',
-                                                   default=FreeswimTrackerRoutine.filter_size,
-                                                   limits=(1, 255))
-        self.filter_size.connect_callback(self.set_filter_size)
-        uniform_width.add_widget(self.filter_size.label)
-        self.console.layout().addWidget(self.filter_size)
-
-        # Min area
-        self.min_area = widgets.IntSliderWidget(self.console, label='Min. area [au]',
-                                                default=FreeswimTrackerRoutine.min_area,
-                                                limits=(1, 255))
-        self.min_area.connect_callback(self.set_min_area)
-        uniform_width.add_widget(self.min_area.label)
-        self.console.layout().addWidget(self.min_area)
-
-        # SUBFRAME CALIBRATION
-        self.console.layout().addWidget(QLabel('<b>Subframe calibration</b>'))
-        # Calibration mode
-        self.calibration_cb = widgets.ComboBox(self)
-        self.calibration_cb.add_items(['Open', 'Locked'])
-        self.calibration_cb.connect_callback(self.set_calibration_mode)
-        self.calibration = widgets.ParameterWidget('Calibration', self.calibration_cb)
-        uniform_width.add_widget(self.calibration.label)
-        self.console.layout().addWidget(self.calibration)
-        # X dim
-        self.x_dimension_length = widgets.IntSliderWidget(self.console, label='X dimension [mm]',
-                                                          default=FreeswimTrackerRoutine.dimension_size[0],
-                                                          limits=(1, 1000))
-        self.x_dimension_length.connect_callback(self.set_x_dimension_size)
-        uniform_width.add_widget(self.x_dimension_length.label)
-        self.console.layout().addWidget(self.x_dimension_length)
-        # Y dim
-        self.y_dimension_length = widgets.IntSliderWidget(self.console, label='Y dimension [mm]',
-                                                          default=FreeswimTrackerRoutine.dimension_size[1],
-                                                          limits=(1, 1000))
-        self.y_dimension_length.connect_callback(self.set_y_dimension_size)
-        uniform_width.add_widget(self.y_dimension_length.label)
-        self.console.layout().addWidget(self.y_dimension_length)
-
-        # Spacer
-        spacer = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
-        self.console.layout().addItem(spacer)
-
-    def set_calibration_mode(self, mode):
-        mode_is_open = mode == 'Open'
-        self.frame_view.rect_roi.set_calibration_mode(mode_is_open)
-        self.x_dimension_length.setEnabled(mode_is_open)
-        self.y_dimension_length.setEnabled(mode_is_open)
-
-    def reset_mog_model(self):
-        self.call_routine(FreeswimTrackerRoutine.reset_mog_model)
-
-    def set_mog_history_len(self):
-        self.call_routine(FreeswimTrackerRoutine.set_mog_history_len, self.mog_history.get_value())
-
-    def set_filter_size(self):
-        self.call_routine(FreeswimTrackerRoutine.set_filter_size, self.filter_size.get_value())
-
-    def set_min_area(self):
-        self.call_routine(FreeswimTrackerRoutine.set_min_area, self.min_area.get_value())
-
-    def set_binary_threshold(self):
-        self.call_routine(FreeswimTrackerRoutine.set_binary_threshold, self.binary_threshold.get_value())
-
-    def set_x_dimension_size(self):
-        self.call_routine(FreeswimTrackerRoutine.set_x_dimension_size, self.x_dimension_length.get_value())
-
-    def set_y_dimension_size(self):
-        self.call_routine(FreeswimTrackerRoutine.set_y_dimension_size, self.y_dimension_length.get_value())
-
-    def _update_calibration_roi_parameters(self):
-        pos = self.frame_view.rect_roi.pos()
-        self.call_routine(FreeswimTrackerRoutine.set_calibration_rect_pos, (pos.x(), pos.y()))
-        size = self.frame_view.rect_roi.size()
-        self.call_routine(FreeswimTrackerRoutine.set_calibration_rect_size, (size.x(), size.y()))
-
-
 class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
+    """Routine for tracking of freeswimming zebrafish.
+
+    Works in conjunction with the `FreeswimTrackerWidget` UI widget to track to
+    track fish particles in a volume of water, using a single camera device.
+
+
+    """
     rect_size = (60, 60)
     camera_device_id = 'multiple_fish_vertical_swim'
 
@@ -349,9 +72,9 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
         width, height = camera.width, camera.height
 
-        vxattribute.VideoStreamAttribute(camera.frame_rate, 'freeswim_tracked_zf_frame',
-                                         (width, height),
-                                         vxattribute.ArrayType.uint8)
+        vxattribute.ArrayAttribute('freeswim_tracked_zf_frame',
+                                   (width, height),
+                                   vxattribute.ArrayType.uint8)
         vxattribute.ArrayAttribute('freeswim_tracked_zf_foreground',
                                    (width, height),
                                    vxattribute.ArrayType.uint8)
@@ -540,3 +263,287 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         # Write centroid positions
         particle_pixel_position_attr.write(new_pixel_positions)
         particle_mapped_position_attr.write(new_mapped_positions)
+
+
+class FreeswimTrackerWidget(vxui.CameraAddonWidget):
+    display_name = 'FreeswimTracker'
+
+    def __init__(self, *args, **kwargs):
+        vxui.CameraAddonWidget.__init__(self, *args, **kwargs)
+        self.central_widget.setLayout(QtWidgets.QHBoxLayout())
+
+        # Add plots
+        self.plots = QtWidgets.QWidget(self)
+        self.plots.setLayout(QtWidgets.QVBoxLayout())
+        self.central_widget.layout().addWidget(self.plots)
+        # Frame
+        self.frame_view = FrameView(self)
+        self.frame_view.rect_roi.sigRegionChangeFinished.connect(self._update_calibration_roi_parameters)
+        self.plots.layout().addWidget(self.frame_view)
+
+        # ROIs
+        self.roi_view = RoiView(self)
+        self.plots.layout().addWidget(self.roi_view)
+        # Add paraemters
+
+        # Add parameter console
+        self.console = QtWidgets.QWidget(self)
+        self.console.setLayout(QtWidgets.QVBoxLayout())
+        self.console.setMaximumWidth(300)
+        self.central_widget.layout().addWidget(self.console)
+
+        # Uniform width for labels (make it pretty)
+        uniform_width = widgets.UniformWidth()
+
+        # MOG MODEL
+        self.console.layout().addWidget(QLabel('<b>Background MOG model</b>'))
+        # MOG history length
+        self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
+                                                   default=FreeswimTrackerRoutine.mog_history_len,
+                                                   limits=(1, 5000))
+        self.mog_history.connect_callback(self.set_mog_history_len)
+        uniform_width.add_widget(self.mog_history.label)
+        self.console.layout().addWidget(self.mog_history)
+
+        # Reset button
+        self.reset_btn = QtWidgets.QPushButton('Reset')
+        self.reset_btn.clicked.connect(self.reset_mog_model)
+        self.reset_mog = widgets.ParameterWidget('Reset MOG model', self.reset_btn)
+        uniform_width.add_widget(self.reset_mog.label)
+        self.console.layout().addWidget(self.reset_mog)
+
+        # FILTERING
+        # Display choice
+        self.display_choice_cb = widgets.ComboBox(self)
+        self.display_choice_cb.connect_callback(self.frame_view.set_attribute)
+        self.display_choice_cb.add_items(['freeswim_tracked_zf_frame',
+                                          'freeswim_tracked_zf_filtered',
+                                          'freeswim_tracked_zf_foreground',
+                                          'freeswim_tracked_zf_binary'])
+        self.display_choice = widgets.ParameterWidget('Display frame', self.display_choice_cb)
+        uniform_width.add_widget(self.display_choice.label)
+        self.console.layout().addWidget(self.display_choice)
+
+        self.console.layout().addWidget(QLabel('<b>Filter parameters</b>'))
+        # Threshold
+        self.binary_threshold = widgets.IntSliderWidget(self.console, label='Threshold [au]',
+                                                        default=FreeswimTrackerRoutine.binary_thresh_val,
+                                                        limits=(1, 254))
+        self.binary_threshold.connect_callback(self.set_binary_threshold)
+        uniform_width.add_widget(self.binary_threshold.label)
+        self.console.layout().addWidget(self.binary_threshold)
+
+        # Filter size
+        self.filter_size = widgets.IntSliderWidget(self.console, label='Filter size [au]',
+                                                   default=FreeswimTrackerRoutine.filter_size,
+                                                   limits=(1, 255))
+        self.filter_size.connect_callback(self.set_filter_size)
+        uniform_width.add_widget(self.filter_size.label)
+        self.console.layout().addWidget(self.filter_size)
+
+        # Min area
+        self.min_area = widgets.IntSliderWidget(self.console, label='Min. area [au]',
+                                                default=FreeswimTrackerRoutine.min_area,
+                                                limits=(1, 255))
+        self.min_area.connect_callback(self.set_min_area)
+        uniform_width.add_widget(self.min_area.label)
+        self.console.layout().addWidget(self.min_area)
+
+        # SUBFRAME CALIBRATION
+        self.console.layout().addWidget(QLabel('<b>Subframe calibration</b>'))
+        # Calibration mode
+        self.calibration_cb = widgets.ComboBox(self)
+        self.calibration_cb.add_items(['Open', 'Locked'])
+        self.calibration_cb.connect_callback(self.set_calibration_mode)
+        self.calibration = widgets.ParameterWidget('Calibration', self.calibration_cb)
+        uniform_width.add_widget(self.calibration.label)
+        self.console.layout().addWidget(self.calibration)
+        # X dim
+        self.x_dimension_length = widgets.IntSliderWidget(self.console, label='X dimension [mm]',
+                                                          default=FreeswimTrackerRoutine.dimension_size[0],
+                                                          limits=(1, 1000))
+        self.x_dimension_length.connect_callback(self.set_x_dimension_size)
+        uniform_width.add_widget(self.x_dimension_length.label)
+        self.console.layout().addWidget(self.x_dimension_length)
+        # Y dim
+        self.y_dimension_length = widgets.IntSliderWidget(self.console, label='Y dimension [mm]',
+                                                          default=FreeswimTrackerRoutine.dimension_size[1],
+                                                          limits=(1, 1000))
+        self.y_dimension_length.connect_callback(self.set_y_dimension_size)
+        uniform_width.add_widget(self.y_dimension_length.label)
+        self.console.layout().addWidget(self.y_dimension_length)
+
+        # Spacer
+        spacer = QtWidgets.QSpacerItem(1, 1, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.console.layout().addItem(spacer)
+
+    def set_calibration_mode(self, mode):
+        mode_is_open = mode == 'Open'
+        self.frame_view.rect_roi.set_calibration_mode(mode_is_open)
+        self.x_dimension_length.setEnabled(mode_is_open)
+        self.y_dimension_length.setEnabled(mode_is_open)
+
+    def reset_mog_model(self):
+        self.call_routine(FreeswimTrackerRoutine.reset_mog_model)
+
+    def set_mog_history_len(self):
+        self.call_routine(FreeswimTrackerRoutine.set_mog_history_len, self.mog_history.get_value())
+
+    def set_filter_size(self):
+        self.call_routine(FreeswimTrackerRoutine.set_filter_size, self.filter_size.get_value())
+
+    def set_min_area(self):
+        self.call_routine(FreeswimTrackerRoutine.set_min_area, self.min_area.get_value())
+
+    def set_binary_threshold(self):
+        self.call_routine(FreeswimTrackerRoutine.set_binary_threshold, self.binary_threshold.get_value())
+
+    def set_x_dimension_size(self):
+        self.call_routine(FreeswimTrackerRoutine.set_x_dimension_size, self.x_dimension_length.get_value())
+
+    def set_y_dimension_size(self):
+        self.call_routine(FreeswimTrackerRoutine.set_y_dimension_size, self.y_dimension_length.get_value())
+
+    def _update_calibration_roi_parameters(self):
+        pos = self.frame_view.rect_roi.pos()
+        self.call_routine(FreeswimTrackerRoutine.set_calibration_rect_pos, (pos.x(), pos.y()))
+        size = self.frame_view.rect_roi.size()
+        self.call_routine(FreeswimTrackerRoutine.set_calibration_rect_size, (size.x(), size.y()))
+
+
+class RoiView(pg.GraphicsLayoutWidget):
+    def __init__(self, parent, **kwargs):
+        pg.GraphicsLayoutWidget.__init__(self, parent=parent, **kwargs)
+
+        self.setFixedHeight(120)
+
+        # Set up plot image item
+        self.image_plot = self.addPlot(0, 0, 1, 10)
+        self.image_item = pg.ImageItem()
+        self.image_plot.hideAxis('left')
+        self.image_plot.hideAxis('bottom')
+        self.image_plot.setAspectLocked(True)
+        self.image_plot.invertY(True)
+        self.image_plot.addItem(self.image_item)
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self._update_image)
+        self.timer.setInterval(50)
+        self.timer.start()
+
+    def _update_image(self):
+        # Read last frame
+        idx, time, frame = vxattribute.read_attribute('freeswim_tracked_particle_rects')
+
+        if idx[0] is None:
+            return
+
+        # Set frame data on image plot
+        self.image_item.setImage(np.vstack(frame[0]))
+
+
+class Roi(pg.RectROI):
+    def __init__(self):
+        self.default_pen = pg.mkPen(color='darkgreen', width=4)
+        pg.RectROI.__init__(self, FreeswimTrackerRoutine.calibration_rect_pos,
+                            [100, 100], sideScalers=True,
+                            pen=self.default_pen, hoverPen=self.default_pen,
+                            handlePen=self.default_pen, handleHoverPen=self.default_pen,
+                            maxBounds=QtCore.QRectF(0, 0, 1924, 1080))
+
+        self.active_calibration = False
+
+    def set_calibration_mode(self, active):
+        # self.translatable = False
+
+        # self.active_calibration = active
+        self.translatable = active
+        self.resizable = active  # TODO: resizable seems to have no effect as of pyqtgraph 0.13.1
+
+
+class FrameView(pg.GraphicsLayoutWidget):
+    def __init__(self, parent, **kwargs):
+        pg.GraphicsLayoutWidget.__init__(self, parent=parent, **kwargs)
+
+        self._calibrate = False
+        self._points = []
+        self._attribute = None
+
+        # Set up plot image item
+        self.image_plot = self.addPlot(0, 0, 1, 10)
+        self.image_item = pg.ImageItem()
+        self.image_plot.hideAxis('left')
+        self.image_plot.hideAxis('bottom')
+        self.image_plot.setAspectLocked(True)
+        self.image_plot.invertY(True)
+        self.image_plot.addItem(self.image_item)
+
+        # Add calibration ROI
+        self.rect_roi = Roi()
+        self.image_plot.vb.addItem(self.rect_roi)
+
+        # Create ROIs to mark tracked particles
+        self._tracking_rois: List[pg.RectROI] = []
+        self._tracking_texts: List[pg.TextItem] = []
+        self.default_pen = pg.mkPen('red', width=5)
+        for _ in range(FreeswimTrackerRoutine.max_particle_num):
+            # Add ROI
+            rect = pg.RectROI((50, 50), FreeswimTrackerRoutine.rect_size,
+                              pen=self.default_pen, handlePen=pg.mkPen(None), hoverPen=self.default_pen)
+            self._tracking_rois.append(rect)
+            self.image_plot.vb.addItem(self._tracking_rois[-1])
+
+            # Add text
+            text = pg.TextItem('')
+            self._tracking_texts.append(text)
+            self.image_plot.vb.addItem(self._tracking_texts[-1])
+
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self._update)
+        self.timer.setInterval(50)
+        self.timer.start()
+
+    def set_attribute(self, frame_name):
+        self._attribute = vxattribute.get_attribute(frame_name)
+
+    def _update(self):
+        if self._attribute is None:
+            return
+
+        # Read last frame
+        idx, time, frame = self._attribute.read()
+
+        if idx[0] is None:
+            return
+
+        # Set frame data on image plot
+        self.image_item.setImage(frame[0])
+
+        # Fetch ROI positions
+        _, _, pixel_positions = vxattribute.read_attribute('freeswim_tracked_particle_pixel_position')
+        _, _, mapped_positions = vxattribute.read_attribute('freeswim_tracked_particle_mapped_position')
+        pixel_positions = pixel_positions[0]
+        mapped_positions = mapped_positions[0]
+
+        # Update ROI positions
+        rect_size = FreeswimTrackerRoutine.rect_size
+        for i, (rect, text) in enumerate(zip(self._tracking_rois, self._tracking_texts)):
+
+            # Update ROI and text
+            pos = pixel_positions[i]
+            if pos[0] < 0:
+                rect.setPen(pg.mkPen(None))
+                text.setText('')
+                continue
+
+            # Move pos to center of ROI
+            pos = (pos[0] - rect_size[0] / 2, pos[1] - rect_size[1] / 2)
+
+            # Update ROI
+            rect.setPos(pos)
+            rect.setPen(self.default_pen)
+
+            # Update text
+            mapped_pos = mapped_positions[i]
+            text.setPos(QtCore.QPoint(pos[0], pos[1] + rect_size[0]))
+            text.setText(f'{mapped_pos[0]:.1f} / {mapped_pos[1]:.1f}', 'red')

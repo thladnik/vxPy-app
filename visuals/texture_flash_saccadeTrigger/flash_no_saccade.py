@@ -8,7 +8,7 @@ from vispy.geometry import create_sphere
 # vxpy stuff
 from vxpy.core import visual as vxvisual
 import vxpy.core.event as vxevent
-from vxpy.plugins.zf_eyeposition_tracking import EyePositionDetectionRoutine
+from vxpy.extras.zf_eyeposition_tracking import EyePositionDetectionRoutine
 import vxpy.core.ipc as vxipc
 
 class SaccadeFlash_Flash_without_saccade(vxvisual.SphericalVisual):
