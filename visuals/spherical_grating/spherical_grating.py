@@ -146,9 +146,6 @@ class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):
         # Add elapsed time to u_time
         self.time.data += dt
 
-        # Apply default transforms to the program for mapping according to hardware calibration
-        self.apply_transform(self.grating)
-
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
 
