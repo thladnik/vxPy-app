@@ -9,6 +9,7 @@ from visuals.gs_saccadic_suppression.gs_simu_saccade_sine_flash import SimuSacca
 from visuals.gs_saccadic_suppression.gs_simu_saccade_sine_flash import SimuSaccadeWithSineFlash4000
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground  # for setting screen to black
 
+
 class RealSaccadeTriggered_Fine(vxprotocol.TriggeredProtocol):
     def __init__(self, *args, **kwargs):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)

@@ -51,7 +51,7 @@ class SinusAmplitude(vxvisual.FloatParameter):
 
 class TextureSinusLumModulation2000(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
+    VERT_LOC = './ml_texture.vert'
     FRAG_LOC = './gs_texture_meanlum_mod.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
