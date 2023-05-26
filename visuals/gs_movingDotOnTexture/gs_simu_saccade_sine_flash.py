@@ -222,8 +222,8 @@ class SimuSaccadeWithSineFlash2000(vxvisual.SphericalVisual):
 
 class SimuSaccadeWithSineFlash4000(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
-    FRAG_LOC = './gs_simu_saccade_sine_flash.frag'
+    VERT_LOC = './ml_texture.vert'
+    FRAG_LOC = './ml_rotating_texture.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
 
@@ -326,8 +326,8 @@ class SimuSaccadeWithSineFlash4000(vxvisual.SphericalVisual):
 
 class SimuSaccadeWithStepFlash2000(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
-    FRAG_LOC = './gs_simu_saccade_sine_flash.frag'
+    VERT_LOC = './ml_texture.vert'
+    FRAG_LOC = './ml_rotating_texture.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
 
@@ -430,8 +430,8 @@ class SimuSaccadeWithStepFlash2000(vxvisual.SphericalVisual):
 
 class SimuSaccadeWithStepFlash4000(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
-    FRAG_LOC = './gs_simu_saccade_sine_flash.frag'
+    VERT_LOC = './ml_texture.vert'
+    FRAG_LOC = './ml_rotating_texture.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
 
