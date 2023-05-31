@@ -5,7 +5,7 @@ import vxpy.core.event as vxevent
 import vxpy.core.attribute as vxattribute
 
 from visuals.ml_saccadetriggered_OKR.ml_rotating_texture import RotatingTexture2000
-from vxpy.plugins.zf_eyeposition_tracking_GS import EyePositionDetectionRoutine
+# from vxpy.plugins.zf_eyeposition_tracking_GS import EyePositionDetectionRoutine
 
 
 # parameters function
