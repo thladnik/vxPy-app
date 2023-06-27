@@ -5,7 +5,7 @@ import vxpy.core.event as vxevent
 import vxpy.core.attribute as vxattribute
 
 from visuals.ml_saccadetriggered_OKR.ml_rotating_texture import RotatingTexture2000
-# from vxpy.plugins.zf_eyeposition_tracking_GS import EyePositionDetectionRoutine
+from vxpy.extras.zf_eyeposition_tracking_GS import EyePositionDetectionRoutine
 
 
 # parameters function
@@ -38,7 +38,7 @@ class SaccadeTriggeredOKR(vxprotocol.TriggeredProtocol):
         okr_delays = [100, 250, 500, 1000, 2000, 4000]
 
         # Set saccade trigger as phase trigger
-        trigger = vxevent.SaccadeDirectionTrigger('eyepos_saccade_trigger')
+        trigger = vxevent.NotNullTrigger(f'{EyePositionDetectionRoutine.le_sacc_direction_prefix}0')
         self.set_phase_trigger(trigger)
 
         p = vxprotocol.Phase(duration=15)
@@ -48,11 +48,11 @@ class SaccadeTriggeredOKR(vxprotocol.TriggeredProtocol):
         for j in range(4):
             for okr_delay in np.random.permutation(okr_delays):
                 p = vxprotocol.Phase(duration=20)
-                if vxattribute.read_attribute(EyePositionDetectionRoutine.le_sacc_prefix) > 0:
-                    sacc_dir = vxattribute.read_attribute(EyePositionDetectionRoutine.le_sacc_direction_prefix)
-                else:
-                    sacc_dir = vxattribute.read_attribute(EyePositionDetectionRoutine.re_sacc_direction_prefix)
+                # if vxattribute.read_attribute(EyePositionDetectionRoutine.le_sacc_prefix) > 0:
+                #     sacc_dir = vxattribute.read_attribute(EyePositionDetectionRoutine.le_sacc_direction_prefix)
+                # else:
+                #     sacc_dir = vxattribute.read_attribute(EyePositionDetectionRoutine.re_sacc_direction_prefix)
                 p.set_visual(RotatingTexture2000,
-                             rot_texture_2000(okr_duration, okr_delay, ang_vel * okr_duration * sacc_dir/ 1000, luminance,
+                             rot_texture_2000(okr_duration, okr_delay, ang_vel * okr_duration * 1/ 1000, luminance,
                                               contrast))
                 self.add_phase(p)
