@@ -89,6 +89,7 @@ IO_DEVICES:
           t_offset: 1.0
 IO_MAX_SR: 1000
 WORKER_USE: true
+WORKER_RATE: 100
 RECORDER_USE: false
 REC_OUTPUT_FOLDER: ./recordings/
 REC_ATTRIBUTES:
