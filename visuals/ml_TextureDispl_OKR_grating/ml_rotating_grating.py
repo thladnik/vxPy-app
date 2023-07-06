@@ -105,6 +105,7 @@ class RotatingGrating(vxvisual.SphericalVisual):
             self.rotation.data = transforms.rotate(self.protocol.global_visual_props['azim_angle'], (0, 0, 1))
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
-        self.grating.draw('triangles', indeces=self.index_buffer)
+        self.apply_transform(self.grating)
+        self.grating.draw('triangles', indices=self.index_buffer)
 
 
