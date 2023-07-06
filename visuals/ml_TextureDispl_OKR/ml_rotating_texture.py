@@ -77,8 +77,8 @@ class RotatingTexture2000(vxvisual.SphericalVisual):
     luminance = vxvisual.FloatParameter('luminance', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
     rotation_start_time = vxvisual.IntParameter('rotation_start_time', static=True, default=1500, limits=(0.0, 5000), step_size=100)  # ms
-    rotation_duration = vxvisual.IntParameter('rotation_duration', static=True, default=100, limits=(20, 200), step_size=10)  # ms
-    rotation_target_angle = vxvisual.FloatParameter('rotation_target_angle', static=True, default=30., limits=(-90.0, 90.0), step_size=0.01)  # deg
+    rotation_duration = vxvisual.IntParameter('rotation_duration', static=True, default=10000, limits=(20, 200), step_size=10)  # ms
+    rotation_target_angle = vxvisual.FloatParameter('rotation_target_angle', static=True, default=300., limits=(-90.0, 90.0), step_size=0.01)  # deg
 
     texture_file = 'visuals/gs_saccadic_suppression/stimulus_data/texture_brightness_0_1_2000_blobs.hdf5'
 
