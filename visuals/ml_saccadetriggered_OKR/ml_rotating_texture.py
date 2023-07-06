@@ -112,7 +112,8 @@ class RotatingTexture2000(vxvisual.SphericalVisual):
         # Global azimuth angle
         self.protocol.global_visual_props['azim_angle'] = 0.
 
-    def initialize(self, **kwargs):
+    def initialize(self, trigger_index=None, trigger_time=None, trigger_data=0, **kwargs):
+        self.direction = trigger_data
         self.time.data = 0.
 
     def render(self, dt):
@@ -129,7 +130,7 @@ class RotatingTexture2000(vxvisual.SphericalVisual):
         time_in_rotation = time - rot_start_time
         if 0.0 < time_in_rotation <= rot_duration:
             # Calculate rotation
-            angle = rot_target_angle * 1000 * dt / rot_duration
+            angle = self.direction * rot_target_angle * 1000 * dt / rot_duration
             self.protocol.global_visual_props['azim_angle'] += angle
 
 
