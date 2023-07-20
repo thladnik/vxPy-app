@@ -108,3 +108,4 @@ REC_ATTRIBUTES:
   ai_slow_sinewave_input: {}
   test_sines_whitenoise: {}
   sawtooth_analogin: {}
+TEST_SCRIPTS: {}
