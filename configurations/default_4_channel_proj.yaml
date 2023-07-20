@@ -33,8 +33,16 @@ ROUTINES:
   vxpy.extras.display_capture.Frames:
     downsample_by: 4
   vxpy.extras.calculate_csd.CalculatePSD: {}
-  vxpy.extras.server.FrameReceiverTcpServer: {}
+  vxpy.extras.server.FrameReceiverTcpServer:
+    _load_order: 0
+    frame_dtype: uint16
+    frame_name: ca_imaging_frame
   vxpy.extras.write_test_attributes.SinesAddedWhiteNoise: {}
+  vxpy.extras.ca_processing.RoiActivityTrackerRoutine:
+    _load_order: 1
+    input_num_interlaced_layers: 2
+    input_frame_name: ca_imaging_frame
+    frame_dtype: uint16
 DISPLAY_USE: true
 DISPLAY_FPS: 60
 DISPLAY_GL_VERSION: 100
@@ -49,6 +57,7 @@ GUI_REFRESH: 30
 GUI_FPS: 20
 GUI_SCREEN: 0
 GUI_ADDONS:
+  vxpy.extras.ca_processing.RoiActivityTrackerWidget: {}
   vxpy.extras.camera_widgets.CameraStreamAddon: {}
   vxpy.extras.zf_eyeposition_tracking.EyePositionDetectionAddon: {}
   vxpy.extras.display_widgets.VisualInteractor:
@@ -60,7 +69,7 @@ GUI_ADDONS:
     - 1200
     - 400
   vxpy.extras.display_widgets.VisualStreamAddon: {}
-  vxpy.extras.io_core_widgets.DisplayPSD: {}
+  vxpy.extras.calculate_csd.DisplayPSD: {}
 IO_USE: true
 IO_DEVICES:
   Dev1_virtual:
@@ -109,3 +118,5 @@ REC_ATTRIBUTES:
   ai_slow_sinewave_input: {}
   test_sines_whitenoise: {}
   sawtooth_analogin: {}
+TEST_SCRIPTS:
+  vxpy.extras.ca_processing_dummy_client.run_client: {}
