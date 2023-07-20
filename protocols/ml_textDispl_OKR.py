@@ -35,8 +35,8 @@ class TextureDisplOKR2000(StaticProtocol):
         conditions = [(-30, 100), (-30, 250), (-30, 500), (-30, 1000), (-30, 2000), (-30, 4000), (30, 100),
                       (30, 250), (30, 500), (30, 1000), (30, 2000), (30, 4000), (0, 3000), (0, 3001)]
 
-        # 10 seconds just texture (no flash)
-        # 10 seconds just texture (coarse)
+
+        # 15 seconds just texture (coarse)
         p = Phase(duration=15)
         p.set_visual(RotatingTexture2000, rot_texture_2000(sacc_duration, sacc_start, 0, luminance, contrast))
         self.add_phase(p)
@@ -50,7 +50,7 @@ class TextureDisplOKR2000(StaticProtocol):
                              rot_texture_2000(sacc_duration, sacc_start, sacc_ang, luminance, contrast))
                 self.add_phase(p)
 
-                okr_phase_dur = (okr_duration + okr_delay)/1000
+                okr_phase_dur = (okr_duration + okr_delay-100)/1000
                 p = Phase(duration=okr_phase_dur)
                 if sacc_ang == 0 and okr_delay == 3000:
                     rot_ang = 600
@@ -60,7 +60,7 @@ class TextureDisplOKR2000(StaticProtocol):
                     rot_ang = -sacc_ang * 20
 
                 p.set_visual(RotatingTexture2000,
-                             rot_texture_2000(okr_duration, okr_delay, rot_ang, luminance,
+                             rot_texture_2000(okr_duration, okr_delay-100, rot_ang, luminance,
                                               contrast))
                 self.add_phase(p)
 
