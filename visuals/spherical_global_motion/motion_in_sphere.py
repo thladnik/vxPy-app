@@ -50,8 +50,8 @@ class TranslationGrating(vxvisual.SphericalVisual):
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
 
     # Paths to shaders
-    VERT_PATH = './sphere.vert'
-    FRAG_PATH = './translation_grating.frag'
+    VERT_PATH = 'sphere.vert'
+    FRAG_PATH = 'translation_grating.frag'
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -89,9 +89,6 @@ class TranslationGrating(vxvisual.SphericalVisual):
         # Add elapsed time to u_time
         self.time.data += dt
 
-        # TEMP!
-        # self.azimuth.data = 2 * self.time.data[0]
-
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
 
@@ -127,8 +124,8 @@ class RotationGrating(vxvisual.SphericalVisual):
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
 
     # Paths to shaders
-    VERT_PATH = './sphere.vert'
-    FRAG_PATH = './rotation_grating.frag'
+    VERT_PATH = 'sphere.vert'
+    FRAG_PATH = 'rotation_grating.frag'
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -166,9 +163,6 @@ class RotationGrating(vxvisual.SphericalVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
-
-        # TEMP!
-        # self.azimuth.data = 2 * self.time.data[0]
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.grating)
