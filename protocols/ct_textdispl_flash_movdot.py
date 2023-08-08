@@ -64,17 +64,17 @@ class TextureDisplacementFlashMovingDot(StaticProtocol):
         conditions = [(-30, 100, -1), (-30, 250, -1), (-30, 500, -1), (-30, 1000, -1), (-30, 2000, -1), (-30, 4000, -1),
                       (30, 100, -1), (30, 250, -1), (30, 500, -1), (30, 1000, -1), (30, 2000, -1), (30, 4000, -1),
                       (0, 750, -1), (0, 750, -1), (-30, 100, 1), (-30, 250, 1), (-30, 500, 1), (-30, 1000, 1),
-                      (-30, 2000, 1), (-30, 4000, -1), (30, 100, 1), (30, 250, 1), (30, 500, 1), (30, 1000, 1),
+                      (-30, 2000, 1), (-30, 4000, 1), (30, 100, 1), (30, 250, 1), (30, 500, 1), (30, 1000, 1),
                       (30, 2000, 1), (30, 4000, 1), (0, 750, 1), (0, 750, 1)]
+
+        # 5 seconds just texture (coarse)
+        p = Phase(duration=30)
+        p.set_visual(SimuSaccadeWithSineFlash2000, saccade2000(sacc_duration, sacc_start, 0, 111, sine_dur, sine_amp,
+                                                               sine_freq, baseline_lum, contrast))
+        self.add_phase(p)
 
         # 4 repeats af all saccade, delay, and stim_type conditions, coarse texture only
         for i in range(4):
-            # 5 seconds just texture (coarse)
-            p = Phase(duration=5)
-            p.set_visual(SimuSaccadeWithSineFlash2000, saccade2000(sacc_duration, sacc_start, 0, 111, sine_dur, sine_amp,
-                                                                   sine_freq, baseline_lum, contrast))
-            self.add_phase(p)
-
             # all saccade, delay, and stim_type conditions in coarse, shuffled
             for sacc_ang, sine_delay, stim_type in np.random.permutation(conditions):
                 dot_start = (sine_delay + sacc_start) / 1000
