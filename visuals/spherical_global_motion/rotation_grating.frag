@@ -23,10 +23,6 @@ void main() {
     float c = 1.0 + sin(2.0 * PI * (angular_pos  / angular_period + time * angular_velocity / angular_period));
     c /= 2.0;
 
-    if(v_elevation < 80.0) {
-        c = 0.0;
-    }
-
     // Set final color
     if(waveform == 2) {
         c = step(0.5, c);
