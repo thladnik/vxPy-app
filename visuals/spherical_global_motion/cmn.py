@@ -165,7 +165,6 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
             motmat = np.repeat(self.rotated_motion_matrix[:, frame_idx], 3, axis=0)
             self._texcoord += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed
             self.sphere_program['a_texcoord'] = self._texcoord
-            # self.sphere_program['a_texcoord'] += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed
 
         # Update index
         self.frame_index.data = frame_idx
@@ -183,16 +182,31 @@ class CMN_100_000f_20fps_10tp_0p1sp(ContiguousMotionNoise):
     stimulus_direction = 1
 
 
-class CMN_10_000f_20fps_10tp_0p1sp_0p02ns(ContiguousMotionNoise):
-    frame_num = 10_000
-    tp_sigma = 10
+class CMN_15_000f_15fps_10tp_0p1sp_varns(ContiguousMotionNoise):
+    frame_num = 15_000
+    tp_sigma = 15
     sp_sigma = 0.1
-    stimulus_fps = 20
-    norm_speed = 0.02
+    stimulus_fps = 15
+    stimulus_diretion = 1
+    normalized_speed = vxvisual.FloatParameter('normalized_speed', limits=(0., 1.), default=0.02, step_size=0.001)
+
+    def render(self, dt):
+        self.norm_speed = self.normalized_speed.data[0]
+        ContiguousMotionNoise.render(self, dt)
+
+
+class CMN_15_000f_15fps_10tp_0p1sp_0p03ns(ContiguousMotionNoise):
+    frame_num = 15_000
+    tp_sigma = 15
+    sp_sigma = 0.1
+    stimulus_fps = 15
+    norm_speed = 0.03
     stimulus_diretion = 1
 
 
-class CMN_10_000f_20fps_10tp_0p1sp_0p02ns_inv(CMN_10_000f_20fps_10tp_0p1sp_0p02ns):
+
+
+class CMN_15_000f_15fps_10tp_0p1sp_0p03ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p03ns):
     stimulus_direction = -1
 
 
