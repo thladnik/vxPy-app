@@ -98,10 +98,11 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
     # Define Moving Dot parameters
     motion_axis = MotionAxis('motion_axis', static=True, default='vertical')
     dot_polarity = vxvisual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
-    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=30, limits=(-180, 180), step_size=5, static=True)
-    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=-60, limits=(-360, 360), step_size=5, static=True)
+    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=-30, limits=(-180, 180), step_size=5,
+                                              static=True)
+    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5, static=True)
     dot_angular_diameter = vxvisual.FloatParameter('dot_angular_diameter', default=20, limits=(1, 90), step_size=1, static=True)
-    dot_offset_angle = vxvisual.FloatParameter('dot_offset_angle', default=-20, limits=(-85, 85), step_size=5, static=True)
+    dot_offset_angle = vxvisual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5, static=True)
     dot_location = vxvisual.Vec3Parameter('dot_location', default=0)
 
     # Paths to shaders
