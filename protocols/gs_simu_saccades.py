@@ -88,7 +88,7 @@ class TextureDisplacementSineFlash(StaticProtocol):
                       (30, 2000, 0.5), (30, 4000, 0.5), (30, 500, 0), (0, 3000, 0.5), (0, 3000, 0.5)]
 
         # 10 seconds just texture (no flash)
-        for i in range(2):
+        for i in range(3):
             # 10 seconds just texture (coarse)
             p = Phase(duration=10)
             p.set_visual(SimuSaccadeWithSineFlash2000, params2000(sacc_duration, sacc_start, 0, 500, sine_dur, 0,
@@ -96,7 +96,7 @@ class TextureDisplacementSineFlash(StaticProtocol):
             self.add_phase(p)
 
             # 4 repeats of all delay and saccade conditions in coarse
-            for j in range(4):
+            for j in range(1):
                 for sacc_ang, sine_delay, sine_amp in np.random.permutation(conditions):
                     sine_start = sine_delay + sacc_start
                     p = Phase(duration=8)
@@ -112,7 +112,7 @@ class TextureDisplacementSineFlash(StaticProtocol):
             self.add_phase(p)
 
             # 4 repeats of all delay and saccade conditions
-            for k in range(4):
+            for k in range(1):
                 for sacc_ang, sine_delay, sine_amp in np.random.permutation(conditions):
                     sine_start = sine_delay + sacc_start
                     p = Phase(duration=8)
