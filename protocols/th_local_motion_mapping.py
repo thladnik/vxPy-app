@@ -587,6 +587,181 @@ class RepulsiveSphere140and40LeftEye20230223(vxprotocol.StaticProtocol):
         p.set_visual(SphereUniformBackground)
         self.add_phase(p)
 
+class RepulsiveSphere140and40LeftEyeLargePatches20230810(vxprotocol.StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
+
+        period = 20
+        base_velocity = 30
+        repeat_num = 3
+
+        # Create list for all combos
+        self.combos = []
+
+        # Densely sampled stimuli
+        verts = scipy.io.loadmat('./protocols/th_local_motion_mapping_data/repulsive_sphere_140.mat')['ans'][0, 0]
+        az, el = cart2sph1(*verts.T)
+        az = az / np.pi * 180
+        el = el / np.pi * 180
+
+        diameters_dense = [25]
+        selected_dense = np.logical_and(np.logical_or(az < 40, az > (180 - 15)), el < 45.0)
+        selected_az_dense = az[selected_dense]
+        selected_el_dense = el[selected_dense]
+
+        for a, e in zip(selected_az_dense, selected_el_dense):
+            # Skip 0/0, as that is a singularity
+            if a == 0.0 and e == 0.0:
+                continue
+
+            # Set sign of velocity
+            if a >= 0:
+                vsign = -1
+            else:
+                vsign = 1
+
+            for dia in diameters_dense:
+                self.combos.append((dia, a, e, vsign * base_velocity))
+
+        # Sparsely sampled stimuli
+        verts = scipy.io.loadmat('./protocols/th_local_motion_mapping_data/repulsive_sphere_40.mat')['ans'][0, 0]
+        az, el = cart2sph1(*verts.T)
+        az = az / np.pi * 180
+        el = el / np.pi * 180
+
+        diameters_sparse = [60]
+        selected_sparse = np.logical_and(np.logical_or(az < 40, az > (180 - 15)), el < 45.0)
+        selected_az_sparse = az[selected_sparse]
+        selected_el_sparse = el[selected_sparse]
+
+        for a, e in zip(selected_az_sparse, selected_el_sparse):
+            # Skip 0/0, as that is a singularity
+            if a == 0.0 and e == 0.0:
+                continue
+
+            # Set sign of velocity
+            if a >= 0:
+                vsign = -1
+            else:
+                vsign = 1
+
+            for dia in diameters_sparse:
+                self.combos.append((dia, a, e, vsign * base_velocity))
+
+        # Shuffle all
+        np.random.seed(1)
+        shuffled_combos = np.random.permutation(self.combos)
+
+        # Create protocol phases
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
+        for i in range(repeat_num):
+            for size, az, el, vel in shuffled_combos:
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, 0, az, el, size))
+                self.add_phase(p)
+
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, vel, az, el, size))
+                self.add_phase(p)
+
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
+
+class RepulsiveSphere140and40RightEyeLargePatches20230810(vxprotocol.StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
+
+        period = 20
+        base_velocity = 30
+        repeat_num = 3
+
+        # Create list for all combos
+        combos = []
+
+        # Densely sampled stimuli
+        verts = scipy.io.loadmat('./protocols/th_local_motion_mapping_data/repulsive_sphere_140.mat')['ans'][0, 0]
+        az, el = cart2sph1(*verts.T)
+        az = az / np.pi * 180
+        el = el / np.pi * 180
+
+        diameters_dense = [25]
+        selected_dense = np.logical_and(np.logical_or(az > -40, az < -(180 - 15)), el < 45.0)
+        selected_az_dense = az[selected_dense]
+        selected_el_dense = el[selected_dense]
+
+        for a, e in zip(selected_az_dense, selected_el_dense):
+            # Skip 0/0, as that is a singularity
+            if a == 0.0 and e == 0.0:
+                continue
+
+            # Set sign of velocity
+            if a >= 0:
+                vsign = -1
+            else:
+                vsign = 1
+
+            for dia in diameters_dense:
+                combos.append((dia, a, e, vsign * base_velocity))
+
+        # Sparsely sampled stimuli
+        verts = scipy.io.loadmat('./protocols/th_local_motion_mapping_data/repulsive_sphere_40.mat')['ans'][0, 0]
+        az, el = cart2sph1(*verts.T)
+        az = az / np.pi * 180
+        el = el / np.pi * 180
+
+        diameters_sparse = [60]
+        selected_sparse = np.logical_and(np.logical_or(az > -40, az < -(180 - 15)), el < 45.0)
+        selected_az_sparse = az[selected_sparse]
+        selected_el_sparse = el[selected_sparse]
+
+        for a, e in zip(selected_az_sparse, selected_el_sparse):
+            # Skip 0/0, as that is a singularity
+            if a == 0.0 and e == 0.0:
+                continue
+
+            # Set sign of velocity
+            if a >= 0:
+                vsign = -1
+            else:
+                vsign = 1
+
+            for dia in diameters_sparse:
+                combos.append((dia, a, e, vsign * base_velocity))
+
+        # Shuffle all
+        np.random.seed(1)
+        shuffled_combos = np.random.permutation(combos)
+
+        # Create protocol phases
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
+        for i in range(repeat_num):
+            for size, az, el, vel in shuffled_combos:
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, 0, az, el, size))
+                self.add_phase(p)
+
+                p = vxprotocol.Phase(duration=4)
+                p.set_visual(LocalTranslationGrating_RoundArea,
+                             create_params(period, vel, az, el, size))
+                self.add_phase(p)
+
+        p = vxprotocol.Phase(15)
+        p.set_visual(SphereUniformBackground)
+        self.add_phase(p)
+
 
 class ProtocolRE_DEMO(vxprotocol.StaticProtocol):
 
@@ -708,7 +883,7 @@ if __name__ == '__main__':
     mask_az_mesh, mask_el_mesh = np.meshgrid(mask_azimuths, mask_elevations)
 
     # Instantiate protocol
-    protocol = RepulsiveSphere140and40LeftEye20230223()
+    protocol = RepulsiveSphere140and40LeftEyeLargePatches20230810()
 
     # Calculate stimulus masks
     stimulus_masks = np.array([calculate_circular_mask(a, e, d) for d, a, e, _ in protocol.combos])

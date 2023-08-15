@@ -92,6 +92,7 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
 
     time = vxvisual.FloatParameter('time', internal=True)
     frame_index = vxvisual.IntParameter('frame_index', internal=True)
+    # texture_size = vxvisual.IntParameter('texture_size')
 
     frame_num = 1_000
     tp_sigma = 10
@@ -125,7 +126,9 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         self.sphere_program['a_position'] = self.position_buffer
 
         # Set texture
-        self.binary_texture = np.uint8(np.random.randint(0, 2, [100, 100, 1]) * np.array([[[1, 1, 1]]]) * 255)
+        # self.binary_texture = np.uint8(np.random.randint(0, 2, [100, 100, 1])
+        #                                * np.array([1, 1, 1])[np.newaxis, np.newaxis, :] * 255)
+        self.binary_texture = np.uint8(np.random.randint(0, 2, [50, 50, 1]) * np.array([[[1, 1, 1]]]) * 255)
         self.sphere_program['u_texture'] = self.binary_texture
         self.sphere_program['u_texture'].wrapping = 'repeat'
 
@@ -159,6 +162,11 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
     def render(self, dt):
         self.time.data = self.time.data + dt
         frame_idx = int(self.time.data * self.stimulus_fps) % (self.frame_num - 1)
+
+        # TEMP: set texture
+        # texsize = self.texture_size.data[0]
+        # x, y = np.meshgrid(np.arange(100) * 2 * np.pi , np.arange(100) * 2 * np.pi )
+        # self.sphere_program['u_texture'] = np.uint8(np.logical_and(np.sin(x) >= 0.0,  np.sin(y) >=0.0) * np.array([[[1, 1, 1]]]) * 255)
 
         # Only move texture coordinate if this motion matrix frame wasn't used yet
         if frame_idx > self.frame_index.data[0]:
@@ -195,18 +203,18 @@ class CMN_15_000f_15fps_10tp_0p1sp_varns(ContiguousMotionNoise):
         ContiguousMotionNoise.render(self, dt)
 
 
-class CMN_15_000f_15fps_10tp_0p1sp_0p03ns(ContiguousMotionNoise):
+class CMN_15_000f_15fps_10tp_0p1sp_0p035ns(ContiguousMotionNoise):
     frame_num = 15_000
     tp_sigma = 15
     sp_sigma = 0.1
     stimulus_fps = 15
-    norm_speed = 0.03
+    norm_speed = 0.035
     stimulus_diretion = 1
 
 
 
 
-class CMN_15_000f_15fps_10tp_0p1sp_0p03ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p03ns):
+class CMN_15_000f_15fps_10tp_0p1sp_0p035ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p035ns):
     stimulus_direction = -1
 
 
