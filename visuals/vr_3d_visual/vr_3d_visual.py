@@ -61,13 +61,13 @@ void main() {
 
 
 class VRVisual(vxvisual.SphericalVisual):
-    """Black und white contrast grating stimulus on a sphere
+    """Virtual reality demo of fish in aquatic environment
     """
-    # (optional) Add a short description
-    description = 'A rotating spherical grating stimulus'
 
     # Define parameters
     time = vxvisual.FloatParameter('time', internal=True)
+    orientation = vxvisual.FloatParameter('orientation', internal=True)
+    position = vxvisual.Vec2Parameter('position', internal=True)
 
     vertices = models.UnitSphere.vertices()
     indices = models.UnitSphere.indices()
@@ -77,10 +77,14 @@ class VRVisual(vxvisual.SphericalVisual):
 
         self.fb_size = 512
 
+        self.pos_x = multiprocessing.Value(ctypes.c_float)
+        self.pos_y = multiprocessing.Value(ctypes.c_float)
+        self.heading = multiprocessing.Value(ctypes.c_float)
         self.raw_frame_data = multiprocessing.Array(ctypes.c_uint8, int(6 * self.fb_size * self.fb_size * 4))
         self.frame_data = np.frombuffer(self.raw_frame_data.get_obj(), dtype=np.uint8).reshape((6, self.fb_size, self.fb_size, 4))
 
-        self.child = multiprocessing.Process(target=cubemap_gen.run, args=(self.raw_frame_data, self.fb_size))
+        self.child = multiprocessing.Process(target=cubemap_gen.run,
+                                             args=(self.raw_frame_data, self.pos_x, self.pos_y, self.heading, self.fb_size))
         self.child.start()
 
         self.program = gloo.Program(self.parse_vertex_shader(VERT_SHADER), FRAG_SHADER)
@@ -97,15 +101,6 @@ class VRVisual(vxvisual.SphericalVisual):
 
         self.program.bind(gloo.VertexBuffer(self.data))
 
-        # self.view = np.eye(4, dtype=np.float32)
-        # self.model = np.eye(4, dtype=np.float32)
-        # self.projection = np.eye(4, dtype=np.float32)
-
-        # self.program['u_model'] = self.model
-        # self.program['u_view'] = self.view
-        # self.projection = perspective(60.0, 1., 1, 100)
-        # self.program['u_projection'] = self.projection
-
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
         self.time.data = 0.0
@@ -113,6 +108,8 @@ class VRVisual(vxvisual.SphericalVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
+        self.position.data = np.array([self.pos_x.value, self.pos_y.value])
+        self.orientation.data = self.heading.value
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.program)
