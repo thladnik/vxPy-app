@@ -177,7 +177,7 @@ class MyApp(ShowBase):
         return seq
 
     def move_actor_fish(self, task):
-
+        global x_pos, y_pos, heading
         dt = globalClock.getDt()
 
         rot_scale = 90 * dt
@@ -215,6 +215,10 @@ class MyApp(ShowBase):
                 self.fish_actor.setH(self.fish_actor.getH() + rotation)
                 self.rig.setH(self.rig.getH() + rotation)
                 print(f'>{self.rig.getH()}deg')
+
+        x_pos.value = self.fish_actor.getPos().get_x()
+        y_pos.value = self.fish_actor.getPos().get_y()
+        heading.value = self.fish_actor.getH()
 
         return task.cont
 
@@ -259,9 +263,12 @@ class MyApp(ShowBase):
         return Task.cont
 
 
-def run(raw_data, _fb_size):
-    global data, fb_size
+def run(raw_data, _x, _y, _heading, _fb_size):
+    global data, fb_size, x_pos, y_pos, heading
     fb_size = _fb_size
+    x_pos = _x
+    y_pos = _y
+    heading = _heading
     data = np.frombuffer(raw_data.get_obj(), dtype=np.uint8).reshape((6, fb_size, fb_size, 4))
 
     p3d_app = MyApp()
