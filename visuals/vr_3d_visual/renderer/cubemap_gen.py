@@ -14,15 +14,18 @@ from direct.task import Task
 
 
 def get_abspath(path):
-    return os.path.join(os.getcwd(), 'visuals/vr_3d_visual/renderer', path)
+    return os.path.join(os.getcwd(), *'visuals/vr_3d_visual/renderer'.split('/'), *path.split('/'))
 
 
 class MyApp(ShowBase):
 
-    def __init__(self):
+    def __init__(self, motion_data_presets: dict = None):
         # ShowBase.__init__(self, windowType='offscreen')
         ShowBase.__init__(self)
         global fb_size
+
+        self.motion_data_presets = motion_data_presets
+        self.world_rot = False
 
         # self.disableMouse()
         self.enableMouse()
@@ -43,15 +46,22 @@ class MyApp(ShowBase):
         # self.cube = self.loader.loadModel('cube.egg')
         # self.cube.setScale(0.5, 0.5, 0.5)
         # self.cube = self.loader.loadModel('blueminnow/blueminnow.egg')
-        self.fish_actor = self.loader.loadModel(get_abspath('Goldfish/Goldfish.egg'))
+        self.main_actor = self.loader.loadModel(get_abspath('Goldfish/Goldfish.egg'))
         # self.cube.setScale(3., 3., 3.)
-        self.fish_actor.setScale(0.5, 0.5, 0.5)
-        self.fish_actor.setPos(0.0, 0.0, 8.0)
-        self.fish_actor.reparentTo(self.render)
+        self.main_actor.setScale(0.5, 0.5, 0.5)
+        self.main_actor.setPos(0.0, 0.0, 8.0)
+        self.main_actor.reparentTo(self.render)
+
+        # Make camera follow actor
+        if not self.world_rot:
+            self.disableMouse()
+            self.camera.reparentTo(self.main_actor)
+            self.camera.setPos(0, -25, 7)
+            self.camera.lookAt(self.main_actor)
 
         self.rig = NodePath('rig')
         self.cbbuffer = self.win.makeCubeMap('env', fb_size, self.rig, to_ram=True)
-        self.rig.reparentTo(self.fish_actor)
+        self.rig.reparentTo(self.main_actor)
 
         # Add texture to model (reflections)
         # self.cube.setTexGen(TextureStage.getDefault(), TexGenAttrib.MWorldCubeMap)
@@ -176,9 +186,27 @@ class MyApp(ShowBase):
 
         return seq
 
+
+    def _move_by_motion_presets(self):
+        t = time.perf_counter() - self.start_time
+
+        idx = np.argmin(np.abs(self.motion_data_presets['time']-t))
+
+        h = self.motion_data_presets['orientation'][idx]
+        x, y = self.motion_data_presets['position'][idx]
+
+        self.main_actor.setH(h)
+        self.rig.setH(h)
+        self.main_actor.setPos(x, y, self.default_z)
+
+
     def move_actor_fish(self, task):
         global x_pos, y_pos, heading
         dt = globalClock.getDt()
+
+        if self.motion_data_presets is not None:
+            self._move_by_motion_presets()
+            return task.cont
 
         rot_scale = 90 * dt
         rot_directions = {'cw': -1, 'ccw': 1}
@@ -188,8 +216,8 @@ class MyApp(ShowBase):
             if not state:
                 continue
 
-            rot = self.fish_actor.getH()
-            pos = self.fish_actor.getPos()
+            rot = self.main_actor.getH()
+            pos = self.main_actor.getPos()
             x_comp_fb = -np.sin(rot / 360 * 2 * np.pi)
             y_comp_fb = np.cos(rot / 360 * 2 * np.pi)
 
@@ -207,28 +235,28 @@ class MyApp(ShowBase):
             if direction in trans_directions:
                 print(f'Translate {direction}', pos)
                 translation = LPoint3f(*[trans_scale * v for v in trans_directions[direction]])
-                self.fish_actor.setPos(pos + translation)
+                self.main_actor.setPos(pos + translation)
 
             if direction in rot_directions:
                 print(f'Rotate {direction} by {rot_scale} from {self.rig.getH()}deg')
                 rotation = rot_scale * rot_directions[direction]
-                self.fish_actor.setH(self.fish_actor.getH() + rotation)
+                self.main_actor.setH(self.main_actor.getH() + rotation)
                 self.rig.setH(self.rig.getH() + rotation)
                 print(f'>{self.rig.getH()}deg')
 
-        x_pos.value = self.fish_actor.getPos().get_x()
-        y_pos.value = self.fish_actor.getPos().get_y()
-        heading.value = self.fish_actor.getH()
+        x_pos.value = self.main_actor.getPos().get_x()
+        y_pos.value = self.main_actor.getPos().get_y()
+        heading.value = self.main_actor.getH()
 
         return task.cont
 
     def spin_camera_task(self, task):
 
-        # angleDegrees = task.time * 6.0
-        angleDegrees = 6.0
-        angleRadians = angleDegrees * (pi / 180.0)
-        self.camera.setPos(100 * sin(angleRadians), -100 * cos(angleRadians), 100)
-        self.camera.setHpr(angleDegrees, -40, 0)
+        if self.world_rot:
+            angleDegrees = 6.0
+            angleRadians = angleDegrees * (pi / 180.0)
+            self.camera.setPos(100 * sin(angleRadians), -100 * cos(angleRadians), 100)
+            self.camera.setHpr(angleDegrees, -40, 0)
         # self.camera.setPos(0, 0, 40)
         # self.camera.setHpr(0, -90, 0)
         return Task.cont
