@@ -17,6 +17,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import vxpy.core.protocol as vxprotocol
 
+from controls.control_tests import TestControl01
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 
 
@@ -109,6 +110,7 @@ class MovingGratings(vxprotocol.StaticProtocol):
                               SphericalBlackWhiteGrating.motion_type: 'rotation',
                               SphericalBlackWhiteGrating.angular_period: sp,
                               SphericalBlackWhiteGrating.angular_velocity: v})
+                p.set_control(TestControl01)
                 self.add_phase(p)
 
                 p = vxprotocol.Phase(mov_duration)
