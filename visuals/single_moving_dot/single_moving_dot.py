@@ -1,5 +1,5 @@
 """
-vxPy_app ./visuals/spherical_grating/spherical_grating.py
+vxPy_app ./visuals/spherical_grating/ml_rotating_grating.py
 Copyright (C) 2022 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
@@ -111,9 +111,32 @@ class SingleDotRotatingAroundAxis(visual.SphericalVisual):
 class SingleDotRotatingSinusoidal(SingleDotRotatingAroundAxis):
 
     dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5)
+    sine_amp = visual.FloatParameter('sine_amp', static=True, default=20.0, limits=(-90, 90), step_size=1)
 
     def __init__(self, *args, **kwargs):
         SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
 
+        # connect new parameters
+        self.sine_amp.connect(self.rotating_dot)
+
     def do_updates(self):
-        self.dot_offset_angle.data = 45 * np.sin(self.time.data)
+        sine_amp = self.sine_amp.data[0]
+        self.dot_offset_angle.data = sine_amp * np.sin(self.time.data)
+
+
+class SingleDotRotatingSpiral(SingleDotRotatingAroundAxis):
+
+    dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5)
+    elevation_vel = visual.FloatParameter('elevation_vel', default = 9, limits=(-90,90), step_size=1.)
+    elevation_start = visual.FloatParameter('elevation_start', default = -90, limits=(-90,90), step_size=1)
+    def __init__(self, *args, **kwargs):
+        SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
+
+        # connect new parameters
+        self.elevation_vel.connect(self.rotating_dot)
+        self.elevation_start.connect(self.rotating_dot)
+
+    def do_updates(self):
+        elevation_vel = self.elevation_vel.data[0]
+        elevation_start = self.elevation_start.data[0]
+        self.dot_offset_angle.data = elevation_vel * self.time.data + elevation_start
