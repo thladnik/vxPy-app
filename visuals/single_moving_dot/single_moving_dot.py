@@ -92,12 +92,28 @@ class SingleDotRotatingAroundAxis(visual.SphericalVisual):
         self.rotating_dot['a_azimuth'] = self.azimuth_buffer
         self.rotating_dot['a_elevation'] = self.elevation_buffer
 
+    def do_updates(self):
+        pass
+
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
+
+        self.do_updates()
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.rotating_dot)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.rotating_dot.draw('triangles', self.index_buffer)
+
+
+class SingleDotRotatingSinusoidal(SingleDotRotatingAroundAxis):
+
+    dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5)
+
+    def __init__(self, *args, **kwargs):
+        SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
+
+    def do_updates(self):
+        self.dot_offset_angle.data = 45 * np.sin(self.time.data)
