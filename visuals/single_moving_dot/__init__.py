@@ -1,1 +1,1 @@
-from .single_moving_dot import SingleDotRotatingAroundAxis, SingleDotRotatingSinusoidal
+from .single_moving_dot import SingleDotRotatingAroundAxis, SingleDotRotatingSinusoidal, SingleDotRotatingSpiral
