@@ -26,7 +26,7 @@ class MotionAxis(vxvisual.Mat4Parameter):
         return transforms.rotate(90, (1, 0, 0))
 
 
-class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):
+class SphericalSFTGrating(vxvisual.SphericalVisual):
     """Black und white contrast grating stimulus on a sphere
     """
     # (optional) Add a short description
@@ -43,8 +43,8 @@ class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
 
     # Paths to shaders
-    VERT_PATH = './spherical_grating.vert'
-    FRAG_PATH = './spherical_grating.frag'
+    VERT_PATH = 'sft_grating.vert'
+    FRAG_PATH = 'sft_grating.frag'
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)

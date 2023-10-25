@@ -126,9 +126,10 @@ class SingleDotRotatingSinusoidal(SingleDotRotatingAroundAxis):
 
 class SingleDotRotatingSpiral(SingleDotRotatingAroundAxis):
 
-    dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5)
-    elevation_vel = visual.FloatParameter('elevation_vel', default = 9, limits=(-90,90), step_size=1.)
-    elevation_start = visual.FloatParameter('elevation_start', default = -90, limits=(-90,90), step_size=1)
+    dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-90, 90), step_size=5)
+    elevation_vel = visual.FloatParameter('elevation_vel', static=True, default = 9, limits=(-90,90), step_size=1.)
+    elevation_start = visual.FloatParameter('elevation_start', static=True, default = -90, limits=(-90,90), step_size=1)
+
     def __init__(self, *args, **kwargs):
         SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
 
