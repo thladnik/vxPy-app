@@ -1,1 +1,1 @@
-from SaccadeTriggeredTextDisplCombined import TextureRotationCosineFlash
+from .SaccadeTriggeredTextDisplCombined import TextureRotationCosineFlash

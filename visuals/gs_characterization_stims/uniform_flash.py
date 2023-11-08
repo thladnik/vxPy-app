@@ -90,9 +90,9 @@ class UniformFlashCos(vxvisual.SphericalVisual):     # for coarse texture only!
     luminance = vxvisual.FloatParameter('luminance', default=0.5, limits=(0.0, 1.0), step_size=0.01)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)    # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
-    flash_start_time = vxvisual.IntParameter('flash_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
-    flash_duration = vxvisual.IntParameter('flash_duration', static=True, default=500, limits=(0.0, 5000), step_size=100)  # ms
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)    # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
+    flash_start_time = vxvisual.IntParameter('flash_start_time', static=True, default=3, limits=(0.0, 5000), step_size=100)  # sec
+    flash_duration = vxvisual.IntParameter('flash_duration', static=True, default=0.5, limits=(0.0, 100), step_size=0.1)  # sec
     flash_amp = vxvisual.FloatParameter('flash_amp', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # total lum range
     flash_freq = vxvisual.FloatParameter('flash_freq', static=True, default=1.0, limits=(0.0, 20.0), step_size=0.1)  # Hz
 

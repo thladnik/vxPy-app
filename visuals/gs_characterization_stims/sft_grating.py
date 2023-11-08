@@ -32,13 +32,11 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
     # (optional) Add a short description
     description = 'Spherical black und white contrast grating stimulus'
 
-    # Varying Parameters
-    rotation = vxvisual.Mat4Parameter('rotation', default=0.0, limits=(0.0, 360.0), internal=True)
-
     # Define parameters
     time = vxvisual.FloatParameter('time', internal=True)
     waveform = vxvisual.IntParameter('waveform', value_map={'rectangular': 1, 'sinusoidal': 2}, static=True)
     motion_type = vxvisual.IntParameter('motion_type', static=True, value_map = {'translation': 1, 'rotation': 2})
+    motion_axis = MotionAxis('motion_axis', static=True)
     angular_velocity = vxvisual.FloatParameter('angular_velocity', default=30, step_size=5, static=True)
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
     offset = vxvisual.FloatParameter('offset', default = 0, limits=(-180,180),step_size=1, static=True)
@@ -62,14 +60,13 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
 
         # Connect parameters (this makes them be automatically updated in the connected programs)
         self.time.connect(self.grating)
-        self.rotation.connect(self.grating)
         self.waveform.connect(self.grating)
         self.motion_type.connect(self.grating)
+        self.motion_axis.connect(self.grating)
         self.angular_velocity.connect(self.grating)
         self.angular_period.connect(self.grating)
         self.offset.connect(self.grating)
 
-        self.protocol.global_visual_props['azim_angle'] = 0.
 
     def initialize(self, **params):
         # Reset u_time to 0 on each visual initialization
@@ -83,12 +80,6 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
     def render(self, dt):
         # Add elapsed time to u_time
         self.time.data += dt
-
-        ang_vel = self.angular_velocity.data[0]
-
-        angle = ang_vel * dt
-        self.protocol.global_visual_props['azim_angle'] += angle
-        self.rotation.data = transforms.rotate(self.protocol.global_visual_props['azim_angle'], (0, 0, 1))
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
         self.grating.draw('triangles', self.index_buffer)
