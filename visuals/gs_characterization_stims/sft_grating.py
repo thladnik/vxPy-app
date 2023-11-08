@@ -41,6 +41,7 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
     motion_type = vxvisual.IntParameter('motion_type', static=True, value_map = {'translation': 1, 'rotation': 2})
     angular_velocity = vxvisual.FloatParameter('angular_velocity', default=30, step_size=5, static=True)
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
+    offset = vxvisual.FloatParameter('offset', default = 0, limits=(-180,180),step_size=1, static=True)
 
     # Paths to shaders
     VERT_PATH = 'sft_grating.vert'
@@ -66,6 +67,7 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
         self.motion_type.connect(self.grating)
         self.angular_velocity.connect(self.grating)
         self.angular_period.connect(self.grating)
+        self.offset.connect(self.grating)
 
         self.protocol.global_visual_props['azim_angle'] = 0.
 
