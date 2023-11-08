@@ -151,6 +151,7 @@ class TextureDisplacementStepFlash50Hz(StaticProtocol):
                       (30, 2000, 0.5), (30, 4000, 0.5), (30, 111, 0), (0, 333, 0.5), (0, 333, 0.5)]
 
         # 10 seconds just texture (no flash)
+
         for i in range(3):
             # 10 seconds just texture (coarse)
             p = Phase(duration=10)

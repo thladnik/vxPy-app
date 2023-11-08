@@ -64,12 +64,12 @@ class SaccadeTriggeredTextDisplCombined(vxprotocol.TriggeredProtocol):
                 if rot_dir == 0:
                     p = vxprotocol.Phase(duration=10)
                     p.set_visual(TextureRotationCosineFlash, params(rot_duration, rot_start, rot_amp, rot_dir, delay,
-                                                                    flash_amp, flash_dur, flash_freq, baseline_lum,
+                                                                    flash_dur, flash_amp, flash_freq, baseline_lum,
                                                                     contrast))
                 else:
                     p = vxprotocol.Phase(duration=18)
                     p.set_visual(TextureRotationCosineFlash, params(rot_duration, rot_start, rot_amp, rot_dir,
-                                                                    rot_start + delay, flash_amp, flash_dur, flash_freq,
+                                                                    rot_start + delay, flash_dur, flash_amp, flash_freq,
                                                                     baseline_lum, contrast))
                 self.add_phase(p)
 

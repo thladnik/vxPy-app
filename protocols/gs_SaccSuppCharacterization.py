@@ -9,10 +9,11 @@ from visuals.single_moving_dot import SingleDotRotatingBackAndForth
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 # define Parameter functions
-def paramsSFGrat(waveform, motion_type, ang_vel, ang_period, offset):
+def paramsSFGrat(waveform, motion_type, motion_axis, ang_vel, ang_period, offset):
     return {
         SphericalSFTGrating.waveform: waveform,
         SphericalSFTGrating.motion_type: motion_type,
+        SphericalSFTGrating.motion_axis: motion_axis,
         SphericalSFTGrating.angular_velocity: ang_vel,
         SphericalSFTGrating.angular_period: ang_period,
         SphericalSFTGrating.offset: offset
@@ -65,6 +66,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # set fixed parameters PART 1: SF Tuning Motion
         sfm_waveform = 'rectangular'
         sfm_motion_type = 'rotation'
+        sft_motion_axis = 'vertical'
         sfm_temp_freq = 4    # Hz (cyc/sec)
         sfm_mov_phase_dur = 12 # sec
         sfm_static_phase_dur = 6 # sec
@@ -119,7 +121,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
         # Add pre-phase (5 sec uniform grey)
-        p = vxprotocol.Phase(5)
+        '''p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
         self.add_phase(p)
 
@@ -130,12 +132,12 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
             for direction, ang_per in np.random.permutation(SFTm_conditions):
                 # Static Phase
                 p = vxprotocol.Phase(sfm_static_phase_dur)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, 0, ang_per,0))
+                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, sft_motion_axis,0, ang_per,0))
                 self.add_phase(p)
 
                 # Moving Phase
                 p = vxprotocol.Phase(sfm_mov_phase_dur) # produces +0.5 pi phase shift, by running 0.0625 sec longer (at 4Hz TF, 1/4 cycle = 0.0625s)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, direction * ang_per * sfm_temp_freq,
+                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, sft_motion_axis, direction * ang_per * sfm_temp_freq,
                                                                ang_per,0))
                 self.add_phase(p)
 
@@ -151,6 +153,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         repeats = 2
         for i in range(repeats):
             for direction, motion_type, motion_axis in np.random.permutation(DS_conditions):
+                direction = int(direction)
                 # Static Phase
                 p = vxprotocol.Phase(ds_static_phase_dur)
                 p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, motion_axis,
@@ -162,6 +165,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
                 p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, motion_axis,
                                                                   direction * ds_ang_vel, ds_ang_period))
                 self.add_phase(p)
+
 
 
         # 5 sec grey between characterization sections
@@ -182,19 +186,20 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)
+        self.add_phase(p)'''
 
 
         # PART 3b: On/Off Flashes
         repeats = 10
-        for flash_dir in np.random.permutation(np.full((repeats,len(flash_direction)),flash_direction).reshape(len(flash_direction)*repeats)):
+        variants = np.array(flash_direction * repeats).reshape((-1,))
+        for flash_dir in np.random.permutation(np.full((repeats-1,len(flash_direction)),flash_direction).reshape(len(flash_direction)*(repeats-1))):
             p = vxprotocol.Phase(flash_phase_dur)
             p.set_visual(UniformFlashStep, paramsFlash(flash_base_lum, flash_start, flash_dur, flash_dir * flash_amp))
             self.add_phase(p)
 
 
         # 5 sec grey between characterization sections
-        p = vxprotocol.Phase(5)
+        '''p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
         self.add_phase(p)
 
@@ -266,4 +271,4 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
             # 5 sec grey between characterization sections
             p = vxprotocol.Phase(5)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-            self.add_phase(p)
+            self.add_phase(p)'''

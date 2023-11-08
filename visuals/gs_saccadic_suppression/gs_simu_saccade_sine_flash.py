@@ -417,7 +417,7 @@ class SimuSaccadeWithStepFlash2000(vxvisual.SphericalVisual):
         time_in_sine = time - sine_start_time
         if 0.0 < time_in_sine <= sine_duration:
             #current_lum = baseline_lum + np.sin(sine_freq * time_in_sine / 1000 * 2.0 * np.pi) * sine_amp / 2.0
-            current_lum = 0.25
+            current_lum = baseline_lum - sine_amp
         else:
             current_lum = baseline_lum
 
@@ -521,7 +521,7 @@ class SimuSaccadeWithStepFlash4000(vxvisual.SphericalVisual):
         time_in_sine = time - sine_start_time
         if 0.0 < time_in_sine <= sine_duration:
             #current_lum = baseline_lum + np.sin(sine_freq * time_in_sine / 1000 * 2.0 * np.pi) * sine_amp / 2.0
-            current_lum = 0.25
+            current_lum = baseline_lum - sine_amp
         else:
             current_lum = baseline_lum
 
