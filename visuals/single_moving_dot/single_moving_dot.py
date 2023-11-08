@@ -44,7 +44,7 @@ class SingleDotRotatingAroundAxis(visual.SphericalVisual):
 
     # Define parameters
     time = visual.FloatParameter('time', internal=True)
-    motion_axis = MotionAxis('motion_axis', static=True)
+    motion_axis = MotionAxis('motion_axis',default='vertical', static=True)
     dot_polarity = visual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
     dot_start_angle = visual.FloatParameter('dot_start_angle', default=0, limits=(-180, 180), step_size=5, static=True)
     dot_angular_velocity = visual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5, static=True)
@@ -141,3 +141,28 @@ class SingleDotRotatingSpiral(SingleDotRotatingAroundAxis):
         elevation_vel = self.elevation_vel.data[0]
         elevation_start = self.elevation_start.data[0]
         self.dot_offset_angle.data = elevation_vel * self.time.data + elevation_start
+
+class SingleDotRotatingBackAndForth(SingleDotRotatingAroundAxis):
+
+    t_switch = visual.FloatParameter('t_switch',default=3,static=True,limits=(0,10),step_size=0.01)   # sec
+    starting_ang_vel = visual.FloatParameter('starting_ang_vel', default=60, limits=(-360, 360), step_size=5, static=True) # °/sec
+    dot_angular_velocity = visual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5)   # °/sec
+
+    def __init__(self, *args, **kwargs):
+        SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
+
+        # connect new parameters
+        self.t_switch.connect(self.rotating_dot)
+        self.starting_ang_vel.connect(self.rotating_dot)
+        self.dot_angular_velocity.connect(self.rotating_dot)
+
+    def do_updates(self):
+        t_switch = self.t_switch.data[0]
+        ang_vel = self.starting_ang_vel.data[0]
+
+        if self.time.data < t_switch:
+            current_ang_vel = ang_vel
+        else:
+            current_ang_vel = -ang_vel
+
+        self.dot_angular_velocity.data = current_ang_vel

@@ -20,9 +20,9 @@ class UniformFlashStep(vxvisual.SphericalVisual):     # for coarse texture only!
     luminance = vxvisual.FloatParameter('luminance', default=0.5, limits=(0.0, 1.0), step_size=0.01)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)    # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
-    flash_start_time = vxvisual.IntParameter('flash_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
-    flash_duration = vxvisual.IntParameter('flash_duration', static=True, default=500, limits=(0.0, 5000), step_size=100)  # ms
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)    # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
+    flash_start_time = vxvisual.IntParameter('flash_start_time', static=True, default=3, limits=(0.0, 100), step_size=0.1)  # ms
+    flash_duration = vxvisual.IntParameter('flash_duration', static=True, default=1, limits=(0.0, 10), step_size=0.1)  # ms
     flash_amp = vxvisual.FloatParameter('flash_amp', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # total lum range
 
     def __init__(self, *args, **kwargs):
@@ -45,6 +45,10 @@ class UniformFlashStep(vxvisual.SphericalVisual):     # for coarse texture only!
         # Connect parameters to rendering program
         self.time.connect(self.uni_flash)
         self.luminance.connect(self.uni_flash)
+        self.baseline_lum.connect(self.uni_flash)
+        self.flash_start_time.connect(self.uni_flash)
+        self.flash_duration.connect(self.uni_flash)
+        self.flash_amp.connect(self.uni_flash)
 
     def initialize(self, **kwargs):
         self.time.data = 0.
@@ -112,6 +116,11 @@ class UniformFlashCos(vxvisual.SphericalVisual):     # for coarse texture only!
         # Connect parameters to rendering program
         self.time.connect(self.uni_flash)
         self.luminance.connect(self.uni_flash)
+        self.baseline_lum.connect(self.uni_flash)
+        self.flash_start_time.connect(self.uni_flash)
+        self.flash_duration.connect(self.uni_flash)
+        self.flash_amp.connect(self.uni_flash)
+        self.flash_freq.connect(self.uni_flash)
 
     def initialize(self, **kwargs):
         self.time.data = 0.
