@@ -6,6 +6,7 @@ uniform int waveform;
 uniform int motion_type;
 uniform float angular_period;
 uniform float time;
+uniform float offset;
 
 // Input
 varying float v_azimuth;
@@ -20,7 +21,7 @@ void main() {
 
 
     // Calculate brightness using position
-    float c = sin(2.0 * PI * (angular_pos  / angular_period));
+    float c = sin(2.0 * PI * (angular_pos  / angular_period) - offset);
 
 
     // If waveform is rectangular (1): apply threshold to brightness
