@@ -4,16 +4,18 @@ import vxpy.core.protocol as vxprotocol
 from visuals.gs_characterization_stims.sft_grating import SphericalSFTGrating
 from visuals.gs_characterization_stims.DS_grating import SphericalDSGrating
 from visuals.gs_characterization_stims.uniform_flash import UniformFlashStep
-from visuals.single_moving_dot import SingleDotRotatingSpiral
+from visuals.gs_characterization_stims.chirp import LogChirp
+from visuals.single_moving_dot import SingleDotRotatingBackAndForth
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 # define Parameter functions
-def paramsSFGrat(waveform, motion_type, ang_vel, ang_period):
+def paramsSFGrat(waveform, motion_type, ang_vel, ang_period, offset):
     return {
         SphericalSFTGrating.waveform: waveform,
         SphericalSFTGrating.motion_type: motion_type,
         SphericalSFTGrating.angular_velocity: ang_vel,
-        SphericalSFTGrating.angular_period: ang_period
+        SphericalSFTGrating.angular_period: ang_period,
+        SphericalSFTGrating.offset: offset
     }
 
 def paramsDSGrat(waveform, motion_type, motion_axis, ang_vel, ang_period):
@@ -33,16 +35,24 @@ def paramsFlash(base_lum, flash_start, flash_dur, flash_amp):
         UniformFlashStep.flash_amp: flash_amp
     }
 
-
-def paramsDot(motion_axis, dot_pol, dot_start_ang, dot_ang_vel, dot_dia, elev_vel, elev_start):
+def paramsChirp(base_lum, sine_amp, f_start, f_final, chirp_dur):
     return {
-        SingleDotRotatingSpiral.motion_axis: motion_axis,
-        SingleDotRotatingSpiral.dot_polarity: dot_pol,
-        SingleDotRotatingSpiral.dot_start_angle: dot_start_ang,
-        SingleDotRotatingSpiral.dot_angular_velocity: dot_ang_vel,
-        SingleDotRotatingSpiral.dot_angular_diameter: dot_dia,
-        SingleDotRotatingSpiral.elevation_vel: elev_vel,
-        SingleDotRotatingSpiral.elevation_start: elev_start
+        LogChirp.baseline_lum: base_lum,
+        LogChirp.sine_amp: sine_amp,
+        LogChirp.starting_freq: f_start,
+        LogChirp.final_freq: f_final,
+        LogChirp.chirp_duration: chirp_dur
+    }
+
+def paramsDot(motion_axis, dot_pol, dot_start_ang, start_ang_vel, dot_dia, t_switch, dot_offset):
+    return {
+        SingleDotRotatingBackAndForth.motion_axis: motion_axis,
+        SingleDotRotatingBackAndForth.dot_polarity: dot_pol,
+        SingleDotRotatingBackAndForth.dot_start_angle: dot_start_ang,
+        SingleDotRotatingBackAndForth.starting_ang_vel: start_ang_vel,
+        SingleDotRotatingBackAndForth.dot_angular_diameter: dot_dia,
+        SingleDotRotatingBackAndForth.t_switch: t_switch,
+        SingleDotRotatingBackAndForth.dot_offset_angle: dot_offset
     }
 
 class CharacterizationProtocol(vxprotocol.StaticProtocol):
@@ -52,48 +62,61 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
         self.global_visual_props['azim_angle'] = 0.
 
-        # set fixed parameters PART 1: SF Tuning
-        sf_waveform = 'rectangular'
-        sf_motion_type = 'rotation'
-        sf_temp_freq = 4    # Hz (cyc/sec)
-        sf_phase_dur = 6 # sec
+        # set fixed parameters PART 1: SF Tuning Motion
+        sfm_waveform = 'rectangular'
+        sfm_motion_type = 'rotation'
+        sfm_temp_freq = 4    # Hz (cyc/sec)
+        sfm_mov_phase_dur = 12 # sec
+        sfm_static_phase_dur = 6 # sec
 
         # set fixed parameters PART 2: direction selectivity
         ds_waveform = 'rectangular'
-        ds_motion_axis = 'vertical'
-        ds_ang_vel = 60 # °/sec
-        ds_ang_period = 30  # °/cyc --> TF = 2 Hz (cyc/s)
-        ds_phase_dur = 6    # sec
+        ds_ang_vel = 90 # °/sec
+        ds_ang_period = 22.5  # °/cyc --> TF = 2 Hz (cyc/s)
+        ds_mov_phase_dur = 12    # sec
+        ds_static_phase_dur = 6 # sec
 
-        # set fixed parameters PART 3: On/Off
-        onoff_phase_dur = 6 # sec
+        # set fixed parameters PART 3a: On/Off Steps
+        onoff_phase_dur = 12 # sec
 
-        # set fixed parameters PART 4: Flashes
-        base_lum = 0.5
+        # set fixed parameters PART 3b: On/Off Flashes
+        flash_base_lum = 0.5
         flash_start = 3 # in sec
         flash_dur = 0.5 # in sec
         flash_amp = 0.5 # change sign for bright or dark flashes
-        flash_phase_dur = 6  # sec
+        flash_phase_dur = 8  # sec
 
-        # set fixed parameters PART 5: Dot
+        # set fixed parameters PART 4: SF Tuning Static
+        sfs_waveform = 'rectangular'
+        sfs_motion_type = 'rotation'
+        sfs_pattern_phase_duration = 6   # sec
+        sfs_grey_phase_duration = 6 # sec
+
+        # set fixed parameters PART 5: Chirp down
+        chirp_base_lum = 0.5
+        chirp_sine_amp = 0.5
+        chirp_f_start = 30  # Hz
+        chirp_f_final = 1   # Hz
+        chirp_dur = 20  # sec
+        chirp_pause_dur = 6 # sec
+
+        # set fixed parameters PART 6: Dot
         dot_motion_axis = 'vertical'
         dot_polarity = 'dark-on-light'
-        dot_start_angle = 0 # °
-        dot_ang_vel = 120   # °/sec (on elevation axis) --> 3s/360° = 3s/cyc
-        dot_dia_small = 5   # °
-        dot_dia_big = 30  # °
-        dot_small_elev_vel = 10/3   # °/s
-        dot_big_elev_vel = 10   # °/s
-        small_dot_phase_dur = 27  # sec; 90° elevation range @ 10° elevation gain/cycle = 9 cyc * 3s/cyc
-        big_dot_phase_dur = 12  # sec, 120° elevation range @ 30° elevation gain/cycle = 4 cyc * 3s/cyc
+        dot_ang_vel = 120   # °/sec
+        dot_grey_phase_duration = 6 # sec
 
         # Variable Conditions:
-        SFTangular_periods = [90, 45, 22.5, 11.25, 5.625]   # PART 1: SF Tuning
-        DSmotion_type = ['translation','rotation']  # PART 2: Direction Selectivity
-        onoff_color = [0.5, 1, 0.5, -1] # PART 3: On/Off
-        flash_direction = [-1,1]  # PART 4: Flashes
-        dot_small_directions = [(1,-45), (-1,45)]  # ° (for upward moving (+1), start @ -45, for downward moving (-1) start @ +45)
-        dot_big_directions = [(1,-90), (-1,30)]  # ° (for upward moving (+1), start @ -90, for downward moving (-1) start @ 30)
+        SFTm_conditions = [(-1, 90), (1, 90), (-1, 45), (1, 45), (-1, 22.5), (1, 22.5), (-1, 11), (1, 11.25), (-1, 5.625), (1, 5.625)]   # direction and angular period in °
+        DS_conditions = [(-1,'translation','forward'),(1,'translation','forward'),(-1,'translation','vertical'),
+                        (1,'translation','vertical'),(-1,'rotation','forward'),(1,'rotation','forward')]  # direction, motion type and motion axis
+        onoff_color = [0.5, 1, 0.5, -1]
+        flash_direction = [-1,1]
+        SFTs_conditions = [(90,0),(90,0.25),(90,0.5),(90,0.75),(45,0),(45,0.25),(45,0.5),(45,0.75),(22.5,0),(22.5,0.25),
+                           (22.5,0.5),(22.5,0.75),(11.25,0),(11.25,0.25),(11.25,0.5),(11.25,0.75),(5.625,0),(5.625,0.25),
+                           (5.625,0.5),(5.625,0.75)]    # angular period in °/cyc, phase shift in cyc
+        dot_conditions = [(-90,45,5),(-90,15,30),(0,15,5),(0,15,30),(90,-15,5),(90,-15,30),(180,15,5),(180,15,30)]    # dot starting position in azimuth °, dot starting position in elevation °, dot diameter in °
+
 
         # Add pre-phase (5 sec uniform grey)
         p = vxprotocol.Phase(5)
@@ -101,54 +124,21 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
-        # PART 1: Spatial Frequency Tuning
+        # PART 1: Spatial Frequency Tuning, Motion
         repeats = 2
         for i in range(repeats):
-            for ang_per in SFTangular_periods:
-                self.global_visual_props['azim_angle'] = 0.
-                # Static Phase, 0 pi phase shifted
-                p = vxprotocol.Phase(sf_phase_dur)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, 0, ang_per))
+            for direction, ang_per in np.random.permutation(SFTm_conditions):
+                # Static Phase
+                p = vxprotocol.Phase(sfm_static_phase_dur)
+                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, 0, ang_per,0))
                 self.add_phase(p)
 
-                # Moving Phase CW_1
-                p = vxprotocol.Phase(sf_phase_dur + 0.0625) # produces +0.5 pi phase shift, by running 0.0625 sec longer (at 4Hz TF, 1/4 cycle = 0.0625s)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, ang_per * sf_temp_freq,
-                                                               ang_per))
+                # Moving Phase
+                p = vxprotocol.Phase(sfm_mov_phase_dur) # produces +0.5 pi phase shift, by running 0.0625 sec longer (at 4Hz TF, 1/4 cycle = 0.0625s)
+                p.set_visual(SphericalSFTGrating, paramsSFGrat(sfm_waveform, sfm_motion_type, direction * ang_per * sfm_temp_freq,
+                                                               ang_per,0))
                 self.add_phase(p)
 
-                # Static Phase, 0.5 pi phase shifted
-                p = vxprotocol.Phase(sf_phase_dur)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, 0, ang_per))
-                self.add_phase(p)
-
-                # Moving Phase CCW_1
-                p = vxprotocol.Phase(sf_phase_dur + 0.125) # produces -1 pi phase shift, by running 0.125 sec longer (at 4Hz TF, 1/2 cycle = 0.125s)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, -ang_per * sf_temp_freq,
-                                                               ang_per))
-                self.add_phase(p)
-
-                # Static Phase, -0.5 pi == 1.5 pi phase shifted
-                p = vxprotocol.Phase(sf_phase_dur)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, 0, ang_per))
-                self.add_phase(p)
-
-                # Moving Phase CW_2
-                p = vxprotocol.Phase(sf_phase_dur - 0.0625)  # produces -0.5 pi phase shift, by running 0.0625 sec shorter (at 4Hz TF, 1/4 cycle = 0.0625s)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, ang_per * sf_temp_freq,
-                                                               ang_per))
-                self.add_phase(p)
-
-                # Static Phase, -1 pi == 1 pi phase shifted
-                p = vxprotocol.Phase(sf_phase_dur)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, 0, ang_per))
-                self.add_phase(p)
-
-                # Moving Phase CCW_2
-                p = vxprotocol.Phase(sf_phase_dur + 0.125)  # produces -1 pi phase shift, by running 0.125 sec longer (at 4Hz TF, 1/2 cycle = 0.125s)
-                p.set_visual(SphericalSFTGrating, paramsSFGrat(sf_waveform, sf_motion_type, -ang_per * sf_temp_freq,
-                                                               ang_per))
-                self.add_phase(p)
 
 
         # 5 sec grey between characterization sections
@@ -158,21 +148,20 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
         # PART 2: Direction Selectivity
-        repeats = 3
+        repeats = 2
         for i in range(repeats):
-            for motion_type in DSmotion_type:
-                for direction in [-1,1]:
-                    # Static Phase
-                    p = vxprotocol.Phase(ds_phase_dur)
-                    p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, ds_motion_axis,
+            for direction, motion_type, motion_axis in np.random.permutation(DS_conditions):
+                # Static Phase
+                p = vxprotocol.Phase(ds_static_phase_dur)
+                p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, motion_axis,
                                                                   0, ds_ang_period))
-                    self.add_phase(p)
+                self.add_phase(p)
 
-                    # Moving Phase
-                    p = vxprotocol.Phase(ds_phase_dur)
-                    p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, ds_motion_axis,
+                # Moving Phase
+                p = vxprotocol.Phase(ds_mov_phase_dur)
+                p.set_visual(SphericalDSGrating, paramsDSGrat(ds_waveform, motion_type, motion_axis,
                                                                   direction * ds_ang_vel, ds_ang_period))
-                    self.add_phase(p)
+                self.add_phase(p)
 
 
         # 5 sec grey between characterization sections
@@ -181,7 +170,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
-        # PART 3: On/Off
+        # PART 3a: On/Off Steps
         repeats = 3
         for i in range(repeats):
             for color in onoff_color:
@@ -196,13 +185,12 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
-        # PART 4: Flashes
+        # PART 3b: On/Off Flashes
         repeats = 10
-        for i in range(repeats):
-            for flash_dir in flash_direction:
-                p = vxprotocol.Phase(flash_phase_dur)
-                p.set_visual(UniformFlashStep, paramsFlash(base_lum, flash_start, flash_dur, flash_dir * flash_amp))
-                self.add_phase(p)
+        for flash_dir in np.random.permutation(np.full((repeats,len(flash_direction)),flash_direction).reshape(len(flash_direction)*repeats)):
+            p = vxprotocol.Phase(flash_phase_dur)
+            p.set_visual(UniformFlashStep, paramsFlash(flash_base_lum, flash_start, flash_dur, flash_dir * flash_amp))
+            self.add_phase(p)
 
 
         # 5 sec grey between characterization sections
@@ -211,24 +199,71 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
-        # PART 5: Dot
-        repeats = 4
-        for i in range(repeats):
-            for elev_dir, elev_start in dot_small_directions:
-                p = vxprotocol.Phase(small_dot_phase_dur)
-                p.set_visual(SingleDotRotatingSpiral, paramsDot(dot_motion_axis, dot_polarity, dot_start_angle,
-                                                                elev_dir * dot_ang_vel, dot_dia_small,
-                                                                elev_dir * dot_small_elev_vel, elev_start))
-                self.add_phase(p)
+        # PART 4: Spatial Frequency Tuning, Static.
+        for ang_per, phase_shift in np.random.permutation(SFTs_conditions):
+            # Pattern Phase
+            p = vxprotocol.Phase(sfs_pattern_phase_duration)
+            p.set_visual(SphericalSFTGrating,paramsSFGrat(sfs_waveform,sfs_motion_type,0,ang_per,ang_per*phase_shift))
+            self.add_phase(p)
 
-            for elev_dir, elev_start in dot_big_directions:
-                p = vxprotocol.Phase(big_dot_phase_dur)
-                p.set_visual(SingleDotRotatingSpiral, paramsDot(dot_motion_axis, dot_polarity, dot_start_angle,
-                                                                elev_dir * dot_ang_vel, dot_dia_big,
-                                                                elev_dir * dot_big_elev_vel, elev_start))
-                self.add_phase(p)
+            # Grey Phase
+            p = vxprotocol.Phase(sfs_grey_phase_duration)
+            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+            self.add_phase(p)
 
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
         self.add_phase(p)
+
+
+        # PART 5: Chirp Down
+        repeats = 3
+        for i in range(repeats):
+            # Pause Phase
+            p = vxprotocol.Phase(chirp_pause_dur)
+            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+            self.add_phase(p)
+
+            # Chirp Phase
+            p = vxprotocol.Phase(chirp_dur)
+            p.set_visual(LogChirp, paramsChirp(chirp_base_lum,chirp_sine_amp,chirp_f_start,chirp_f_final,chirp_dur))
+            self.add_phase(p)
+
+        # 5 sec grey between characterization sections
+        p = vxprotocol.Phase(5)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+        self.add_phase(p)
+
+        # PART 6: Dot
+        repeats = 3
+        for i in range(repeats):
+            for azim_start, elev_start, dot_dia in np.random.permutation(dot_conditions):
+                # Grey Phase
+                p = vxprotocol.Phase(dot_grey_phase_duration)
+                p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([1, 1, 1])})
+                self.add_phase(p)
+
+                # Dot Phase
+                if dot_dia < 6:  # small dot
+                    for elev_offset in [0, 5, 10, 15, 20, 25, 30]:
+                        dot_phase_dur = 1.5 * np.cos((elev_start-elev_offset) * np.pi / 180)
+                        p = vxprotocol.Phase(dot_phase_dur)
+                        p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
+                                                            dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
+                                                            dot_dia, dot_phase_dur/2, elev_start-elev_offset))
+                        self.add_phase(p)
+                elif dot_dia > 6:   # large dot
+                    for elev_offset in [0, 15, 30]:
+                        dot_phase_dur = 1.5 * np.cos((elev_start-elev_offset) * np.pi / 180)
+                        p = vxprotocol.Phase(dot_phase_dur)
+                        p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
+                                                            dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
+                                                            dot_dia, dot_phase_dur/2, elev_start-elev_offset))
+                        self.add_phase(p)
+
+
+            # 5 sec grey between characterization sections
+            p = vxprotocol.Phase(5)
+            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+            self.add_phase(p)
