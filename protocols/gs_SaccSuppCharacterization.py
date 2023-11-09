@@ -91,14 +91,15 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # set fixed parameters PART 4: SF Tuning Static
         sfs_waveform = 'rectangular'
         sfs_motion_type = 'rotation'
+        sfs_motion_axis = 'vertical'
         sfs_pattern_phase_duration = 6   # sec
         sfs_grey_phase_duration = 6 # sec
 
         # set fixed parameters PART 5: Chirp down
         chirp_base_lum = 0.5
         chirp_sine_amp = 0.5
-        chirp_f_start = 30  # Hz
-        chirp_f_final = 1   # Hz
+        chirp_f_start = 10  # Hz
+        chirp_f_final = 0.5   # Hz
         chirp_dur = 20  # sec
         chirp_pause_dur = 6 # sec
 
@@ -186,20 +187,20 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)'''
+        self.add_phase(p)
 
 
         # PART 3b: On/Off Flashes
         repeats = 10
         variants = np.array(flash_direction * repeats).reshape((-1,))
-        for flash_dir in np.random.permutation(np.full((repeats-1,len(flash_direction)),flash_direction).reshape(len(flash_direction)*(repeats-1))):
+        for flash_dir in np.random.permutation(variants):  #(np.full((repeats-1,len(flash_direction)),flash_direction).reshape(len(flash_direction)*(repeats-1))):
             p = vxprotocol.Phase(flash_phase_dur)
             p.set_visual(UniformFlashStep, paramsFlash(flash_base_lum, flash_start, flash_dur, flash_dir * flash_amp))
             self.add_phase(p)
 
 
         # 5 sec grey between characterization sections
-        '''p = vxprotocol.Phase(5)
+        p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
         self.add_phase(p)
 
@@ -207,8 +208,9 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # PART 4: Spatial Frequency Tuning, Static.
         for ang_per, phase_shift in np.random.permutation(SFTs_conditions):
             # Pattern Phase
+            offset = ang_per * phase_shift
             p = vxprotocol.Phase(sfs_pattern_phase_duration)
-            p.set_visual(SphericalSFTGrating,paramsSFGrat(sfs_waveform,sfs_motion_type,0,ang_per,ang_per*phase_shift))
+            p.set_visual(SphericalSFTGrating,paramsSFGrat(sfs_waveform,sfs_motion_type,sfs_motion_axis,0,ang_per,offset))
             self.add_phase(p)
 
             # Grey Phase
@@ -238,7 +240,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)
+        self.add_phase(p)'''
 
         # PART 6: Dot
         repeats = 3
@@ -269,6 +271,6 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
             # 5 sec grey between characterization sections
-            p = vxprotocol.Phase(5)
+            '''p = vxprotocol.Phase(5)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
             self.add_phase(p)'''
