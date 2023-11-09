@@ -45,15 +45,15 @@ def paramsChirp(base_lum, sine_amp, f_start, f_final, chirp_dur):
         LogChirp.chirp_duration: chirp_dur
     }
 
-def paramsDot(motion_axis, dot_pol, dot_start_ang, start_ang_vel, dot_dia, t_switch, dot_offset):
+def paramsDot(motion_axis, dot_pol, dot_start_ang, dot_ang_vel, dot_dia, dot_offset, t_switch):
     return {
         SingleDotRotatingBackAndForth.motion_axis: motion_axis,
         SingleDotRotatingBackAndForth.dot_polarity: dot_pol,
         SingleDotRotatingBackAndForth.dot_start_angle: dot_start_ang,
-        SingleDotRotatingBackAndForth.starting_ang_vel: start_ang_vel,
+        SingleDotRotatingBackAndForth.dot_angular_velocity: dot_ang_vel,
         SingleDotRotatingBackAndForth.dot_angular_diameter: dot_dia,
-        SingleDotRotatingBackAndForth.t_switch: t_switch,
-        SingleDotRotatingBackAndForth.dot_offset_angle: dot_offset
+        SingleDotRotatingBackAndForth.dot_offset_angle: dot_offset,
+        SingleDotRotatingBackAndForth.t_switch: t_switch
     }
 
 class CharacterizationProtocol(vxprotocol.StaticProtocol):
@@ -258,7 +258,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
                         p = vxprotocol.Phase(dot_phase_dur)
                         p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
                                                             dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
-                                                            dot_dia, dot_phase_dur/2, elev_start-elev_offset))
+                                                            dot_dia, elev_start-elev_offset, dot_phase_dur/2))
                         self.add_phase(p)
                 elif dot_dia > 6:   # large dot
                     for elev_offset in [0, 15, 30]:
@@ -266,7 +266,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
                         p = vxprotocol.Phase(dot_phase_dur)
                         p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
                                                             dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
-                                                            dot_dia, dot_phase_dur/2, elev_start-elev_offset))
+                                                            dot_dia, elev_start-elev_offset, dot_phase_dur/2))
                         self.add_phase(p)
 
 

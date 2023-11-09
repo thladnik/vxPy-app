@@ -21,6 +21,7 @@ import numpy as np
 
 from vxpy.core import visual
 from vxpy.utils import sphere
+from vxpy.utils.geometry import sph2cart1
 
 
 class MotionAxis(visual.Mat4Parameter):
@@ -144,25 +145,80 @@ class SingleDotRotatingSpiral(SingleDotRotatingAroundAxis):
 
 class SingleDotRotatingBackAndForth(SingleDotRotatingAroundAxis):
 
-    t_switch = visual.FloatParameter('t_switch',default=3,static=True,limits=(0,10),step_size=0.01)   # sec
-    starting_ang_vel = visual.FloatParameter('starting_ang_vel', default=60, limits=(-360, 360), step_size=5, static=True) # °/sec
-    dot_angular_velocity = visual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5)   # °/sec
+    # Define general Parameters
+    time = visual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
+
+    # Define Moving Dot parameters, static
+    motion_axis = MotionAxis('motion_axis', static=True, default='vertical')
+    dot_polarity = visual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
+    dot_start_angle = visual.FloatParameter('dot_start_angle', default=-30, limits=(-180, 180), step_size=5, static=True)
+    dot_angular_velocity = visual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5, static=True)
+    dot_angular_diameter = visual.FloatParameter('dot_angular_diameter', default=20, limits=(1, 90), step_size=1, static=True)
+    dot_offset_angle = visual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5,static=True)
+    t_switch = visual.FloatParameter('t_switch',static=True, default=2, limits = (0.1,10), step_size=0.1)
+
+    # Define Moving Dot parameters, variable
+    dot_location = visual.Vec3Parameter('dot_location', default=0)
+
+    # Paths to shaders
+    VERT_PATH = './moving_dot_position.vert'
+    FRAG_PATH = './moving_dot_position.frag'
 
     def __init__(self, *args, **kwargs):
-        SingleDotRotatingAroundAxis.__init__(self, *args, **kwargs)
+        visual.SphericalVisual.__init__(self, *args, **kwargs)
 
-        # connect new parameters
-        self.t_switch.connect(self.rotating_dot)
-        self.starting_ang_vel.connect(self.rotating_dot)
+        # Set up 3d model of sphere
+        self.sphere = sphere.UVSphere(azim_lvls=60, elev_lvls=30, upper_elev=np.pi / 2)
+        self.index_buffer = gloo.IndexBuffer(self.sphere.indices)
+        self.position_buffer = gloo.VertexBuffer(self.sphere.a_position)
+        self.azimuth_buffer = gloo.VertexBuffer(self.sphere.a_azimuth)
+        self.elevation_buffer = gloo.VertexBuffer(self.sphere.a_elevation)
+
+        # Set up program
+        self.rotating_dot = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
+        # Set positions with buffers
+        self.rotating_dot['a_position'] = self.position_buffer
+
+        # Connect parameters (this makes them be automatically updated in the connected programs)
+        self.time.connect(self.rotating_dot)
+        self.motion_axis.connect(self.rotating_dot)
+        self.dot_polarity.connect(self.rotating_dot)
+        self.dot_start_angle.connect(self.rotating_dot)
         self.dot_angular_velocity.connect(self.rotating_dot)
+        self.dot_angular_diameter.connect(self.rotating_dot)
+        self.dot_offset_angle.connect(self.rotating_dot)
+        self.dot_location.connect(self.rotating_dot)
+        self.t_switch.connect(self.rotating_dot)
 
-    def do_updates(self):
+
+    def initialize(self, **params):
+        # Reset u_time to 0 on each visual initialization
+        self.time.data = 0.
+
+    def render(self, dt):
+        # Add elapsed time to u_time
+        self.time.data += dt
+
+        # Get times
+        time = self.time.data[0]  # s
+
+        # dot location
+        start_ang = self.dot_start_angle.data[0]
+        ang_vel = self.dot_angular_velocity.data[0]
+        dot_offset = self.dot_offset_angle.data[0]
         t_switch = self.t_switch.data[0]
-        ang_vel = self.starting_ang_vel.data[0]
 
-        if self.time.data < t_switch:
-            current_ang_vel = ang_vel
+        if time < t_switch:
+            dot_azim = start_ang + time  * ang_vel / 180.0 * np.pi
+            dot_elev = dot_offset / 180. * np.pi
+            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
         else:
-            current_ang_vel = -ang_vel
+            dot_azim = (start_ang + t_switch * ang_vel / 180.0 * np.pi) - (time - t_switch) * ang_vel / 180.0 * np.pi
+            dot_elev = dot_offset / 180. * np.pi
+            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
 
-        self.dot_angular_velocity.data = current_ang_vel
+        # Apply default transforms to the program for mapping according to hardware calibration
+        self.apply_transform(self.rotating_dot)
+
+        # Draw the actual visual stimulus using the indices of the  triangular faces
+        self.rotating_dot.draw('triangles', indices=self.index_buffer)
