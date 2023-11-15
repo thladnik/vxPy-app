@@ -52,16 +52,18 @@ void main(void) {
 class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
     time = 0.0  # s
-    jitter_update_rate = 2.0  # Hz
+    jitter_update_rate = 4.0  # Hz
     last_jitter_update = 0.0  # s
-    pattern_update_rate = 2.0  # Hz
+    pattern_update_rate = 4.0  # Hz
     last_pattern_update = 0.0  # s
+
+    sphere_vertex_filepath = ''
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
 
         # Model
-        self.vertices = np.ascontiguousarray(np.array(scipy.io.loadmat('./visuals/jitter_noise/repulsive_sphere_640.mat')['ans'][0, 0], dtype=np.float32))
+        self.vertices = np.ascontiguousarray(np.array(scipy.io.loadmat(self.sphere_vertex_filepath)['ans'][0, 0], dtype=np.float32))
         self.indices = np.ascontiguousarray(self.create_simplices(self.vertices).flatten())
         self.indices_buffer = IndexBuffer(self.indices)
         self.vertices_buffer = VertexBuffer(self.vertices)
@@ -128,6 +130,15 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
         self.program.draw('triangles', self.indices_buffer)
         self.program['u_lines'] = 1
         self.program.draw('lines', self.indices_buffer)
+
+
+class BinaryBlackWhiteJitterNoise8deg(BinaryBlackWhiteJitterNoise):
+
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_640.mat'
+
+
+class BinaryBlackWhiteJitterNoise16deg(BinaryBlackWhiteJitterNoise):
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_160.mat'
 
 
 if __name__ == '__main__':

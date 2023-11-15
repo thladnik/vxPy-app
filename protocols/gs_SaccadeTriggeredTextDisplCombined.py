@@ -23,9 +23,9 @@ def params(rot_duration, rot_start, rot_amp, rot_dir, flash_start, flash_dur, fl
 
 
 class SaccadeTriggeredTextDisplCombined(vxprotocol.TriggeredProtocol):
+
     def __init__(self, *args, **kwargs):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
-
         self.global_visual_props['azim_angle'] = 0.
 
         # Fix seed
@@ -78,3 +78,6 @@ class SaccadeTriggeredTextDisplCombined(vxprotocol.TriggeredProtocol):
         self.add_phase(p)
 
 
+if __name__ == '__main__':
+
+    protocol = SaccadeTriggeredTextDisplCombined()
