@@ -1,1 +1,1 @@
-from .jitter_noise import BinaryBlackWhiteJitterNoise
+from .jitter_noise import BinaryBlackWhiteJitterNoise8deg, BinaryBlackWhiteJitterNoise16deg

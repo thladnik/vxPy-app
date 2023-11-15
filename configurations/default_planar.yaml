@@ -27,7 +27,7 @@ CAMERA_DEVICES:
     frame_rate: 115
 ROUTINES:
   vxpy.extras.camera_capture.Frames: {}
-  vxpy.extras.zf_eyeposition_tracking.EyePositionDetectionRoutine:
+  vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking:
     roi_maxnum: 1
     min_size: 45
   vxpy.extras.display_capture.Frames:
@@ -49,7 +49,7 @@ GUI_FPS: 20
 GUI_SCREEN: 0
 GUI_ADDONS:
   vxpy.extras.camera_widgets.CameraStreamAddon: {}
-  vxpy.extras.zf_eyeposition_tracking.EyePositionDetectionAddon: {}
+  vxpy.extras.zf_eyeposition_tracking.ZFEyeTrackingUI: {}
   vxpy.extras.display_widgets.VisualInteractor:
     detached: true
     preferred_size:

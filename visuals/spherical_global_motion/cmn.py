@@ -58,12 +58,12 @@ def create_motion_matrix(tile_centers: np.ndarray,
     tile_cen_q = Geometry.qn(tile_centers)
 
     # Take face/tile orientation into account (for actual stimulus display)
-    tile_ori_q1 = Geometry.qn(np.real(tile_orientations)).normalize[:, None]
-    tile_ori_q2 = Geometry.qn(np.imag(tile_orientations)).normalize[:, None]
-    projected_motmat = Geometry.projection(tile_cen_q[:, None], sp_smooth_q)
-    rotated_motion_matrix = Geometry.qdot(tile_ori_q1, projected_motmat) \
-                            - 1.j * Geometry.qdot(tile_ori_q2,
-                                                  projected_motmat)
+    if tile_orientations is not None:
+        tile_ori_q1 = Geometry.qn(np.real(tile_orientations)).normalize[:, None]
+        tile_ori_q2 = Geometry.qn(np.imag(tile_orientations)).normalize[:, None]
+        projected_motmat = Geometry.projection(tile_cen_q[:, None], sp_smooth_q)
+        rotated_motion_matrix = Geometry.qdot(tile_ori_q1, projected_motmat) \
+                                - 1.j * Geometry.qdot(tile_ori_q2, projected_motmat)
 
     # Map to horizontal/vertical axes in tile plane (for analysis and illustration)
     projected_motmat = Geometry.projection(tile_cen_q[:, np.newaxis], sp_smooth_q)
@@ -71,6 +71,8 @@ def create_motion_matrix(tile_centers: np.ndarray,
     tile_hori_vec = Geometry.qcross(tile_cen_q, tile_up_vec).normalize
     motion_matrix = Geometry.qdot(tile_up_vec[:, np.newaxis], projected_motmat) \
                     - 1.j * Geometry.qdot(tile_hori_vec[:, np.newaxis], projected_motmat)
+    if tile_orientations is None:
+        rotated_motion_matrix = np.copy(motion_matrix)
 
     # Plot reference directions for motion matrix projection:
     # fig = plt.figure()
@@ -228,6 +230,7 @@ if __name__ == '__main__':
 
     from vxpy.utils import geometry
 
+    os.chdir('../..')
     np.random.seed(1)
 
     create_vector_video = True
@@ -261,7 +264,7 @@ if __name__ == '__main__':
     intertile_distance = sphere_model.intertile_distance
 
     # Create motion matrix
-    motmat = create_motion_matrix(centers, intertile_distance,
+    motmat, _ = create_motion_matrix(centers, intertile_distance,
                                   frame_num=frame_num, tp_sigma=tp_sigma, sp_sigma=sp_sigma)
 
     # Calculate 2d mapped positions
@@ -304,7 +307,7 @@ if __name__ == '__main__':
         fig.tight_layout()
 
         ani = animation.FuncAnimation(fig, animate, fargs=(qr,), interval=50, blit=False, frames=motmat.shape[1])
-        ani.save(f'./motion_vectors_f{frame_num}_sp{sp_sigma}_tp{tp_sigma}.mp4', writer='ffmpeg')
+        # ani.save(f'./motion_vectors_f{frame_num}_sp{sp_sigma}_tp{tp_sigma}.mp4', writer='ffmpeg')
 
     if create_polar_histogram:
         print('Create polar histograms')
