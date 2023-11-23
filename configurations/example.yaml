@@ -4,9 +4,9 @@ CAMERA_DEVICES:
   fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: dataset
-    data_path: single_zf_spontaneous_eye_movements_115Hz
+    data_path: multiple_zf_driven_eye_movements_20Hz
     preload_data: false
-    width: 720
+    width: 752
     height: 480
     frame_rate: 115
 ROUTINES:
@@ -34,7 +34,7 @@ GUI_REFRESH: 30
 GUI_FPS: 20
 GUI_SCREEN: 0
 GUI_ADDONS:
-  vxpy.extras.camera_widgets.CameraStreamAddon: {}
+  vxpy.extras.camera_capture.FrameUI: {}
   vxpy.extras.zf_eyeposition_tracking.ZFEyeTrackingUI: {}
   vxpy.extras.display_widgets.VisualInteractor: {}
   vxpy.extras.display_widgets.VisualStreamAddon: {}
