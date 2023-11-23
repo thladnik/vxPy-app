@@ -32,5 +32,6 @@ class TelemetrixStepperKebab(telemetrix_device.Telemetrix):
     def _end(self) -> bool:
 
         self.board.stepper_stop(self.motor)
+        self.board.shutdown()
 
         return True
