@@ -33,7 +33,6 @@ class KebabPositionTracker(vxroutine.IoRoutine):
 
     def main(self):
         self.device = vxserial.get_serial_device_by_id('Dev_kebab')
-        # if self.i % 1 == 0:
         if not self.wait_for_position:
             self.device.board.stepper_get_current_position(self.device.motor, self._current_position_callback)
             self.wait_for_position = True
@@ -43,7 +42,8 @@ class KebabPositionTracker(vxroutine.IoRoutine):
 
         rotation_num = position[2] // self.steps_to_full_rotation
 
-        vxattribute.write_attribute('stepper_full_rotation_trigger', rotation_num > self.rotation_num)
+        _trigger = (rotation_num > self.rotation_num) or (position[2] == 0)
+        vxattribute.write_attribute('stepper_full_rotation_trigger', _trigger)
         self.rotation_num = rotation_num
 
         vxattribute.write_attribute('stepper_rotation_number', self.rotation_num)
