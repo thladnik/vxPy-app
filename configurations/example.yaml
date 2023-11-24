@@ -4,9 +4,9 @@ CAMERA_DEVICES:
   fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: dataset
-    data_path: multiple_zf_driven_eye_movements_20Hz
+    data_path: single_zf_spontaneous_eye_movements_115Hz
     preload_data: false
-    width: 752
+    width: 720
     height: 480
     frame_rate: 115
 ROUTINES:
