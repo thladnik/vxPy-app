@@ -4,11 +4,11 @@ CAMERA_DEVICES:
   fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: dataset
-    data_path: single_zf_spontaneous_eye_movements_115Hz
+    data_path: zf_vor_eye_movements_50Hz
     preload_data: false
-    width: 720
+    width: 640
     height: 480
-    frame_rate: 115
+    frame_rate: 60
 ROUTINES:
   vxpy.extras.camera_capture.Frames: {}
   vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking:
@@ -23,11 +23,11 @@ DISPLAY_USE: true
 DISPLAY_FPS: 60
 DISPLAY_GL_VERSION: 100
 DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
-DISPLAY_WIN_POS_X: -1080
-DISPLAY_WIN_POS_Y: 0
+DISPLAY_WIN_POS_X: 2512
+DISPLAY_WIN_POS_Y: 1848
 DISPLAY_WIN_SCREEN_ID: 1
-DISPLAY_WIN_SIZE_HEIGHT_PX: 1920
-DISPLAY_WIN_SIZE_WIDTH_PX: 1080
+DISPLAY_WIN_SIZE_HEIGHT_PX: 400
+DISPLAY_WIN_SIZE_WIDTH_PX: 800
 DISPLAY_USE_LCR_NATIVE_RES: false
 GUI_USE: true
 GUI_REFRESH: 30
