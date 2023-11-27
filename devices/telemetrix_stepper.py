@@ -1,7 +1,12 @@
-from telemetrix import telemetrix
-
+import vxpy.core.logger as vxlogger
 from vxpy.devices import telemetrix_device
 
+log = vxlogger.getLogger(__name__)
+
+try:
+    from telemetrix import telemetrix
+except Exception:
+    log.error('Failed to import telemetrix')
 
 class TelemetrixStepperKebab(telemetrix_device.Telemetrix):
 
