@@ -17,7 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 import os
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io
 
@@ -821,6 +820,7 @@ class ProtocolRE_DEMO(vxprotocol.StaticProtocol):
 if __name__ == '__main__':
     os.chdir('../')
 
+    import matplotlib.pyplot as plt
 
     def cart2sph1(cx, cy, cz):
         cxy = cx + cy * 1.j

@@ -15,11 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
+import numpy as np
+
 import vxpy.core.protocol as vxprotocol
 
 from controls.control_tests import TestControl01
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 
+import vxpy.core.container as vxcontainer
 
 class GratingProtocol(vxprotocol.StaticProtocol):
 
@@ -88,6 +91,7 @@ class MovingGratings(vxprotocol.StaticProtocol):
         vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         mov_duration = 3
+        vxcontainer.create_dataset('some_position', (1,), np.int64)
 
         for i in list(range(3))[::-1]:
             sp = 30 * 2 ** (i - 1)
