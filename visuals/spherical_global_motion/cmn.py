@@ -214,10 +214,16 @@ class CMN_15_000f_15fps_10tp_0p1sp_0p035ns(ContiguousMotionNoise):
     stimulus_diretion = 1
 
 
-
-
 class CMN_15_000f_15fps_10tp_0p1sp_0p035ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p035ns):
     stimulus_direction = -1
+
+
+class CMN_3_000f_15fps_7tp_0p25sp_0p005ns(ContiguousMotionNoise):
+    frame_num = 15_000
+    tp_sigma = 7
+    sp_sigma = 0.25
+    stimulus_fps = 15
+    norm_speed = 0.005
 
 
 if __name__ == '__main__':
@@ -237,8 +243,8 @@ if __name__ == '__main__':
     create_polar_histogram = False
 
     frame_num = 2_000
-    tp_sigma = 10
-    sp_sigma = 0.1
+    tp_sigma = 7
+    sp_sigma = 0.25
 
 
     def despine(axis, spines=None, hide_ticks=True):
@@ -291,12 +297,12 @@ if __name__ == '__main__':
             qr.set_UVC(*scale_uv_vectors(U[:, tidx], V[:, tidx]))
 
 
-        fig = plt.figure(figsize=(10, 5), dpi=200)
+        fig = plt.figure(figsize=(6, 3), dpi=200)
         ax = plt.subplot()
         ax.set_title(f'frames: {frame_num}, sp_sigma: {sp_sigma}, tp_sigma: {tp_sigma}')
         ax.set_aspect(1)
         qr = ax.quiver(azims, elevs, *scale_uv_vectors(U[:, 0], V[:, 0]),
-                       pivot='middle', scale=15, width=0.0015, headlength=4.5)
+                       units='width', pivot='tail', scale=150*sp_sigma, width=0.0015, headlength=4.5)
         ax.set_xticks([-np.pi, -np.pi / 2, 0, np.pi / 2, np.pi])
         ax.set_xticklabels([-180, -90, 0, 90, 180])
         ax.set_xlabel('azimuth [deg]')
