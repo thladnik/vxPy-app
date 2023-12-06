@@ -83,7 +83,7 @@ def create_motion_matrix(tile_centers: np.ndarray,
     # fig.legend()
     # plt.show()
 
-    vxcontainer.temporary_dump(**{save_keys[0]: motion_matrix, save_keys[1]: rotated_motion_matrix})
+    vxcontainer.temporary_dump({save_keys[0]: motion_matrix, save_keys[1]: rotated_motion_matrix})
 
     return [motion_matrix, rotated_motion_matrix]
 
@@ -93,8 +93,9 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
     """
 
     time = vxvisual.FloatParameter('time', internal=True)
+
     frame_index = vxvisual.IntParameter('frame_index', internal=True)
-    # texture_size = vxvisual.IntParameter('texture_size')
+    motion_frame = vxvisual.Parameter('motion_matrix', shape=(320,), dtype=np.complex_, internal=True)
 
     frame_num = 1_000
     tp_sigma = 10
@@ -123,20 +124,18 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         self.position_buffer = gloo.VertexBuffer(np.float32(self.sphere.a_position))
 
         face_num = self.sphere.indices.size // 3
-        self._texcoord: np.ndarray = None
-        self.startpoints = Geometry.cen2tri(np.random.rand(face_num), np.random.rand(face_num), .1)
+        self.texture_start_coords = Geometry.cen2tri(np.random.rand(face_num), np.random.rand(face_num), .1)
+        self.texture_start_coords = np.float32(self.texture_start_coords.reshape([-1, 2]) / 2)
         self.sphere_program['a_position'] = self.position_buffer
 
         # Set texture
-        # self.binary_texture = np.uint8(np.random.randint(0, 2, [100, 100, 1])
-        #                                * np.array([1, 1, 1])[np.newaxis, np.newaxis, :] * 255)
         self.binary_texture = np.uint8(np.random.randint(0, 2, [50, 50, 1]) * np.array([[[1, 1, 1]]]) * 255)
         self.sphere_program['u_texture'] = self.binary_texture
         self.sphere_program['u_texture'].wrapping = 'repeat'
 
         # Set texture coordinates
-        self._texcoord = np.float32(self.startpoints.reshape([-1, 2]) / 2)
-        self.sphere_program['a_texcoord'] = gloo.VertexBuffer(self._texcoord)
+        self.texture_coords = np.float32(self.texture_start_coords.reshape([-1, 2]) / 2)
+        self.sphere_program['a_texcoord'] = gloo.VertexBuffer(self.texture_coords)
 
         # Create motion matrix to save to file for analysis
         self.motion_matrix, self.rotated_motion_matrix = create_motion_matrix(tile_centers=self.sphere.tile_center,
@@ -148,8 +147,15 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         self.motion_matrix = self.motion_matrix[:, ::self.stimulus_diretion]
         self.rotated_motion_matrix = self.rotated_motion_matrix[:, ::self.stimulus_diretion]
 
-        # Dump to recording file
-        vxcontainer.dump(motion_matrix=self.motion_matrix, rotated_motion_matrix=self.rotated_motion_matrix)
+        # Dump info to recording file
+        vxcontainer.dump(
+            dict(motion_matrix=self.motion_matrix, rotated_motion_matrix=self.rotated_motion_matrix,
+                 positions=self.sphere.a_position, texture_start_coords=self.texture_start_coords,
+                 frame_num=self.frame_num, tp_sigma=self.tp_sigma, sp_sigma=self.sp_sigma,
+                 stimulus_fps=self.stimulus_fps, norm_speed=self.norm_speed,
+                 stimulus_diretion=self.stimulus_diretion, binary_texture=self.binary_texture),
+            group=self.__class__.__name__
+        )
 
     def initialize(self, **params):
         # Reset time
@@ -157,24 +163,21 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         self.frame_index.data = 0
 
         # Reset texture coordinates
-        self._texcoord = np.float32(self.startpoints.reshape([-1, 2]) / 2)
-        # self.sphere_program['a_texcoord'] = gloo.VertexBuffer(self._texcoord)
-        self.sphere_program['a_texcoord'] = self._texcoord
+        self.texture_coords = np.float32(self.texture_start_coords.reshape([-1, 2]) / 2)
 
     def render(self, dt):
         self.time.data = self.time.data + dt
         frame_idx = int(self.time.data * self.stimulus_fps) % (self.frame_num - 1)
 
-        # TEMP: set texture
-        # texsize = self.texture_size.data[0]
-        # x, y = np.meshgrid(np.arange(100) * 2 * np.pi , np.arange(100) * 2 * np.pi )
-        # self.sphere_program['u_texture'] = np.uint8(np.logical_and(np.sin(x) >= 0.0,  np.sin(y) >=0.0) * np.array([[[1, 1, 1]]]) * 255)
-
         # Only move texture coordinate if this motion matrix frame wasn't used yet
         if frame_idx > self.frame_index.data[0]:
+            # Save un-rotated version
+            self.motion_frame.data = self.motion_matrix[:, frame_idx]
+
+            # Update program based on motion matrix
             motmat = np.repeat(self.rotated_motion_matrix[:, frame_idx], 3, axis=0)
-            self._texcoord += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed
-            self.sphere_program['a_texcoord'] = self._texcoord
+            self.texture_coords += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed
+            self.sphere_program['a_texcoord'] = self.texture_coords
 
         # Update index
         self.frame_index.data = frame_idx
@@ -214,10 +217,24 @@ class CMN_15_000f_15fps_10tp_0p1sp_0p035ns(ContiguousMotionNoise):
     stimulus_diretion = 1
 
 
-
-
 class CMN_15_000f_15fps_10tp_0p1sp_0p035ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p035ns):
     stimulus_direction = -1
+
+
+class CMN_3_000f_15fps_7tp_0p25sp_0p005ns(ContiguousMotionNoise):
+    frame_num = 15_000
+    tp_sigma = 7
+    sp_sigma = 0.25
+    stimulus_fps = 15
+    norm_speed = 0.005
+
+
+class CMN_20_000f_15fps_7tp_0p25sp_0p005ns(ContiguousMotionNoise):
+    frame_num = 20_000
+    tp_sigma = 7
+    sp_sigma = 0.25
+    stimulus_fps = 15
+    norm_speed = 0.005
 
 
 if __name__ == '__main__':
@@ -237,8 +254,9 @@ if __name__ == '__main__':
     create_polar_histogram = False
 
     frame_num = 2_000
-    tp_sigma = 10
-    sp_sigma = 0.1
+    tp_sigma = 7
+    sp_sigma = 0.25
+    fps = 15
 
 
     def despine(axis, spines=None, hide_ticks=True):
@@ -265,7 +283,7 @@ if __name__ == '__main__':
 
     # Create motion matrix
     motmat, _ = create_motion_matrix(centers, intertile_distance,
-                                  frame_num=frame_num, tp_sigma=tp_sigma, sp_sigma=sp_sigma)
+                                     frame_num=frame_num, tp_sigma=tp_sigma, sp_sigma=sp_sigma)
 
     # Calculate 2d mapped positions
     azims, elevs, r = geometry.cart2sph(*centers.T)
@@ -291,12 +309,12 @@ if __name__ == '__main__':
             qr.set_UVC(*scale_uv_vectors(U[:, tidx], V[:, tidx]))
 
 
-        fig = plt.figure(figsize=(10, 5), dpi=200)
+        fig = plt.figure(figsize=(6, 3), dpi=200)
         ax = plt.subplot()
         ax.set_title(f'frames: {frame_num}, sp_sigma: {sp_sigma}, tp_sigma: {tp_sigma}')
         ax.set_aspect(1)
         qr = ax.quiver(azims, elevs, *scale_uv_vectors(U[:, 0], V[:, 0]),
-                       pivot='middle', scale=15, width=0.0015, headlength=4.5)
+                       units='width', pivot='tail', scale=150 * sp_sigma, width=0.0015, headlength=4.5)
         ax.set_xticks([-np.pi, -np.pi / 2, 0, np.pi / 2, np.pi])
         ax.set_xticklabels([-180, -90, 0, 90, 180])
         ax.set_xlabel('azimuth [deg]')
@@ -306,7 +324,7 @@ if __name__ == '__main__':
 
         fig.tight_layout()
 
-        ani = animation.FuncAnimation(fig, animate, fargs=(qr,), interval=50, blit=False, frames=motmat.shape[1])
+        ani = animation.FuncAnimation(fig, animate, fargs=(qr,), interval=1000//fps, blit=False, frames=motmat.shape[1])
         # ani.save(f'./motion_vectors_f{frame_num}_sp{sp_sigma}_tp{tp_sigma}.mp4', writer='ffmpeg')
 
     if create_polar_histogram:
