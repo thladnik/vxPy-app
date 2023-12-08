@@ -118,11 +118,11 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         SFTs_conditions = [(90,0),(90,0.25),(90,0.5),(90,0.75),(45,0),(45,0.25),(45,0.5),(45,0.75),(22.5,0),(22.5,0.25),
                            (22.5,0.5),(22.5,0.75),(11.25,0),(11.25,0.25),(11.25,0.5),(11.25,0.75),(5.625,0),(5.625,0.25),
                            (5.625,0.5),(5.625,0.75)]    # angular period in °/cyc, phase shift in cyc
-        dot_conditions = [(-90,45,5),(-90,15,30),(0,15,5),(0,15,30),(90,-15,5),(90,-15,30),(180,15,5),(180,15,30)]    # dot starting position in azimuth °, dot starting position in elevation °, dot diameter in °
+        dot_conditions = [(-90,45,5),(-90,45,30),(0,15,5),(0,15,30),(90,-15,5),(90,-15,30),(-180,15,5),(-180,15,30)]    # dot starting position in azimuth °, dot starting position in elevation °, dot diameter in °
 
 
         # Add pre-phase (5 sec uniform grey)
-        '''p = vxprotocol.Phase(5)
+        p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
         self.add_phase(p)
 
@@ -240,7 +240,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)'''
+        self.add_phase(p)
 
         # PART 6: Dot
         repeats = 3
@@ -254,7 +254,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
                 # Dot Phase
                 if dot_dia < 6:  # small dot
                     for elev_offset in [0, 5, 10, 15, 20, 25, 30]:
-                        dot_phase_dur = 1.5 * np.cos((elev_start-elev_offset) * np.pi / 180)
+                        dot_phase_dur = 3 * np.cos((elev_start-elev_offset) * np.pi / 180)
                         p = vxprotocol.Phase(dot_phase_dur)
                         p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
                                                             dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
@@ -262,7 +262,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
                         self.add_phase(p)
                 elif dot_dia > 6:   # large dot
                     for elev_offset in [0, 15, 30]:
-                        dot_phase_dur = 1.5 * np.cos((elev_start-elev_offset) * np.pi / 180)
+                        dot_phase_dur = 3 * np.cos((elev_start-elev_offset) * np.pi / 180)
                         p = vxprotocol.Phase(dot_phase_dur)
                         p.set_visual(SingleDotRotatingBackAndForth, paramsDot(dot_motion_axis, dot_polarity, azim_start,
                                                             dot_ang_vel/np.cos((elev_start-elev_offset) * np.pi / 180),
@@ -271,6 +271,6 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
             # 5 sec grey between characterization sections
-            '''p = vxprotocol.Phase(5)
+            p = vxprotocol.Phase(5)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-            self.add_phase(p)'''
+            self.add_phase(p)
