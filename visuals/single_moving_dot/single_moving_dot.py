@@ -21,7 +21,7 @@ import numpy as np
 
 from vxpy.core import visual
 from vxpy.utils import sphere
-from vxpy.utils.geometry import sph2cart1
+from vxpy.utils.geometry import sph2cart1, sph2cart
 
 
 class MotionAxis(visual.Mat4Parameter):
@@ -178,6 +178,7 @@ class SingleDotRotatingBackAndForth(SingleDotRotatingAroundAxis):
         self.rotating_dot = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH))
         # Set positions with buffers
         self.rotating_dot['a_position'] = self.position_buffer
+        self.rotating_dot['static_rotation'] = transforms.rotate(-90, (0, 0, 1))
 
         # Connect parameters (this makes them be automatically updated in the connected programs)
         self.time.connect(self.rotating_dot)
@@ -209,13 +210,15 @@ class SingleDotRotatingBackAndForth(SingleDotRotatingAroundAxis):
         t_switch = self.t_switch.data[0]
 
         if time < t_switch:
-            dot_azim = start_ang + time  * ang_vel / 180.0 * np.pi
+            dot_azim = start_ang / 180.0 * np.pi + time  * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
         else:
-            dot_azim = (start_ang + t_switch * ang_vel / 180.0 * np.pi) - (time - t_switch) * ang_vel / 180.0 * np.pi
+            dot_azim = ((start_ang / 180.0 * np.pi + t_switch * ang_vel / 180.0 * np.pi)
+                        - (time - t_switch) * ang_vel / 180.0 * np.pi)
             dot_elev = dot_offset / 180. * np.pi
             self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.rotating_dot)

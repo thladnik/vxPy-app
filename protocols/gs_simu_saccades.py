@@ -82,10 +82,8 @@ class TextureDisplacementSineFlash(StaticProtocol):
         contrast = 0.5
 
         # experimental conditions, (sacc_ang, sine_start, sine_amp)
-        conditions = [(-30, -500, 0.5), (-30, 20, 0.5), (-30, 100, 0.5), (-30, 250, 0.5), (-30, 500, 0.5),
-                      (-30, 1000, 0.5), (-30, 2000, 0.5), (-30, 4000, 0.5), (-30, 500, 0), (30, -500, 0.5),
-                      (30, 20, 0.5), (30, 100, 0.5), (30, 250, 0.5), (30, 500, 0.5), (30, 1000, 0.5),
-                      (30, 2000, 0.5), (30, 4000, 0.5), (30, 500, 0), (0, 3000, 0.5), (0, 3000, 0.5)]
+        conditions = [(-30, 100, 0.5), (-30, 2000, 0.5), (-30, 500, 0), (30, 100, 0.5),
+                      (30, 2000, 0.5), (30, 500, 0), (0, 3000, 0.5), (0, 3000, 0.5)]
 
         # 10 seconds just texture (no flash)
         for i in range(3):
@@ -121,9 +119,9 @@ class TextureDisplacementSineFlash(StaticProtocol):
                                                                           baseline_lum, contrast))
                     self.add_phase(p)
 
-            p = Phase(duration=5)
-            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-            self.add_phase(p)
+        p = Phase(duration=5)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
+        self.add_phase(p)
 
 
 class TextureDisplacementStepFlash50Hz(StaticProtocol):

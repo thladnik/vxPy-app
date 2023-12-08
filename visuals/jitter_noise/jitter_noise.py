@@ -11,10 +11,10 @@ import vxpy.core.visual as vxvisual
 
 vertex = """
 uniform int u_lines;
-uniform mat4 m_transform;
+uniform mat4 rotation_mat;
 
 attribute vec3 a_position;
-attribute float a_color;
+attribute float binary_pattern;
 
 varying float v_color;
 
@@ -26,9 +26,9 @@ void main(void) {
         pos = pos * 1.2;
     }
     
-    gl_Position = m_transform * pos;
+    gl_Position = transform_position((rotation_mat * pos).xyz);
 
-    v_color = a_color;
+    v_color = binary_pattern;
 
 }
 """
@@ -51,13 +51,17 @@ void main(void) {
 
 class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
-    time = 0.0  # s
     jitter_update_rate = 4.0  # Hz
     last_jitter_update = 0.0  # s
     pattern_update_rate = 4.0  # Hz
     last_pattern_update = 0.0  # s
+    patch_diameter: int = None
 
     sphere_vertex_filepath = ''
+
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    rotation_mat = vxvisual.Mat4Parameter('rotation_mat')
+    time = vxvisual.FloatParameter('time')
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -72,15 +76,16 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
         self.program = Program(self.parse_vertex_shader(vertex), fragment)
         self.program.bind(self.vertices_buffer)
         self.program['a_position'] = self.vertices_buffer
-        self.program['m_transform'] = np.eye(4)
+
+        self.binary_pattern.data = self.generate_pattern()
+        self.rotation_mat.data = np.eye(4)
 
         # Set initial pattern
-        self.program['a_color'] = self.generate_pattern()
-
-        self.start_time = time.perf_counter()
+        self.binary_pattern.connect(self.program)
+        self.rotation_mat.connect(self.program)
 
     def initialize(self, **kwargs):
-        self.time = 0.0
+        self.time.data = 0.0
 
     def create_simplices(self, verts):
 
@@ -99,7 +104,7 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
     def generate_rotation(self):
 
-        angle = np.random.randint(10) * 0.5
+        angle = np.random.randint(5) * self.patch_diameter / 5 / 2
 
         v3 = np.random.rand(3)
         v3 /= np.linalg.norm(v3)
@@ -108,13 +113,13 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
     def update_visual(self):
 
-        if self.last_pattern_update + 1/self.pattern_update_rate < self.time:
-            self.program['a_color'] = self.generate_pattern()
-            self.last_pattern_update = self.time
+        if self.last_pattern_update + 1/self.pattern_update_rate < self.time.data:
+            self.binary_pattern.data = self.generate_pattern()
+            self.last_pattern_update = self.time.data[0]
 
-        if self.last_jitter_update + 1/self.jitter_update_rate < self.time:
-            self.program['m_transform'] = self.generate_rotation()
-            self.last_jitter_update = self.time
+        if self.last_jitter_update + 1/self.jitter_update_rate < self.time.data:
+            self.rotation_mat.data = self.generate_rotation()
+            self.last_jitter_update = self.time.data[0]
 
     def on_resize(self, event):
         width, height = event.physical_size
@@ -122,23 +127,28 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
     def render(self, dt):
 
-        self.time += dt
+        self.time.data += dt
 
         self.update_visual()
 
         self.program['u_lines'] = 0
         self.program.draw('triangles', self.indices_buffer)
-        self.program['u_lines'] = 1
-        self.program.draw('lines', self.indices_buffer)
+        # self.program['u_lines'] = 1
+        # self.program.draw('lines', self.indices_buffer)
 
 
 class BinaryBlackWhiteJitterNoise8deg(BinaryBlackWhiteJitterNoise):
 
     sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_640.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 8
 
 
 class BinaryBlackWhiteJitterNoise16deg(BinaryBlackWhiteJitterNoise):
+
     sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_160.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 16
 
 
 if __name__ == '__main__':
