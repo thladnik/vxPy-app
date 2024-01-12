@@ -18,20 +18,34 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import numpy as np
 
 import vxpy.core.protocol as vxprotocol
-from visuals.spherical_grating import SphericalBlackWhiteGrating
+from visuals.gs_characterization_stims.sft_grating import SphericalSFTGrating
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
+def paramsSFGrat(waveform, motion_type, motion_axis, ang_vel, ang_period, offset):
+    return {
+        SphericalSFTGrating.waveform: waveform,
+        SphericalSFTGrating.motion_type: motion_type,
+        SphericalSFTGrating.motion_axis: motion_axis,
+        SphericalSFTGrating.angular_velocity: ang_vel,
+        SphericalSFTGrating.angular_period: ang_period,
+        SphericalSFTGrating.offset: offset
+    }
 
-class RotatingGratings(vxprotocol.StaticProtocol):
+
+class SFTRotatingGratings(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
         vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
-        moving_phase_dur = 6  # seconds
-        pause_phase_dur = 6  # seconds
+        # set fixed parameters PART 1: SF Tuning Motion
+        waveform = 'rectangular'
+        motion_type = 'rotation'
+        motion_axis = 'vertical'
+        moving_phase_dur = 6  # sec
+        static_phase_dur = 6  # sec
         num_repeat = 3  # number of repeats
 
-        spatial_periods = 1. / np.array([0.01, 0.02, 0.04, 0.08, 0.16])  # deg/cycle
+        ang_periods = 1. / np.array([0.01, 0.02, 0.04, 0.08, 0.16])  # deg/cycle
 
         # Add pre-phase
         p = vxprotocol.Phase(15)
@@ -39,28 +53,18 @@ class RotatingGratings(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
         for i in range(num_repeat):
-            for sf in spatial_periods:
+            for sf in ang_periods:
                 for direction in [1, -1]:
                     # Static phase
-                    p = vxprotocol.Phase(pause_phase_dur)
-                    p.set_visual(SphericalBlackWhiteGrating,
-                                 {SphericalBlackWhiteGrating.waveform: 'rectangular',
-                                  SphericalBlackWhiteGrating.motion_type: 'rotation',
-                                  SphericalBlackWhiteGrating.motion_axis: 'vertical',
-                                  SphericalBlackWhiteGrating.angular_velocity: 0,
-                                  SphericalBlackWhiteGrating.angular_period: sf}
-                                 )
+                    p = vxprotocol.Phase(static_phase_dur)
+                    p.set_visual(SphericalSFTGrating,
+                                 paramsSFGrat(waveform, motion_type, motion_axis, 0, sf, 0))
                     self.add_phase(p)
 
                     # Moving phase
                     p = vxprotocol.Phase(moving_phase_dur)
-                    p.set_visual(SphericalBlackWhiteGrating,
-                                 {SphericalBlackWhiteGrating.waveform: 'rectangular',
-                                  SphericalBlackWhiteGrating.motion_type: 'rotation',
-                                  SphericalBlackWhiteGrating.motion_axis: 'vertical',
-                                  SphericalBlackWhiteGrating.angular_velocity: 30 * direction,
-                                  SphericalBlackWhiteGrating.angular_period: sf}
-                                 )
+                    p.set_visual(SphericalSFTGrating,
+                                 paramsSFGrat(waveform, motion_type, motion_axis, 30 * direction, sf, 0))
                     self.add_phase(p)
 
         # Add post-phase
