@@ -39,7 +39,7 @@ class SphericalSFTGrating(vxvisual.SphericalVisual):
     motion_axis = MotionAxis('motion_axis', static=True)
     angular_velocity = vxvisual.FloatParameter('angular_velocity', default=30, step_size=5, static=True)
     angular_period = vxvisual.FloatParameter('angular_period', default=45, limits=(5, 360), step_size=5, static=True)
-    offset = vxvisual.FloatParameter('offset', default = 0, limits=(-180,180),step_size=1, static=True)
+    offset = vxvisual.FloatParameter('offset', default = -180, limits=(-180,180),step_size=1, static=True)
 
     # Paths to shaders
     VERT_PATH = 'sft_grating.vert'
