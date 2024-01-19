@@ -1,4 +1,4 @@
-uniform mat4 motion_axis;
+uniform mat4 static_rotation;
 
 // Input
 attribute vec3 a_position;
@@ -9,7 +9,8 @@ varying vec3 v_position;
 
 // Main
 void main() {
-    gl_Position = transform_position(a_position);
+    vec4 pos = static_rotation * vec4(a_position, 1.0);
+    gl_Position = transform_position(pos.xyz);
 
     v_position = a_position;
 }

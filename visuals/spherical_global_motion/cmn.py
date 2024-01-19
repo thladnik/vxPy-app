@@ -129,7 +129,8 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         self.sphere_program['a_position'] = self.position_buffer
 
         # Set texture
-        self.binary_texture = np.uint8(np.random.randint(0, 2, [50, 50, 1]) * np.array([[[1, 1, 1]]]) * 255)
+        self.binary_texture = np.uint8(np.random.randint(0, 2, [75, 75, 1]) * np.array([[[1, 1, 1]]]) * 255)
+        # self.binary_texture = np.uint8(np.random.randint(0, 2, [100, 100, 1]) * np.array([[[1, 1, 1]]]) * 255)
         self.sphere_program['u_texture'] = self.binary_texture
         self.sphere_program['u_texture'].wrapping = 'repeat'
 

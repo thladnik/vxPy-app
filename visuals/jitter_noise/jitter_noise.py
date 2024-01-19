@@ -86,6 +86,7 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
 
     def initialize(self, **kwargs):
         self.time.data = 0.0
+        np.random.seed(1)
 
     def create_simplices(self, verts):
 
@@ -142,6 +143,14 @@ class BinaryBlackWhiteJitterNoise8deg(BinaryBlackWhiteJitterNoise):
     sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_640.mat'
     binary_pattern = vxvisual.Attribute('binary_pattern')
     patch_diameter = 8
+
+class BinaryBlackWhiteJitterNoise8deg2Hz(BinaryBlackWhiteJitterNoise):
+
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_640.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 8
+    jitter_update_rate = 2.0
+    pattern_update_rate = 2.0
 
 
 class BinaryBlackWhiteJitterNoise16deg(BinaryBlackWhiteJitterNoise):

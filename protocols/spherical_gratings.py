@@ -71,6 +71,7 @@ class RepeatsTestProtocol(vxprotocol.StaticProtocol):
 class StaticGratings(vxprotocol.StaticProtocol):
 
     def __init__(self, *args, **kwargs):
+
         vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
         for i in range(5):

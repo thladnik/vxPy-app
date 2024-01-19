@@ -3,6 +3,7 @@ import os
 import time
 from math import pi, sin, cos
 
+import h5py
 import numpy as np
 from direct.actor.Actor import Actor
 from direct.interval.MetaInterval import Sequence
@@ -24,8 +25,13 @@ class MyApp(ShowBase):
         ShowBase.__init__(self)
         global fb_size
 
+        self.speed = 1
+
         self.motion_data_presets = motion_data_presets
         self.world_rot = False
+        self.third_person = False
+        self.start_time = time.perf_counter()
+        self.default_z = 8.0
 
         # self.disableMouse()
         self.enableMouse()
@@ -49,15 +55,20 @@ class MyApp(ShowBase):
         self.main_actor = self.loader.loadModel(get_abspath('Goldfish/Goldfish.egg'))
         # self.cube.setScale(3., 3., 3.)
         self.main_actor.setScale(0.5, 0.5, 0.5)
-        self.main_actor.setPos(0.0, 0.0, 8.0)
+        self.main_actor.setPos(0.0, 0.0, self.default_z)
         self.main_actor.reparentTo(self.render)
 
         # Make camera follow actor
         if not self.world_rot:
-            self.disableMouse()
-            self.camera.reparentTo(self.main_actor)
-            self.camera.setPos(0, -25, 7)
-            self.camera.lookAt(self.main_actor)
+            if self.third_person:
+                self.disableMouse()
+                self.camera.reparentTo(self.main_actor)
+                self.camera.setPos(0, -10, 2)
+                self.camera.lookAt(self.main_actor)
+            else:
+                self.disableMouse()
+                self.camera.setPos(40, -40, 40)
+
 
         self.rig = NodePath('rig')
         self.cbbuffer = self.win.makeCubeMap('env', fb_size, self.rig, to_ram=True)
@@ -73,7 +84,7 @@ class MyApp(ShowBase):
         for c in self.finger_corals:
             c.setPos(vegetation_spread / 2 * np.random.rand(), vegetation_spread * (np.random.rand() - 0.5),
                      -np.random.rand() / 2)
-            c.setScale(*[4 * np.random.rand()] * 3)
+            c.setScale(*[2 * np.random.rand()] * 3)
             c.setH(360 * np.random.rand())
             c.reparentTo(self.render)
 
@@ -81,7 +92,7 @@ class MyApp(ShowBase):
         for c in self.fire_corals:
             c.setPos(-vegetation_spread / 2 * np.random.rand(), vegetation_spread * (np.random.rand() - 0.5),
                      -np.random.rand() / 2)
-            c.setScale(*[5 * np.random.rand()] * 3)
+            c.setScale(*[2 * np.random.rand()] * 3)
             c.setH(360 * np.random.rand())
             c.reparentTo(self.render)
 
@@ -188,7 +199,7 @@ class MyApp(ShowBase):
 
 
     def _move_by_motion_presets(self):
-        t = time.perf_counter() - self.start_time
+        t = (time.perf_counter() - self.start_time) * self.speed
 
         idx = np.argmin(np.abs(self.motion_data_presets['time']-t))
 
@@ -202,7 +213,7 @@ class MyApp(ShowBase):
 
     def move_actor_fish(self, task):
         global x_pos, y_pos, heading
-        dt = globalClock.getDt()
+        dt = globalClock.getDt() * self.speed
 
         if self.motion_data_presets is not None:
             self._move_by_motion_presets()
@@ -227,8 +238,8 @@ class MyApp(ShowBase):
             trans_scale = 5 * dt
             trans_directions = {'forward': (x_comp_fb, y_comp_fb, 0),
                                 'backward': (-x_comp_fb, -y_comp_fb, 0),
-                                'left': (x_comp_lr, y_comp_lr, 0),
-                                'right': (-x_comp_lr, -y_comp_lr, 0),
+                                'right': (x_comp_lr, y_comp_lr, 0),
+                                'left': (-x_comp_lr, -y_comp_lr, 0),
                                 'up': (0, 0, 1),
                                 'down': (0, 0, -1)}
 
@@ -257,6 +268,9 @@ class MyApp(ShowBase):
             angleRadians = angleDegrees * (pi / 180.0)
             self.camera.setPos(100 * sin(angleRadians), -100 * cos(angleRadians), 100)
             self.camera.setHpr(angleDegrees, -40, 0)
+        else:
+            if not self.third_person:
+                self.camera.lookAt(self.main_actor)
         # self.camera.setPos(0, 0, 40)
         # self.camera.setHpr(0, -90, 0)
         return Task.cont
@@ -299,5 +313,12 @@ def run(raw_data, _x, _y, _heading, _fb_size):
     heading = _heading
     data = np.frombuffer(raw_data.get_obj(), dtype=np.uint8).reshape((6, fb_size, fb_size, 4))
 
-    p3d_app = MyApp()
+    with h5py.File('./2023-08-31_fish1_rec1_p20/Display.hdf5', 'r') as f:
+        motion_data = {'time': f['ABCMeta_0/time'][:].squeeze(),
+                       'orientation': f['ABCMeta_0/orientation'][:].squeeze(),
+                       'position': f['ABCMeta_0/position'][:].squeeze()}
+
+    motion_data = None
+
+    p3d_app = MyApp(motion_data_presets=motion_data)
     p3d_app.run()

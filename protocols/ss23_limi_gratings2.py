@@ -37,6 +37,8 @@ class SFTRotatingGratings(vxprotocol.StaticProtocol):
     def __init__(self, *args, **kwargs):
         vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
+        self.global_visual_props['azim_angle'] = 0.
+
         # set fixed parameters PART 1: SF Tuning Motion
         waveform = 'rectangular'
         motion_type = 'rotation'
@@ -45,7 +47,7 @@ class SFTRotatingGratings(vxprotocol.StaticProtocol):
         static_phase_dur = 6  # sec
         num_repeat = 3  # number of repeats
 
-        ang_periods = 1. / np.array([0.01, 0.02, 0.04, 0.08, 0.16])  # deg/cycle
+        ang_periods = [90, 45, 22.5, 11.25, 5.625] # deg/cycle
 
         # Add pre-phase
         p = vxprotocol.Phase(15)
