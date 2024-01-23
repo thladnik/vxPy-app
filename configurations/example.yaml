@@ -4,9 +4,9 @@ CAMERA_DEVICES:
   fish_embedded:
     api: vxpy.devices.camera.virtual_camera.VirtualCamera
     data_source: dataset
-    data_path: zf_vor_eye_movements_50Hz
+    data_path: single_zf_spontaneous_eye_movements_115Hz
     preload_data: false
-    width: 640
+    width: 720
     height: 480
     frame_rate: 60
 ROUTINES:
@@ -19,15 +19,25 @@ ROUTINES:
   vxpy.extras.calculate_csd.CalculatePSD: {}
   vxpy.extras.write_test_attributes.SinesAddedWhiteNoise: {}
   vxpy.extras.write_test_attributes.RunCtrlLed: {}
+  vxpy.extras.server.FrameReceiverTcpServer:
+    _load_order: 0
+    frame_width: 512
+    frame_height: 512
+    frame_dtype: uint16
+  vxpy.extras.ca_processing.RoiActivityTrackerRoutine:
+    _load_order: 1
+    frame_width: 512
+    frame_height: 512
+    frame_dtype: uint16
 DISPLAY_USE: true
 DISPLAY_FPS: 60
 DISPLAY_GL_VERSION: 100
 DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
-DISPLAY_WIN_POS_X: 2512
-DISPLAY_WIN_POS_Y: 1848
+DISPLAY_WIN_POS_X: 0
+DISPLAY_WIN_POS_Y: 0
 DISPLAY_WIN_SCREEN_ID: 1
-DISPLAY_WIN_SIZE_HEIGHT_PX: 400
-DISPLAY_WIN_SIZE_WIDTH_PX: 800
+DISPLAY_WIN_SIZE_HEIGHT_PX: 600
+DISPLAY_WIN_SIZE_WIDTH_PX: 600
 DISPLAY_USE_LCR_NATIVE_RES: false
 GUI_USE: true
 GUI_REFRESH: 30
@@ -39,6 +49,7 @@ GUI_ADDONS:
   vxpy.extras.display_widgets.VisualInteractor: {}
   vxpy.extras.display_widgets.VisualStreamAddon: {}
   vxpy.extras.calculate_csd.DisplayPSD: {}
+  vxpy.extras.ca_processing.RoiActivityTrackerWidget: {}
 IO_USE: true
 IO_DEVICES:
   Dev1_virtual:
@@ -99,4 +110,6 @@ REC_ATTRIBUTES:
   ai_slow_sinewave_input: {}
   test_sines_whitenoise: {}
   sawtooth_analogin: {}
-TEST_SCRIPTS: {}
+  roi_activity*: {}
+TEST_SCRIPTS:
+  vxpy.extras.ca_processing_dummy_client.run_client: {}
