@@ -132,10 +132,10 @@ class SimuSaccadeWithSineFlash2000(vxvisual.SphericalVisual):
     texture_default = vxvisual.Attribute('texture_default', static=True)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
     # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
-    contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
-    sine_start_time = vxvisual.IntParameter('sine_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
+    contrast = vxvisual.FloatParameter('contrast', static=True, default=0.8, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
+    sine_start_time = vxvisual.IntParameter('sine_start_time', static=True, default=2000, limits=(0.0, 5000), step_size=100)  # ms
     sine_duration = vxvisual.IntParameter('sine_duration', static=True, default=500, limits=(0.0, 5000), step_size=100)  # ms
     sine_amp = vxvisual.FloatParameter('sine_amp', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # total lum range
     sine_freq = vxvisual.FloatParameter('sine_freq', static=True, default=2.0, limits=(0.0, 20.0), step_size=0.1)  # Hz

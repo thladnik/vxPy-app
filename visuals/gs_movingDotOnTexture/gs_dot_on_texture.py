@@ -87,9 +87,9 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
 
     # Define Texture Parameters
-    rotation = vxvisual.Mat4Parameter('rotation', default=0.0, limits=(0.0, 360.0), internal=True)
+    rotation = vxvisual.Mat4Parameter('rotation', default=30.0, limits=(0.0, 360.0), internal=True)
     texture_default = vxvisual.Attribute('texture_default', static=True)
-    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)
+    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0),
                                        step_size=0.01)  # Absolute contrast
 
