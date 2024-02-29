@@ -40,7 +40,8 @@ class KebabPositionTracker(vxroutine.IoRoutine):
     def _current_position_callback(self, position: list):
         vxattribute.write_attribute('stepper_position', position[2])
 
-        rotation_num = position[2] // self.steps_to_full_rotation
+        rotation_num = abs(position[2]) // self.steps_to_full_rotation
+
 
         _trigger = (rotation_num > self.rotation_num) or (position[2] == 0)
         vxattribute.write_attribute('stepper_full_rotation_trigger', _trigger)
