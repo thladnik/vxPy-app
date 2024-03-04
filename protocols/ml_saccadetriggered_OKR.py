@@ -5,7 +5,7 @@ import vxpy.core.event as vxevent
 import vxpy.core.attribute as vxattribute
 
 from visuals.ml_saccadetriggered_OKR.ml_rotating_texture import RotatingTexture2000
-from vxpy.extras.zf_eyeposition_tracking import EyePositionDetectionRoutine
+from vxpy.extras.zf_eyeposition_tracking import ZFEyeTracking
 
 
 # parameters function
@@ -38,7 +38,7 @@ class SaccadeTriggeredOKR(vxprotocol.TriggeredProtocol):
         okr_delays = [100, 250, 500, 1000, 2000, 4000, 8000]
 
         # Set saccade trigger as phase trigger
-        trigger = vxevent.NotNullTrigger(f'{EyePositionDetectionRoutine.le_sacc_direction_prefix}0') # select which eye should be used as triggering eye
+        trigger = vxevent.NotNullTrigger(f'{ZFEyeTracking.le_sacc_direction_prefix}0') # select which eye should be used as triggering eye
         self.set_phase_trigger(trigger)
 
         p = vxprotocol.Phase(duration=15)
