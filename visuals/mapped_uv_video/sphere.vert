@@ -3,8 +3,8 @@ attribute vec3 a_position;
 attribute vec2 a_texture_coord;
 
 // Output
-out vec3 v_position;
-out vec2 v_texture_coord;
+varying vec3 v_position;
+varying vec2 v_texture_coord;
 
 // Main
 void main() {

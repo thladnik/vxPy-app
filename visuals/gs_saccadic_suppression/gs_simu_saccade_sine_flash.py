@@ -132,16 +132,16 @@ class SimuSaccadeWithSineFlash2000(vxvisual.SphericalVisual):
     texture_default = vxvisual.Attribute('texture_default', static=True)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)
     # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
-    sine_start_time = vxvisual.IntParameter('sine_start_time', static=True, default=2000, limits=(0.0, 5000), step_size=100)  # ms
-    sine_duration = vxvisual.IntParameter('sine_duration', static=True, default=1000, limits=(0.0, 5000), step_size=100)  # ms
-    sine_amp = vxvisual.FloatParameter('sine_amp', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)  # total lum range
-    sine_freq = vxvisual.FloatParameter('sine_freq', static=True, default=1.0, limits=(0.0, 20.0), step_size=0.1)  # Hz
-    saccade_start_time = vxvisual.IntParameter('saccade_start_time', static=True, default=1500, limits=(0.0, 5000), step_size=100)  # ms
-    saccade_duration = vxvisual.IntParameter('saccade_duration', static=True, default=50, limits=(20, 200), step_size=10)  # ms
-    saccade_target_angle = vxvisual.FloatParameter('saccade_target_angle', static=True, default=15., limits=(-90.0, 90.0), step_size=0.01)  # deg
+    sine_start_time = vxvisual.IntParameter('sine_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
+    sine_duration = vxvisual.IntParameter('sine_duration', static=True, default=500, limits=(0.0, 5000), step_size=100)  # ms
+    sine_amp = vxvisual.FloatParameter('sine_amp', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # total lum range
+    sine_freq = vxvisual.FloatParameter('sine_freq', static=True, default=2.0, limits=(0.0, 20.0), step_size=0.1)  # Hz
+    saccade_start_time = vxvisual.IntParameter('saccade_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
+    saccade_duration = vxvisual.IntParameter('saccade_duration', static=True, default=100, limits=(20, 200), step_size=10)  # ms
+    saccade_target_angle = vxvisual.FloatParameter('saccade_target_angle', static=True, default=0, limits=(-90.0, 90.0), step_size=0.01)  # deg
 
     texture_file = 'visuals/gs_saccadic_suppression/stimulus_data/texture_brightness_0_1_2000_blobs.hdf5'
 
@@ -236,16 +236,16 @@ class SimuSaccadeWithSineFlash4000(vxvisual.SphericalVisual):
     texture_default = vxvisual.Attribute('texture_default', static=True)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
     # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
-    contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
+    contrast = vxvisual.FloatParameter('contrast', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)  # Absolute contrast
     sine_start_time = vxvisual.IntParameter('sine_start_time', static=True, default=2000, limits=(0.0, 5000), step_size=100)  # ms
     sine_duration = vxvisual.IntParameter('sine_duration', static=True, default=1000, limits=(0.0, 5000), step_size=100)  # ms
-    sine_amp = vxvisual.FloatParameter('sine_amp', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)  # total lum range
+    sine_amp = vxvisual.FloatParameter('sine_amp', static=True, default=0, limits=(0.0, 1.0), step_size=0.01)  # total lum range
     sine_freq = vxvisual.FloatParameter('sine_freq', static=True, default=1.0, limits=(0.0, 20.0), step_size=0.1)  # Hz
-    saccade_start_time = vxvisual.IntParameter('saccade_start_time', static=True, default=1500, limits=(0.0, 5000), step_size=100)  # ms
-    saccade_duration = vxvisual.IntParameter('saccade_duration', static=True, default=50, limits=(20, 200), step_size=10)  # ms
-    saccade_target_angle = vxvisual.FloatParameter('saccade_target_angle', static=True, default=15., limits=(-90.0, 90.0), step_size=0.01)  # deg
+    saccade_start_time = vxvisual.IntParameter('saccade_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
+    saccade_duration = vxvisual.IntParameter('saccade_duration', static=True, default=100, limits=(20, 200), step_size=10)  # ms
+    saccade_target_angle = vxvisual.FloatParameter('saccade_target_angle', static=True, default=30, limits=(-90.0, 90.0), step_size=0.01)  # deg
 
     texture_file = 'visuals/gs_saccadic_suppression/stimulus_data/texture_brightness_0_1_4000_blobs.hdf5'
 
@@ -417,7 +417,7 @@ class SimuSaccadeWithStepFlash2000(vxvisual.SphericalVisual):
         time_in_sine = time - sine_start_time
         if 0.0 < time_in_sine <= sine_duration:
             #current_lum = baseline_lum + np.sin(sine_freq * time_in_sine / 1000 * 2.0 * np.pi) * sine_amp / 2.0
-            current_lum = 0.25
+            current_lum = baseline_lum - sine_amp
         else:
             current_lum = baseline_lum
 
@@ -521,7 +521,7 @@ class SimuSaccadeWithStepFlash4000(vxvisual.SphericalVisual):
         time_in_sine = time - sine_start_time
         if 0.0 < time_in_sine <= sine_duration:
             #current_lum = baseline_lum + np.sin(sine_freq * time_in_sine / 1000 * 2.0 * np.pi) * sine_amp / 2.0
-            current_lum = 0.25
+            current_lum = baseline_lum - sine_amp
         else:
             current_lum = baseline_lum
 
