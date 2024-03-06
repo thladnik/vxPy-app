@@ -35,7 +35,7 @@ class SaccadeTriggeredOKR(vxprotocol.TriggeredProtocol):
         ang_vel = 60
 
         # OKR delays in ms
-        okr_delays = [100, 250, 500, 1000, 2000, 4000]
+        okr_delays = [100, 250, 500, 1000, 2000, 4000, 8000]
 
         # Set saccade trigger as phase trigger
         trigger = vxevent.NotNullTrigger(f'{ZFEyeTracking.le_sacc_direction_prefix}0') # select which eye should be used as triggering eye
@@ -47,7 +47,7 @@ class SaccadeTriggeredOKR(vxprotocol.TriggeredProtocol):
 
         for j in range(4):
             for okr_delay in np.random.permutation(okr_delays):
-                p = vxprotocol.Phase(duration=20)
+                p = vxprotocol.Phase(duration=25)
                 p.set_visual(RotatingTexture2000,
                              rot_texture_2000(okr_duration, okr_delay, ang_vel * okr_duration / 1000, luminance,
                                               contrast))

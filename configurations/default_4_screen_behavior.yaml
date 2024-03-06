@@ -1,0 +1,54 @@
+PATH_CALIBRATION: calibrations/spherical_4_screen_cylinder.yaml
+CAMERA_USE: true
+CAMERA_DEVICES:
+  fish_embedded:
+    api: vxpy.devices.camera.tis_windows_tisgrabber.TISCamera
+    exposure: 0.2
+    frame_rate: 20
+    gain: 6.0
+    height: 480
+    model: DMK 23UV024
+    serial: 7610475
+    width: 640
+    format: Y800
+ROUTINES:
+  vxpy.extras.camera_capture.Frames: {}
+  vxpy.extras.zf_eyeposition_tracking.EyePositionDetectionRoutine:
+    roi_maxnum: 1
+    min_size: 45
+DISPLAY_USE: true
+DISPLAY_FPS: 60
+DISPLAY_GL_VERSION: 100
+DISPLAY_TRANSFORM: Spherical4ScreenCylindricalTransform
+DISPLAY_WIN_POS_X: 1920
+DISPLAY_WIN_POS_Y: 0
+DISPLAY_WIN_SCREEN_ID: 1
+DISPLAY_WIN_SIZE_HEIGHT_PX: 768
+DISPLAY_WIN_SIZE_WIDTH_PX: 4096
+GUI_USE: true
+GUI_REFRESH: 30
+GUI_FPS: 20
+GUI_SCREEN: 0
+GUI_ADDONS:
+  vxpy.extras.camera_widgets.CameraStreamAddon: {}
+  vxpy.extras.zf_eyeposition_tracking.EyePositionDetectionAddon: {}
+  vxpy.extras.display_widgets.VisualInteractor: {}
+IO_USE: false
+IO_DEVICES: {}
+IO_MAX_SR: 1000
+WORKER_USE: false
+RECORDER_USE: false
+REC_OUTPUT_FOLDER: ./recordings/
+REC_ATTRIBUTES:
+  ai*: {}
+  ao*: {}
+  di*: {}
+  do*: {}
+  eyepos_*: {}
+  fish_embedded_frame:
+    videoformat: avi
+    codec: xvid
+  display_frame:
+    videoformat: mpeg
+    codec: h265
+    bitrate: 5000
