@@ -9,7 +9,7 @@ varying vec3 v_position;
 varying vec4 v_rotation;
 
 void main() {
-    vec4 position = u_projection * u_view * u_model * vec4(a_position, 1.0);
+    vec4 position = transform_position(a_position);
     gl_Position = position;
     v_position = a_position;
     v_rotation = a_rotation;
