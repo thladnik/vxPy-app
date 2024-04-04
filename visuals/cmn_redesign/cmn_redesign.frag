@@ -124,6 +124,12 @@ void main() {
 
     mat4 rotmat = rotamat_from_quat(v_rotation);
 
+//    For debugging:
+//    mat4 rotmat = mat4(1., 0., 0., 0.,
+//                       0., 1., 0., 0.,
+//                       0., 0., 1., 0.,
+//                       0., 0., 0., 1. );
+
     vec3 position = (rotmat * vec4(v_position, 1.0)).xyz;
 
     position = normalize(position);

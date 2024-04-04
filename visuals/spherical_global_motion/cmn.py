@@ -83,7 +83,7 @@ def create_motion_matrix(tile_centers: np.ndarray,
     # fig.legend()
     # plt.show()
 
-    vxcontainer.temporary_dump({save_keys[0]: motion_matrix, save_keys[1]: rotated_motion_matrix})
+    vxcontainer.temporary_dump(**{save_keys[0]: motion_matrix, save_keys[1]: rotated_motion_matrix})
 
     return [motion_matrix, rotated_motion_matrix]
 
