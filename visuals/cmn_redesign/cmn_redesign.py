@@ -115,6 +115,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
     time = vxvisual.FloatParameter('time', internal=True)
     frame_index = vxvisual.IntParameter('frame_index', internal=True)
+    noise_scale = vxvisual.FloatParameter('noise_scale', default=5., limits=(.01, 50.), step_size=.01)
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self , *args, **kwargs)
@@ -211,7 +212,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
         self.program = gloo.Program(self.VERT_SHADER, self.FRAG_SHADER)
         self.program['a_position'] = self.vertices
         self.index_buffer = gloo.IndexBuffer(self.indices)
-
+        self.noise_scale.connect(self.program)
 
         data_dump = dict(centers=self.centers, vertices=self.vertices, indices=self.indices,
                          motion_vectors=self.motion_vectors, local_motion_vectors=self.local_motion_vectors,
@@ -246,6 +247,39 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
         # Render
         self.program.draw('triangles', self.index_buffer)
+
+
+class CMNUp(ContiguousMotionNoise3D):
+
+    subdivision_level = 2
+    frame_num = 500
+    sp_cr = 30.  # spatial contiguity radius [deg]
+    tp_cr = 3.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 50  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([.0, .0, .2])
+
+
+class CMNForward(ContiguousMotionNoise3D):
+
+    subdivision_level = 2
+    frame_num = 500
+    sp_cr = 30.  # spatial contiguity radius [deg]
+    tp_cr = 3.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 50  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([.2, .0, .0])
+
+
+class CMNLeft(ContiguousMotionNoise3D):
+
+    subdivision_level = 2
+    frame_num = 500
+    sp_cr = 30.  # spatial contiguity radius [deg]
+    tp_cr = 3.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 50  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([.0, .2, .0])
 
 
 class CMN3D20240404(ContiguousMotionNoise3D):
