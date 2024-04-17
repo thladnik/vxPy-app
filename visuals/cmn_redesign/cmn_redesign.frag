@@ -134,9 +134,9 @@ void main() {
 
     position = normalize(position);
 
-    float brightness = snoise(position*50.0);
-    vec4 color = vec4(vec3(brightness), 1.0);
-//    vec4 color = vec4(vec3(step(brightness, 0.2)), 1.0);
+    float brightness = snoise(position*5.0);
+//    vec4 color = vec4(vec3(brightness), 1.0);
+    vec4 color = vec4(vec3(step(brightness, 0.0)), 1.0);
     gl_FragColor = color;
 
 }
