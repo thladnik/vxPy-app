@@ -32,7 +32,7 @@ class TranslationMotionAxis(vxvisual.Mat4Parameter):
         azimuth = TranslationGrating.azimuth.data[0]
 
         rot_elevation = transforms.rotate(90. - elevation, (0, 1, 0))
-        rot_azimuth = transforms.rotate(azimuth, (0, 0, 1))
+        rot_azimuth = transforms.rotate(azimuth, (0, 0, -1))
         self.data = np.dot(rot_elevation, rot_azimuth)
 
 
