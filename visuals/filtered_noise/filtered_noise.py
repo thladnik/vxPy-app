@@ -12,7 +12,6 @@ def generate_white_noise(width, height, seed):
     np.random.seed(seed)
     return np.random.rand(*width, *height)
 
-
 # Function to apply a low-pass filter
 def apply_lowpass_filter(image, sigma):
     sigma = sigma[0]

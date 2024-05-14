@@ -14,8 +14,6 @@ void main()
     // Normalize the color based on the min and max values
     color = (color - u_min_value) / (u_max_value - u_min_value);
 
-    // Apply some filtering or manipulation to the color here if needed
-
     // Output the color
     gl_FragColor = color;
 }
