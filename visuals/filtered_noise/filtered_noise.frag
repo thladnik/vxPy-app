@@ -1,17 +1,18 @@
-#version 120
+// Input
+varying vec2 v_position;
+varying vec2 v_nposition;
 
-uniform sampler2D u_texture; // The input texture
-uniform float u_time; // Time uniform
-uniform float u_min_value; // Minimum value in the texture
-uniform float u_max_value; // Maximum value in the texture
-varying vec2 v_texcoord; // Interpolated texture coordinates
+// Uniforms
+uniform sampler2D u_texture;
+uniform float u_min_value;
+uniform float u_max_value;
 
-void main()
-{
-    // Sample the texture at the interpolated texture coordinates
-    vec4 color = texture2D(u_texture, v_texcoord);
+// Main
+void main() {
+    // Sample the texture
+    vec4 color = texture2D(u_texture, v_nposition);
 
-    // Normalize the color based on the min and max values
+    // Normalize the color value
     color = (color - u_min_value) / (u_max_value - u_min_value);
 
     // Output the color

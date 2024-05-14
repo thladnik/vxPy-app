@@ -4,8 +4,8 @@ from scipy.ndimage import gaussian_filter
 import vxpy.core.visual as vxvisual
 from vxpy.utils import plane
 
-width = 3840
-height = 2160
+width = 98
+height = 734
 
 
 def generate_white_noise(width, height, seed):
