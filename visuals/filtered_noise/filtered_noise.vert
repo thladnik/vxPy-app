@@ -1,11 +1,13 @@
-attribute vec3 a_position; // Changed from vec2 to vec3
-varying vec2 v_texcoord;
+// Input
+attribute vec3 a_position;
 
-void main()
-{
-    // Pass the vertex position to the fragment shader
-    v_texcoord = a_position.xy * 0.5 + 0.5; // Adjusted to extract only the x and y components
+// Output
+varying vec2 v_position;
+varying vec2 v_nposition;
 
-    // Set the vertex position in clip space
-    gl_Position = vec4(a_position, 1.0); // Changed 0.0 to 1.0 for the w component
+// Main
+void main() {
+    gl_Position = transform_position(a_position);
+    v_position = real_position(a_position);
+    v_nposition = norm_position(a_position);
 }
