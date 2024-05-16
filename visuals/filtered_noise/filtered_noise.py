@@ -4,12 +4,13 @@ from scipy.ndimage import gaussian_filter
 import vxpy.core.visual as vxvisual
 from vxpy.utils import plane
 import matplotlib.pyplot as plt
+import time
 
-#width = 98
-#height = 734
+width = 98
+height = 734
 
-width = 1000
-height = 1000
+#width = 1000
+#height = 1000
 
 diagonal = 20.6  #in cm
 
@@ -71,34 +72,42 @@ class FilteredNoise(vxvisual.PlanarVisual):
         self.width.connect(self.noise)
         self.height.connect(self.noise)
 
+        self.last_render_time = time.time()
+
     def initialize(self, *args, **kwargs):
         # Reset time to 0.0 on each visual initialization
         self.time.data = 0.0
 
     def render(self, dt):
         # Add elapsed time to u_time
-        self.time.data += dt
-        print(dt)
-        self.sigma.data += self.step_width.data
-        self.width.data = width
-        self.height.data = height
-        #print(self.sigma.data)
+        current_time = time.time()
+        elapsed_time = current_time - self.last_render_time
 
-        white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
-        lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
+        print(elapsed_time)
 
-        # Calculate frequency cutoff
-        cutoff_frequency = 1 / (2 * np.pi * self.sigma.data)
-        #print("cutoff frequency:", cutoff_frequency)
+        if elapsed_time >= 0.2:
+            # Update the time of the last rendered frame
+            self.last_render_time = current_time
+            self.sigma.data += self.step_width.data
+            self.width.data = width
+            self.height.data = height
+            #print(self.sigma.data)
 
-        # Create power spectrum
-        power_spectrum = calculate_power_spectrum(lowpass_filtered)
-        plt.imshow(np.log(power_spectrum), cmap='viridis')
-        plt.colorbar()
-        plt.title(self.sigma.data)
-        plt.show()
+            white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
+            lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
 
-        self.noise['u_min_value'] = np.min(lowpass_filtered)
-        self.noise['u_max_value'] = np.max(lowpass_filtered)
-        self.texture.set_data(lowpass_filtered)
-        self.noise.draw('triangles', self.index_buffer)
+            # Calculate frequency cutoff
+            cutoff_frequency = 1 / (2 * np.pi * self.sigma.data)
+            #print("cutoff frequency:", cutoff_frequency)
+
+            # Create power spectrum
+            power_spectrum = calculate_power_spectrum(lowpass_filtered)
+            plt.imshow(np.log(power_spectrum), cmap='viridis')
+            plt.colorbar()
+            plt.title(self.sigma.data)
+            #plt.show()
+
+            self.noise['u_min_value'] = np.min(lowpass_filtered)
+            self.noise['u_max_value'] = np.max(lowpass_filtered)
+            self.texture.set_data(lowpass_filtered)
+            self.noise.draw('triangles', self.index_buffer)
