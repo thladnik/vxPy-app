@@ -23,8 +23,29 @@ from visuals.filtered_noise import FilteredNoise
 class FilteredNoiseOverTime(StaticProtocol):
     def __init__(self, *args, **kwargs):
         StaticProtocol.__init__(self, *args, **kwargs)
+
+        p = Phase(duration=10)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.sigma: 0.0,
+                      FilteredNoise.step_width: 0.0})
+        self.add_phase(p)
+
         p = Phase(duration=900)
         p.set_visual(FilteredNoise,
-                     {FilteredNoise.sigma: 10.0,
-                      FilteredNoise.step_width: 0.0017})
+                     {FilteredNoise.sigma: 0.0,
+                      FilteredNoise.step_width: 0.013888888888})
         self.add_phase(p)
+
+        p = Phase(duration=30)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.sigma: 25.0,
+                      FilteredNoise.step_width: 0.0})
+        self.add_phase(p)
+
+        p = Phase(duration=900)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.sigma: 25.0,
+                      FilteredNoise.step_width: -0.013888888888})
+        self.add_phase(p)
+
+

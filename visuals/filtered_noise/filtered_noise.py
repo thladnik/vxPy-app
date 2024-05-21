@@ -83,15 +83,15 @@ class FilteredNoise(vxvisual.PlanarVisual):
         current_time = time.time()
         elapsed_time = current_time - self.last_render_time
 
-        print(elapsed_time)
+        #print(elapsed_time)
 
-        if elapsed_time >= 0.2:
+        if elapsed_time >= 0.5:
             # Update the time of the last rendered frame
             self.last_render_time = current_time
             self.sigma.data += self.step_width.data
             self.width.data = width
             self.height.data = height
-            #print(self.sigma.data)
+            print(self.sigma.data)
 
             white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
             lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
@@ -102,9 +102,9 @@ class FilteredNoise(vxvisual.PlanarVisual):
 
             # Create power spectrum
             power_spectrum = calculate_power_spectrum(lowpass_filtered)
-            plt.imshow(np.log(power_spectrum), cmap='viridis')
-            plt.colorbar()
-            plt.title(self.sigma.data)
+            #plt.imshow(np.log(power_spectrum), cmap='viridis')
+            #plt.colorbar()
+            #plt.title(self.sigma.data)
             #plt.show()
 
             self.noise['u_min_value'] = np.min(lowpass_filtered)
