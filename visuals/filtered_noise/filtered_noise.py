@@ -13,6 +13,9 @@ screen_width = 1920
 screen_height = 1080
 screen_diagonal = 6096 #in mm
 
+distance_to_stimulus_mm = 100  # in mm
+visual_acuity_cycles_per_degree = 0.24
+
 
 def calculate_pixel_density(width_px, height_px, diagonal_mm):
     # Diagonal in pixels
@@ -79,13 +82,6 @@ class FilteredNoise(vxvisual.PlanarVisual):
         self.sigma.connect(self.noise)
         self.width.connect(self.noise)
         self.height.connect(self.noise)
-
-        # Calculate the pixel density in px/mm
-        diagonal_px = np.sqrt(width ** 2 + height ** 2)
-        diagonal_mm = diagonal * 10  # Convert cm to mm
-        ppi = diagonal_px / diagonal_mm
-
-        print('test')
 
     def initialize(self, *args, **kwargs):
         # Reset time to 0.0 on each visual initialization
