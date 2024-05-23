@@ -11,10 +11,11 @@ diagonal = 207  #in mm
 
 screen_width = 1920
 screen_height = 1080
-screen_diagonal = 6096 #in mm
+screen_diagonal = 609.6 #in mm
 
 distance_to_stimulus_mm = 100  # in mm
 visual_acuity_cycles_per_degree = 0.24
+min_sigma_mm = 0.5787
 
 
 def calculate_pixel_density(width_px, height_px, diagonal_mm):
@@ -98,7 +99,7 @@ class FilteredNoise(vxvisual.PlanarVisual):
 
         self.width.data = width
         self.height.data = height
-        #print(self.sigma.data)
+        print(self.sigma.data)
 
         white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
         lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
@@ -106,8 +107,9 @@ class FilteredNoise(vxvisual.PlanarVisual):
         # Calculate frequency cutoff
         pixel_density = calculate_pixel_density(screen_width, screen_height, screen_diagonal)
         sigma_mm = self.sigma.data / pixel_density
+        #min_sigma = min_sigma_mm * pixel_density
         self.cutoff_frequency.data = 1 / (2 * np.pi * sigma_mm)
-        print("cutoff frequency:", self.cutoff_frequency.data)
+        #print("cutoff frequency:", self.cutoff_frequency.data)
 
         self.noise['u_min_value'] = np.min(lowpass_filtered)
         self.noise['u_max_value'] = np.max(lowpass_filtered)
