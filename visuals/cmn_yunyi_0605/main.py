@@ -101,7 +101,7 @@ def project_motion_vectors(centers: np.ndarray, motion_vectors: np.ndarray):
 class CMN_FORE_BACK(vxvisual.SphericalVisual):
     subdivision_level = 2
     frame_num = 10000
-    sp_cr = 57.  # spatial contiguity radius [deg]
+    sp_cr = 90.  # spatial contiguity radius [deg]
     tp_cr = 1.  # temporal contiguity radius [s]
     fps = 30  # [frames/s]
     nominal_velocity = 67  # mean local velocity [deg/s]
