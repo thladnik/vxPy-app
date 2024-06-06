@@ -100,6 +100,15 @@ class CMN_FORE_BACK0605(vxprotocol.StaticProtocol):
         phase.set_visual(ForegroundMovingForwardReverse)
         self.add_phase(phase)
 
+        # CMN
+        phase = vxprotocol.Phase(duration=1 * 5)
+        phase.set_visual(ForegroundStationaryReverse)
+        self.add_phase(phase)
+
+        # CMN
+        phase = vxprotocol.Phase(duration=1 * 5)
+        phase.set_visual(CMNReverse)
+        self.add_phase(phase)
 
 
 

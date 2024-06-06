@@ -130,7 +130,7 @@ varying vec4 v_foreground_rotation_start;
 varying float past_time_pos;
 
 void main() {
-    float deltaU = 0.3 * time;
+    float deltaU = PI * time/6;
     mat4 rotmat = rotamat_from_quat(v_rotation);
 //     mat4 rotmat_foreground = rotamat_from_quat(v_start_rotation);
     mat4 rotmat_foreground = rotamat_from_quat(v_foreground_rotation_start);
