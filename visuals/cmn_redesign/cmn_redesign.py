@@ -14,7 +14,6 @@ import vxpy.core.logger as vxlogger
 import vxpy.core.container as vxcontainer
 from vxpy.utils import sphere
 
-
 log = vxlogger.getLogger(__name__)
 
 
@@ -46,7 +45,7 @@ def create_motion_matrix(positions: np.ndarray,
     # Temporal smoothing
     # tp_min_length = int(np.ceil(np.sqrt(-2 * tp_sigma ** 2 * np.log(.01 * tp_sigma * np.sqrt(2 * np.pi)))))
     # tp_range = np.linspace(-tp_min_length, tp_min_length, num=2 * tp_min_length + 1)
-    tp_range = np.linspace(-2*tp_cr, 2*tp_cr, num=4*tp_cr+1)
+    tp_range = np.linspace(-2 * tp_cr, 2 * tp_cr, num=4 * tp_cr + 1)
     tp_kernel = 1 / (tp_sigma * np.sqrt(2 * np.pi)) * np.exp(-0.5 * (tp_range / tp_sigma) ** 2)
     tp_smooth_x = signal.convolve(flow_vec[:, :, 0], tp_kernel[np.newaxis, :], mode='same')
     tp_smooth_y = signal.convolve(flow_vec[:, :, 1], tp_kernel[np.newaxis, :], mode='same')
@@ -71,7 +70,6 @@ def create_motion_matrix(positions: np.ndarray,
 
 
 def project_motion_vectors(centers: np.ndarray, motion_vectors: np.ndarray):
-
     print('Project motion vectors')
 
     start_t = time.perf_counter()
@@ -82,21 +80,20 @@ def project_motion_vectors(centers: np.ndarray, motion_vectors: np.ndarray):
     angular_velocities = np.zeros(motion_vectors.shape[:2], dtype=np.float32)
 
     for tidx, motion_vecs in enumerate(motion_vectors):
-
-        motvecs_local = motion_vecs - centers * np.sum(motion_vecs * centers, axis=1)[:,None]
+        motvecs_local = motion_vecs - centers * np.sum(motion_vecs * centers, axis=1)[:, None]
         local_motion_vectors[tidx] = motvecs_local
 
-        axes = crossproduct(motvecs_local / np.linalg.norm(motvecs_local, axis=1)[:,None], centers)
-        axes /= np.linalg.norm(axes, axis=1)[:,None]
+        axes = crossproduct(motvecs_local / np.linalg.norm(motvecs_local, axis=1)[:, None], centers)
+        axes /= np.linalg.norm(axes, axis=1)[:, None]
 
         angles = -np.linalg.norm(motvecs_local, axis=1)
         angular_velocities[tidx, :] = angles
 
         # Calculate quaternion
-        rotation_quats[tidx, :, 0] = np.cos(angles/2)
-        rotation_quats[tidx, :, 1] = axes[:,0]*np.sin(angles/2)
-        rotation_quats[tidx, :, 2] = axes[:,1]*np.sin(angles/2)
-        rotation_quats[tidx, :, 3] = axes[:,2]*np.sin(angles/2)
+        rotation_quats[tidx, :, 0] = np.cos(angles / 2)
+        rotation_quats[tidx, :, 1] = axes[:, 0] * np.sin(angles / 2)
+        rotation_quats[tidx, :, 2] = axes[:, 1] * np.sin(angles / 2)
+        rotation_quats[tidx, :, 3] = axes[:, 2] * np.sin(angles / 2)
 
     print(f'Projection time: {time.perf_counter() - start_t:.1f}')
 
@@ -104,7 +101,6 @@ def project_motion_vectors(centers: np.ndarray, motion_vectors: np.ndarray):
 
 
 class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
-
     subdivision_level = 3
     frame_num = 10000
     sp_cr = 57.  # spatial contiguity radius [deg]
@@ -118,7 +114,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
     noise_scale = vxvisual.FloatParameter('noise_scale', default=5., limits=(.01, 50.), step_size=.01)
 
     def __init__(self, *args, **kwargs):
-        vxvisual.SphericalVisual.__init__(self , *args, **kwargs)
+        vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
 
         print(f'Running at {self.fps} fps')
         print(f'Frame number {self.frame_num} frames')
@@ -154,7 +150,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
         self.face_num = face_idcs.shape[0]
         self.faces = np.zeros_like(face_idcs)
         self.centers = np.zeros((self.face_num, 3), dtype=np.float32)
-        self.vertices = np.zeros((self.face_num*3, 3), dtype=np.float32)
+        self.vertices = np.zeros((self.face_num * 3, 3), dtype=np.float32)
         for i, face in enumerate(face_idcs):
             verts = vertices[face]
             for j, v in enumerate(verts):
@@ -168,14 +164,12 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
         # Create motion vectors
         self.motion_vectors = create_motion_matrix(self.centers,
-                                                      frame_num=self.frame_num,
-                                                      sp_cr=self.sp_cr,
-                                                      tp_cr=int(self.tp_cr * self.fps))
-
-
+                                                   frame_num=self.frame_num,
+                                                   sp_cr=self.sp_cr,
+                                                   tp_cr=int(self.tp_cr * self.fps))
 
         # Add bias (for testing):
-        self.motion_vectors += self.motion_vector_bias[None,None,:]
+        self.motion_vectors += self.motion_vector_bias[None, None, :]
 
         # Normalize velocity
         motion_norms = np.linalg.norm(self.motion_vectors, axis=-1)
@@ -183,8 +177,8 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
         # Project local motion vectors and calculate unit quaternions
         t = time.perf_counter()
-        self.local_motion_vectors, self.angular_velocities, self.rotation_quats = project_motion_vectors(self.centers, self.motion_vectors)
-
+        self.local_motion_vectors, self.angular_velocities, self.rotation_quats = project_motion_vectors(self.centers,
+                                                                                                         self.motion_vectors)
 
         # Convert to quaternion array
         self.rotation_quats = qt.array(self.rotation_quats).normalized
@@ -203,7 +197,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
         # vxcontainer.temporary_dump_group(save_group_name, data_dump)
 
         # Arrays to save latest rotation for each face
-        start_rotations = np.ones((self.centers.shape[0], 4, 4), dtype=np.float32) * np.eye(4)[None,:,:]
+        start_rotations = np.ones((self.centers.shape[0], 4, 4), dtype=np.float32) * np.eye(4)[None, :, :]
         self.current_quats = qt.array.from_rotation_matrix(start_rotations)
 
         # Create program
@@ -250,7 +244,6 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
 
 class CMNUp(ContiguousMotionNoise3D):
-
     subdivision_level = 2
     frame_num = 500
     sp_cr = 30.  # spatial contiguity radius [deg]
@@ -261,7 +254,6 @@ class CMNUp(ContiguousMotionNoise3D):
 
 
 class CMNForward(ContiguousMotionNoise3D):
-
     subdivision_level = 2
     frame_num = 500
     sp_cr = 30.  # spatial contiguity radius [deg]
@@ -272,7 +264,6 @@ class CMNForward(ContiguousMotionNoise3D):
 
 
 class CMNLeft(ContiguousMotionNoise3D):
-
     subdivision_level = 2
     frame_num = 500
     sp_cr = 30.  # spatial contiguity radius [deg]
@@ -283,7 +274,6 @@ class CMNLeft(ContiguousMotionNoise3D):
 
 
 class CMN3D20240404(ContiguousMotionNoise3D):
-
     subdivision_level = 2
     frame_num = 500
     sp_cr = 30.  # spatial contiguity radius [deg]
@@ -305,7 +295,6 @@ class CMN3D20240410(ContiguousMotionNoise3D):
 
 
 class CMN3D20240411(ContiguousMotionNoise3D):
-
     subdivision_level = 2
     frame_num = 30_000
     sp_cr = 57.  # spatial contiguity radius [deg]
@@ -316,5 +305,4 @@ class CMN3D20240411(ContiguousMotionNoise3D):
 
 
 if __name__ == '__main__':
-
     pass
