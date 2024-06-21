@@ -6,9 +6,7 @@ from visuals.spherical_global_motion import TranslationGrating
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
 
 
-
 class CMN3DBaseProtocol(vxprotocol.StaticProtocol):
-
     cmn_version: ContiguousMotionNoise3D
 
     def create(self):
@@ -24,8 +22,8 @@ class CMN3DBaseProtocol(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
         # CMN
-        phase = vxprotocol.Phase(duration=20*60)
-        phase.set_visual(self.cmn_version)
+        phase = vxprotocol.Phase(duration=5 * 6)
+        phase.set_visual(CMN3D20240411)
         self.add_phase(phase)
 
         # Grey
@@ -36,7 +34,6 @@ class CMN3DBaseProtocol(vxprotocol.StaticProtocol):
         # Translation characterization
         for i in range(3):
             for azim in np.arange(-180, 180, 30):
-
                 phase = vxprotocol.Phase(duration=4)
                 phase.set_visual(TranslationGrating,
                                  {TranslationGrating.azimuth: azim,
@@ -60,5 +57,4 @@ class CMN3DBaseProtocol(vxprotocol.StaticProtocol):
 
 
 class CMN3DProtocol20240411(CMN3DBaseProtocol):
-
     cmn_version = CMN3D20240411

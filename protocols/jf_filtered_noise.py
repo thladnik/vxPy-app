@@ -24,7 +24,7 @@ class FilteredNoiseOverTime(StaticProtocol):
     def __init__(self, *args, **kwargs):
         StaticProtocol.__init__(self, *args, **kwargs)
 
-        p = Phase(duration=30)
+        p = Phase(duration=300)
         p.set_visual(FilteredNoise,
                      {FilteredNoise.duration: 30.0,
                       FilteredNoise.start_sigma: 2.0,
