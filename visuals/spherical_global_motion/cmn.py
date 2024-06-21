@@ -104,7 +104,8 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
     norm_speed = 0.01
     stimulus_diretion = 1
 
-    def __init__(self, *args, **kwargs):
+    def \
+            __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args)
 
         np.random.seed(1)
