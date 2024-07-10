@@ -1,3 +1,15 @@
+//
+// Description : Array and textureless GLSL 2D/3D/4D simplex
+//               noise functions.
+//      Author : Ian McEwan, Ashima Arts.
+//  Maintainer : stegu
+//     Lastmod : 20201014 (stegu)
+//     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
+//               Distributed under the MIT License. See LICENSE file.
+//               https://github.com/ashima/webgl-noise
+//               https://github.com/stegu/webgl-noise
+//
+
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -90,59 +102,20 @@ float snoise(vec3 v)
                                 dot(p2,x2), dot(p3,x3) ) );
   }
 
-mat4 rotamat_from_quat(vec4 quat) {
-
-    float q0 = quat.x;
-    float q1 = quat.y;
-    float q2 = quat.z;
-    float q3 = quat.w;
-
-    return mat4(q0*q0+q1*q1-q2*q2-q3*q3, 2*q1*q2-2*q0*q3,         2*q1*q3+2*q0*q2,         0.0,
-                2*q1*q2+2*q0*q3,         q0*q0-q1*q1+q2*q2-q3*q3, 2*q2*q3-2*q0*q1,         0.0,
-                2*q1*q3-2*q0*q2,         2*q2*q3+2*q0*q1,         q0*q0-q1*q1-q2*q2+q3*q3, 0.0,
-                0.0,                     0.0,                     0.0,                     1.0
-    );
-
-}
+uniform mat4 rotation_matrix;
+uniform float noise_scale;
 
 varying vec3 v_position;
-varying vec4 v_rotation;
-varying float v_triangle_center_az;
-varying float v_triangle_center_el;
-uniform float time;
-uniform float noise_scale;
-varying vec4 v_start_rotation;
-varying vec4 v_rotation_stationary;
 
 void main() {
 
-    mat4 rotmat = rotamat_from_quat(v_rotation);
-    mat4 rotmat_foreground = rotamat_from_quat(v_start_rotation);
-    mat4 rotmat_background_stationary = rotamat_from_quat(v_rotation_stationary);
-//    For debugging:
-//    mat4 rotmat = mat4(1., 0., 0., 0.,
-//                       0., 1., 0., 0.,
-//                       0., 0., 1., 0.,
-//                       0., 0., 0., 1. );
+    vec3 position = (rotation_matrix * vec4(v_position, 1.0)).xyz;
 
-    vec3 position = (rotmat * vec4(v_position, 1.0)).xyz;
-    vec3 background_stationary_position = (rotmat_background_stationary * vec4(v_position, 1.0)).xyz;
-    vec3 fore_position_original = (rotmat_foreground * vec4(v_position, 1.0)).xyz;
-    vec3 fore_position = vec3(fore_position_original.x, fore_position_original.y, fore_position_original.z);
-//    position = normalize(position);
-//    fore_position = normalize(fore_position);
+    position = normalize(position);
+
     float brightness = snoise(position*noise_scale);
-    float brightness_foreground = snoise(fore_position*noise_scale);
-    float brightness_foreground_stationary = snoise(fore_position_original*noise_scale);
-    float brightness_background_stationary = snoise(background_stationary_position*noise_scale);
 //    vec4 color = vec4(vec3(brightness), 1.0);
     vec4 color = vec4(vec3(step(brightness, 0.0)), 1.0);
-    vec4 color_foreground = vec4(vec3(step(brightness_foreground, 0.0)), 1.0);
-    vec4 color_foreground_stationary = vec4(vec3(step(brightness_foreground_stationary, 0.0)), 1.0);
-    vec4 color_background_stationary = vec4(vec3(step(brightness_background_stationary, 0.0)), 1.0);
-    if(v_triangle_center_az >= -1.9031872  && v_triangle_center_az <= -1.2384055 && v_triangle_center_el <= -0.08800039 && v_triangle_center_el >= -0.45215960){
-       gl_FragColor = color_foreground_stationary;
-    } else {
-       gl_FragColor = color;
-    }
+    gl_FragColor = color;
+
 }
