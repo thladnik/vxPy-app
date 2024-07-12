@@ -21,8 +21,26 @@ import vxpy.core.protocol as vxprotocol
 
 from controls.control_tests import TestControl01
 from visuals.spherical_grating import SphericalBlackWhiteGrating
+from visuals.spherical_global_motion import GratingFootball
 
 import vxpy.core.container as vxcontainer
+
+
+class FootballProtocol(vxprotocol.StaticProtocol):
+
+    def create(self):
+
+        for i in range(5):
+            p = vxprotocol.Phase(duration=10)
+            p.set_visual(GratingFootball,
+                         {GratingFootball.rotation_axis: GratingFootball.roll_rotation_axis(),
+                          GratingFootball.velocity_sine_frequency: 0.1 * (i+1),
+                          GratingFootball.reset_time: i == 0,
+                          GratingFootball.spatial_period: 20,
+                          GratingFootball.max_angular_velocity: 30
+                          })
+            self.add_phase(p)
+
 
 class GratingProtocol(vxprotocol.StaticProtocol):
 
