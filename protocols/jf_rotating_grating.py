@@ -27,12 +27,12 @@ class RotatingGratings(vxprotocol.StaticProtocol):
     def __init__(self, *args, **kwargs):
         vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
-        moving_phase_dur = 5  # seconds
-        pause_phase_dur = 5  # seconds
-        num_repeat = 3  # number of repeats
+        moving_phase_dur = 30  # seconds
+        pause_phase_dur = 15  # seconds
+        num_repeat = 2  # number of repeats
 
-        spatial_periods = 1. / np.array([0.01, 0.05, 0.2])  # deg/cycle
-        angular_velocities = np.array([25., 50., 100.])
+        spatial_periods = 1. / np.array([0.01, 0.05, 0.1, 0.2])  # deg/cycle
+        angular_velocities = np.array([3, 6.25, 12.5, 25])
 
         for i in range(num_repeat):
             all_combinations = list(itertools.product(spatial_periods, angular_velocities, [1, -1]))
