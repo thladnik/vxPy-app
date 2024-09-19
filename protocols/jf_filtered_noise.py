@@ -23,8 +23,80 @@ from visuals.filtered_noise import FilteredNoise
 class FilteredNoiseOverTime(StaticProtocol):
     def __init__(self, *args, **kwargs):
         StaticProtocol.__init__(self, *args, **kwargs)
-        p = Phase(duration=900)
+
+        p = Phase(duration=300)
         p.set_visual(FilteredNoise,
-                     {FilteredNoise.sigma: 10.0,
-                      FilteredNoise.step_width: 0.0017})
+                     {FilteredNoise.duration: 30.0,
+                      FilteredNoise.start_sigma: 2.0,
+                      FilteredNoise.end_sigma: 2.0})
+        self.add_phase(p)
+
+        p = Phase(duration=60)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 60,
+                      FilteredNoise.start_sigma: 2.0,
+                      FilteredNoise.end_sigma: 7.0})
+        self.add_phase(p)
+
+        p = Phase(duration=300)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 300.0,
+                      FilteredNoise.start_sigma: 7.0,
+                      FilteredNoise.end_sigma: 7.0})
+        self.add_phase(p)
+
+        p = Phase(duration=60)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 60.0,
+                      FilteredNoise.start_sigma: 7.0,
+                      FilteredNoise.end_sigma: 12.0})
+        self.add_phase(p)
+
+        p = Phase(duration=300)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 300.0,
+                      FilteredNoise.start_sigma: 12.0,
+                      FilteredNoise.end_sigma: 12.0})
+        self.add_phase(p)
+
+        p = Phase(duration=60)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 60.0,
+                      FilteredNoise.start_sigma: 12.0,
+                      FilteredNoise.end_sigma: 17.0})
+        self.add_phase(p)
+
+        p = Phase(duration=300)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 300.0,
+                      FilteredNoise.start_sigma: 17.0,
+                      FilteredNoise.end_sigma: 17.0})
+        self.add_phase(p)
+
+        p = Phase(duration=60)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 60.0,
+                      FilteredNoise.start_sigma: 17.0,
+                      FilteredNoise.end_sigma: 22.0})
+        self.add_phase(p)
+
+        p = Phase(duration=300)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 300.0,
+                      FilteredNoise.start_sigma: 22.0,
+                      FilteredNoise.end_sigma: 22.0})
+        self.add_phase(p)
+
+        p = Phase(duration=60)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 60.0,
+                      FilteredNoise.start_sigma: 22.0,
+                      FilteredNoise.end_sigma: 27.0})
+        self.add_phase(p)
+
+        p = Phase(duration=300)
+        p.set_visual(FilteredNoise,
+                     {FilteredNoise.duration: 300.0,
+                      FilteredNoise.start_sigma: 27.0,
+                      FilteredNoise.end_sigma: 27.0})
         self.add_phase(p)
