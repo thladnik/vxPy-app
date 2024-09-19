@@ -49,14 +49,14 @@ class ROITriggered_Coarse(vxprotocol.TriggeredProtocol):
 
         repeats = 4
 
-        for i in range(repeats):
-            # 15 sec just texture (flash delay = 0)
-            p = vxprotocol.Phase(duration=15)
-            p.set_visual(TextureRotationCosineFlash,
+        # 15 sec just texture (flash delay = 0)
+        p = vxprotocol.Phase(duration=15)
+        p.set_visual(TextureRotationCosineFlash,
                          paramstext(rot_duration, rot_start, rot_amp, rot_dir, 0, flash_dur_text,
                                     0, flash_freq_text, baseline_lum_text, contrast))
-            self.add_phase(p)
+        self.add_phase(p)
 
+        for i in range(repeats):
             # shuffled conditions, texture
             for delay, flash_amp in np.random.permutation(conditions):
                 if delay > 4000:
