@@ -119,3 +119,5 @@ class RealSaccadeTriggered_Coarse(vxprotocol.TriggeredProtocol):
         p = vxprotocol.Phase(5)
         p.set_visual(SphereUniformBackground)
         self.add_phase(p)
+
+
