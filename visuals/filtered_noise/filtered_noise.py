@@ -1,24 +1,32 @@
 import numpy as np
-from vispy import gloo, app
+from vispy import gloo
 from scipy.ndimage import gaussian_filter
 import vxpy.core.visual as vxvisual
 from vxpy.utils import plane
-import matplotlib.pyplot as plt
-import time
+from scipy import interpolate
 
-width = 98
-height = 734
+width = 108.  #in px
+height = 727.  #in px
+#width = np.float_(108.)
+#height = np.float_(727.)
+diagonal = 207  #in mm
 
-#width = 1000
-#height = 1000
+screen_width = 1920
+screen_height = 1080
+screen_diagonal = 609.6  #in mm
 
-diagonal = 20.6  #in cm
+distance_to_stimulus_mm = 100  # in mm
+visual_acuity_cycles_per_degree = 0.24
+min_sigma_mm = 0.57896  # for 100mm water height
+#min_sigma_mm = 0.28948  # for 50mm water height
 
 
-def calculate_power_spectrum(texture):
-    fft_texture = np.fft.fftshift(np.fft.fft2(texture))
-    power_spectrum = np.abs(fft_texture) ** 2
-    return power_spectrum
+def calculate_pixel_density(width_px, height_px, diagonal_mm):
+    # Diagonal in pixels
+    diagonal_px = np.sqrt(width_px ** 2 + height_px ** 2)
+    # Pixel density in pixels per mm
+    pixel_density = diagonal_px / diagonal_mm
+    return pixel_density
 
 
 def generate_white_noise(width, height, seed):
@@ -32,13 +40,23 @@ def apply_lowpass_filter(image, sigma):
     return gaussian_filter(image, sigma)
 
 
+def normalize(arr):
+    min_val = np.min(arr)
+    max_val = np.max(arr)
+    normalized_arr = (arr - min_val) / (max_val - min_val)
+    return normalized_arr
+
+
 class FilteredNoise(vxvisual.PlanarVisual):
     time = vxvisual.FloatParameter('time', internal=True)
     sigma = vxvisual.FloatParameter('sigma', default=1.0, limits=(0, 100), step_size=0.1, static=False)
     width = vxvisual.IntParameter('width', static=True, internal=True)
     height = vxvisual.IntParameter('height', static=True, internal=True)
     seed = vxvisual.IntParameter('seed', static=True)
-    step_width = vxvisual.FloatParameter('step_width', default=0.01, limits=(0, 1), step_size=0.01, static=False)
+    start_sigma = vxvisual.FloatParameter('start_sigma', default=0.0, limits=(0, 100), static=False)
+    end_sigma = vxvisual.FloatParameter('end_sigma', default=20.0, limits=(0, 100), static=False)
+    duration = vxvisual.FloatParameter('duration', default=0.0, limits=(0, 900), static=False)
+    cutoff_frequency = vxvisual.FloatParameter('cutoff_frequency', static=False, internal=True)
 
     def __init__(self, *args, **kwargs):
         vxvisual.PlanarVisual.__init__(self, *args, **kwargs)
@@ -67,47 +85,45 @@ class FilteredNoise(vxvisual.PlanarVisual):
         # Set positions with vertex buffer
         self.noise['a_position'] = self.position_buffer
 
+        self.duration.data = 0.0
+        self.start_sigma.data = 0.0
+        self.end_sigma.data = 0.0
+
         self.time.connect(self.noise)
         self.sigma.connect(self.noise)
         self.width.connect(self.noise)
         self.height.connect(self.noise)
-
-        self.last_render_time = time.time()
 
     def initialize(self, *args, **kwargs):
         # Reset time to 0.0 on each visual initialization
         self.time.data = 0.0
 
     def render(self, dt):
-        # Add elapsed time to u_time
-        current_time = time.time()
-        elapsed_time = current_time - self.last_render_time
+        self.time.data += dt
+        #print(dt)
 
-        print(elapsed_time)
+        x = [0.0, float(self.duration.data)]
+        y = [float(self.start_sigma.data), float(self.end_sigma.data)]
+        f = interpolate.interp1d(x, y)
+        self.sigma.data = float(f(min(self.time.data, self.duration.data)))
 
-        if elapsed_time >= 0.2:
-            # Update the time of the last rendered frame
-            self.last_render_time = current_time
-            self.sigma.data += self.step_width.data
-            self.width.data = width
-            self.height.data = height
-            #print(self.sigma.data)
+        self.width.data = width
+        self.height.data = height
+        #print(self.sigma.data)
 
-            white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
-            lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
+        white_noise = generate_white_noise(self.width.data, self.height.data, self.seed.data)
+        lowpass_filtered = apply_lowpass_filter(white_noise, self.sigma.data)
 
-            # Calculate frequency cutoff
-            cutoff_frequency = 1 / (2 * np.pi * self.sigma.data)
-            #print("cutoff frequency:", cutoff_frequency)
+        normalized_lowpass_filtered = normalize(lowpass_filtered)
 
-            # Create power spectrum
-            power_spectrum = calculate_power_spectrum(lowpass_filtered)
-            plt.imshow(np.log(power_spectrum), cmap='viridis')
-            plt.colorbar()
-            plt.title(self.sigma.data)
-            #plt.show()
+        # Calculate frequency cutoff
+        pixel_density = calculate_pixel_density(screen_width, screen_height, screen_diagonal)
+        sigma_mm = self.sigma.data / pixel_density
+        #min_sigma = min_sigma_mm * pixel_density
+        self.cutoff_frequency.data = 1 / (2 * np.pi * sigma_mm)
+        print("cutoff frequency:", self.cutoff_frequency.data)
 
-            self.noise['u_min_value'] = np.min(lowpass_filtered)
-            self.noise['u_max_value'] = np.max(lowpass_filtered)
-            self.texture.set_data(lowpass_filtered)
-            self.noise.draw('triangles', self.index_buffer)
+        self.noise['u_min_value'] = np.min(normalized_lowpass_filtered)
+        self.noise['u_max_value'] = np.max(normalized_lowpass_filtered)
+        self.texture.set_data(normalized_lowpass_filtered)
+        self.noise.draw('triangles', self.index_buffer)
