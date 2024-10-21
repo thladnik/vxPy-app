@@ -113,6 +113,7 @@ class ct_prey_capture_stereopsis_blue(vxprotocol.StaticProtocol):
         random.shuffle(permutations_dicts)
 
         ################################# Execute protocol #################################
+        #TODO: add short no movement phase to record zero position of occluder?
         for phase in permutations_dicts:
             this_phase = {}
 

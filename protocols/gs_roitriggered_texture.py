@@ -22,6 +22,9 @@ def paramstext(rot_duration, rot_start, rot_amp, rot_dir, flash_start, flash_dur
 
 
 class ROITriggered_Coarse(vxprotocol.TriggeredProtocol):
+
+    trigger_name = ''
+
     def __init__(self, *args, **kwargs):
         vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
 
@@ -44,7 +47,7 @@ class ROITriggered_Coarse(vxprotocol.TriggeredProtocol):
                       (8000, 0.5), (8000, 0.5)]
 
         # Set tigger that controls progression of this protocol
-        trigger = vxevent.RisingEdgeTrigger('roi_activity_trigger')
+        trigger = vxevent.RisingEdgeTrigger(self.trigger_name)
         self.set_phase_trigger(trigger)
 
         repeats = 4
@@ -72,3 +75,13 @@ class ROITriggered_Coarse(vxprotocol.TriggeredProtocol):
         p = vxprotocol.Phase(duration=5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
         self.add_phase(p)
+
+
+class ROITriggerd_Coarse_Layer0(ROITriggered_Coarse):
+
+    trigger_name = 'roi_activity_trigger_0'
+
+
+class ROITriggerd_Coarse_Layer1(ROITriggered_Coarse):
+    trigger_name = 'roi_activity_trigger_1'
+
