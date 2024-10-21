@@ -86,6 +86,7 @@ class TranslationGrating(vxvisual.SphericalVisual):
         self.grating['a_elevation'] = self.elevation_buffer
 
     def render(self, dt):
+
         # Add elapsed time to u_time
         self.time.data += dt
 

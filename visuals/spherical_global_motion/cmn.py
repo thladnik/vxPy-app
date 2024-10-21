@@ -62,15 +62,17 @@ def create_motion_matrix(tile_centers: np.ndarray,
         tile_ori_q1 = Geometry.qn(np.real(tile_orientations)).normalize[:, None]
         tile_ori_q2 = Geometry.qn(np.imag(tile_orientations)).normalize[:, None]
         projected_motmat = Geometry.projection(tile_cen_q[:, None], sp_smooth_q)
-        rotated_motion_matrix = Geometry.qdot(tile_ori_q1, projected_motmat) \
-                                - 1.j * Geometry.qdot(tile_ori_q2, projected_motmat)
+        # rotated_motion_matrix = Geometry.qdot(tile_ori_q1, projected_motmat) \
+        #                         - 1.j * Geometry.qdot(tile_ori_q2, projected_motmat)
+        rotated_motion_matrix = Geometry.qdot(tile_ori_q2, projected_motmat) \
+                                + 1.j * Geometry.qdot(tile_ori_q1, projected_motmat)
 
     # Map to horizontal/vertical axes in tile plane (for analysis and illustration)
     projected_motmat = Geometry.projection(tile_cen_q[:, np.newaxis], sp_smooth_q)
     tile_up_vec = Geometry.projection(tile_cen_q, Geometry.qn([0, 0, 1])).normalize
     tile_hori_vec = Geometry.qcross(tile_cen_q, tile_up_vec).normalize
-    motion_matrix = Geometry.qdot(tile_up_vec[:, np.newaxis], projected_motmat) \
-                    - 1.j * Geometry.qdot(tile_hori_vec[:, np.newaxis], projected_motmat)
+    motion_matrix = Geometry.qdot(tile_hori_vec[:, np.newaxis], projected_motmat) \
+                    + 1.j * Geometry.qdot(tile_up_vec[:, np.newaxis], projected_motmat)
     if tile_orientations is None:
         rotated_motion_matrix = np.copy(motion_matrix)
 
@@ -102,7 +104,7 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
     sp_sigma = 0.1
     stimulus_fps = 20
     norm_speed = 0.01
-    stimulus_diretion = 1
+    stimulus_direction = 1
 
     def \
             __init__(self, *args, **kwargs):
@@ -146,8 +148,8 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
                                                                               **self.cmn_parameters)
 
         # Apply direction
-        self.motion_matrix = self.motion_matrix[:, ::self.stimulus_diretion]
-        self.rotated_motion_matrix = self.rotated_motion_matrix[:, ::self.stimulus_diretion]
+        self.motion_matrix = self.motion_matrix[:, ::self.stimulus_direction]
+        self.rotated_motion_matrix = self.rotated_motion_matrix[:, ::self.stimulus_direction]
 
         # Dump info to recording file
         vxcontainer.dump(
@@ -155,7 +157,7 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
                  positions=self.sphere.a_position, texture_start_coords=self.texture_start_coords,
                  frame_num=self.frame_num, tp_sigma=self.tp_sigma, sp_sigma=self.sp_sigma,
                  stimulus_fps=self.stimulus_fps, norm_speed=self.norm_speed,
-                 stimulus_diretion=self.stimulus_diretion, binary_texture=self.binary_texture),
+                 stimulus_diretion=self.stimulus_direction, binary_texture=self.binary_texture),
             group=self.__class__.__name__
         )
 
@@ -172,13 +174,14 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
         frame_idx = int(self.time.data * self.stimulus_fps) % (self.frame_num - 1)
 
         # Only move texture coordinate if this motion matrix frame wasn't used yet
+        # frame_idx = 500
         if frame_idx > self.frame_index.data[0]:
             # Save un-rotated version
             self.motion_frame.data = self.motion_matrix[:, frame_idx]
 
             # Update program based on motion matrix
             motmat = np.repeat(self.rotated_motion_matrix[:, frame_idx], 3, axis=0)
-            self.texture_coords += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed
+            self.texture_coords += np.array([np.real(motmat), np.imag(motmat)]).T * self.norm_speed #/ 20
             self.sphere_program['a_texcoord'] = self.texture_coords
 
         # Update index
@@ -202,7 +205,7 @@ class CMN_15_000f_15fps_10tp_0p1sp_varns(ContiguousMotionNoise):
     tp_sigma = 15
     sp_sigma = 0.1
     stimulus_fps = 15
-    stimulus_diretion = 1
+    stimulus_direction = 1
     normalized_speed = vxvisual.FloatParameter('normalized_speed', limits=(0., 1.), default=0.02, step_size=0.001)
 
     def render(self, dt):
@@ -216,7 +219,7 @@ class CMN_15_000f_15fps_10tp_0p1sp_0p035ns(ContiguousMotionNoise):
     sp_sigma = 0.1
     stimulus_fps = 15
     norm_speed = 0.035
-    stimulus_diretion = 1
+    stimulus_direction = 1
 
 
 class CMN_15_000f_15fps_10tp_0p1sp_0p035ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p035ns):
@@ -224,7 +227,7 @@ class CMN_15_000f_15fps_10tp_0p1sp_0p035ns_inv(CMN_15_000f_15fps_10tp_0p1sp_0p03
 
 
 class CMN_3_000f_15fps_7tp_0p25sp_0p005ns(ContiguousMotionNoise):
-    frame_num = 15_000
+    frame_num = 3_000
     tp_sigma = 7
     sp_sigma = 0.25
     stimulus_fps = 15
@@ -255,11 +258,14 @@ if __name__ == '__main__':
     create_vector_video = True
     create_polar_histogram = False
 
-    frame_num = 2_000
+    # frame_num = 2_000
+    # tp_sigma = 7
+    # sp_sigma = 0.25
+    # fps = 15
+    frame_num = 3_000
     tp_sigma = 7
     sp_sigma = 0.25
     fps = 15
-
 
     def despine(axis, spines=None, hide_ticks=True):
         def hide_spine(spine):
@@ -305,6 +311,7 @@ if __name__ == '__main__':
 
 
         def animate(tidx, qr):
+            tidx = 500
             if tidx % 100 == 0:
                 print(f'{tidx}/{motmat.shape[1]}')
 
