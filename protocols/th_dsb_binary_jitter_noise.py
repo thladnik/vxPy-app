@@ -50,4 +50,3 @@ class BinaryJitterNoiseSingle(StaticProtocol):
         p = Phase(1*30, visual=SphereUniformBackground,
                   visual_params={SphereUniformBackground.u_color: [0.5, 0.5, 0.5]})
         self.add_phase(p)
-
