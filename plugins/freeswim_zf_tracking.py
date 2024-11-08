@@ -42,7 +42,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
     """
     rect_size = (60, 60)
-    camera_device_id = 'multiple_fish_vertical_swim'
+    camera_device_id = 'fish_freeswimming'
 
     # Set processing parameters
     dimension_size = np.array([100., 80.])  # mm
@@ -62,7 +62,6 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         # Create mixture of gaussian BG subtractor
         self._mog: cv2.MOG2BackgroundSubtractor = None
 
-        self.reset_mog_model()
 
     @classmethod
     def require(cls):
@@ -86,8 +85,7 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
                                    vxattribute.ArrayType.uint8)
         vxattribute.ArrayAttribute('freeswim_tracked_particle_rects',
                                    (cls.max_particle_num, *cls.rect_size),
-                                   dtype=vxattribute.ArrayType.uint8,
-                                   chunked=True)
+                                   dtype=vxattribute.ArrayType.uint8)
 
         vxattribute.ArrayAttribute('freeswim_tracked_particle_count_total',
                                    (1,),
@@ -114,10 +112,13 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         vxattribute.write_to_file(self, 'freeswim_tracked_particle_pixel_position')
         vxattribute.write_to_file(self, 'freeswim_tracked_particle_mapped_position')
 
+        self.reset_mog_model()
+        # self._mog = cv2.createBackgroundSubtractorKNN(int(self.mog_history_len), detectShadows=False)
+
     @vxroutine.CameraRoutine.callback
     def reset_mog_model(self):
-        # self._mog = cv2.createBackgroundSubtractorMOG2(int(self.mog_history_len), detectShadows=False)
-        self._mog = cv2.createBackgroundSubtractorKNN(int(self.mog_history_len), detectShadows=False)
+        pass
+        self._mog = cv2.createBackgroundSubtractorMOG2(int(self.mog_history_len), detectShadows=False)
 
     @vxroutine.CameraRoutine.callback
     def set_mog_history_len(self, value):
@@ -195,7 +196,6 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
         vxattribute.write_attribute('freeswim_tracked_particle_count_total', len(contours))
 
         # Go through all contours now and filter them
-        print('---')
         if len(contours) > 0:
             i = 0
             for cnt in contours:
@@ -222,11 +222,9 @@ class FreeswimTrackerRoutine(vxroutine.CameraRoutine):
 
                 # Fix rects overlapping source image boundary
                 if rect.shape != self.rect_size:
-                    print(rect.sum())
                     right_rect = np.zeros(self.rect_size)
                     right_rect[:rect.shape[0], :rect.shape[1]] = rect[:,:]
                     rect = right_rect
-                    print(rect.sum())
 
                 particle_rectangles.append(rect)
                 particle_areas.append((area, i))
@@ -300,7 +298,7 @@ class FreeswimTrackerWidget(vxui.CameraAddonWidget):
         # MOG history length
         self.mog_history = widgets.IntSliderWidget(self.console, label='MOG history',
                                                    default=FreeswimTrackerRoutine.mog_history_len,
-                                                   limits=(1, 5000))
+                                                   limits=(1, 20000))
         self.mog_history.connect_callback(self.set_mog_history_len)
         uniform_width.add_widget(self.mog_history.label)
         self.console.layout().addWidget(self.mog_history)
