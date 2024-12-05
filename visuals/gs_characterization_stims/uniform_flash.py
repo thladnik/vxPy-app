@@ -34,10 +34,14 @@ class UniformFlashStep(vxvisual.SphericalVisual):     # for coarse texture only!
     luminance = Luminance('luminance', default=0.5, limits=(0.0, 1.0), step_size=0.01)
 
     # Static (not set in rendering program)
-    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)  # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
-    flash_start_time = vxvisual.FloatParameter('flash_start_time', static=True, default=3, limits=(0.0, 100), step_size=0.1)  # sec
-    flash_duration = vxvisual.FloatParameter('flash_duration', static=True, default=0.5, limits=(0.0, 10), step_size=0.1)  # sec
-    flash_amp = vxvisual.FloatParameter('flash_amp', static=True, default=-0.5, limits=(0.0, 1.0), step_size=0.01)  # total lum range
+    baseline_lum = vxvisual.FloatParameter('baseline_lum', static=True, default=0.75, limits=(0.0, 1.0),
+                                           step_size=0.01)  # lum_contrast = vxvisual.FloatParameter('lum_contrast', static=True, default=0.25, limits=(0.0, 1.0), step_size=0.01)
+    flash_start_time = vxvisual.IntParameter('flash_start_time', static=True, default=4000, limits=(0.0, 5000),
+                                             step_size=100)  # ms
+    flash_duration = vxvisual.IntParameter('flash_duration', static=True, default=500, limits=(0.0, 5000),
+                                           step_size=100)  # ms
+    flash_amp = vxvisual.FloatParameter('flash_amp', static=True, default=0.5, limits=(0.0, 1.0),
+                                        step_size=0.01)  # total lum range
 
     def __init__(self, *args, **kwargs):
         visual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -64,6 +68,7 @@ class UniformFlashStep(vxvisual.SphericalVisual):     # for coarse texture only!
         self.flash_duration.connect(self.uni_flash)
         self.flash_amp.connect(self.uni_flash)
 
+
     def initialize(self, **kwargs):
         self.time.data = 0.
 
@@ -81,7 +86,7 @@ class UniformFlashStep(vxvisual.SphericalVisual):     # for coarse texture only!
 
         time_in_flash = time - flash_start_time
         if 0.0 < time_in_flash <= flash_duration:
-            # current_lum = baseline_lum + np.sin(flash_freq * time_in_flash / 1000 * 2.0 * np.pi) * sine_amp / 2.0
+            # current_lum = baseline_lum + np.sin(flash_freq * time_in_flash / 1000 * 2.0 * np.pi) * flash_amp / 2.0
             current_lum = baseline_lum + flash_amp
         else:
             current_lum = baseline_lum
