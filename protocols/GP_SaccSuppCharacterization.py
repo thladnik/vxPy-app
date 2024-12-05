@@ -86,8 +86,8 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
         # set fixed parameters PART 3b: On/Off Flashes
         flash_base_lum = 0.5
-        flash_start = 3 # in sec
-        flash_dur = 0.5 # in sec
+        flash_start = 3000 # in ms
+        flash_dur = 500 # in ms
         flash_amp = 0.5 # change sign for bright or dark flashes
         flash_phase_dur = 8  # sec
 
@@ -132,7 +132,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
         # PART 1: Spatial Frequency Tuning, Motion
-        repeats = 2
+        '''repeats = 2
         for i in range(repeats):
             for direction, ang_per in np.random.permutation(SFTm_conditions):
                 # Static Phase
@@ -205,7 +205,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(10)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)
+        self.add_phase(p)'''
 
 
         # PART 3c: On/Off Flashes
