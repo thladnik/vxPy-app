@@ -313,10 +313,10 @@ def run(raw_data, _x, _y, _heading, _fb_size):
     heading = _heading
     data = np.frombuffer(raw_data.get_obj(), dtype=np.uint8).reshape((6, fb_size, fb_size, 4))
 
-    with h5py.File('./2023-08-31_fish1_rec1_p20/Display.hdf5', 'r') as f:
-        motion_data = {'time': f['ABCMeta_0/time'][:].squeeze(),
-                       'orientation': f['ABCMeta_0/orientation'][:].squeeze(),
-                       'position': f['ABCMeta_0/position'][:].squeeze()}
+    # with h5py.File('./2023-08-31_fish1_rec1_p20/Display.hdf5', 'r') as f:
+    #     motion_data = {'time': f['ABCMeta_0/time'][:].squeeze(),
+    #                    'orientation': f['ABCMeta_0/orientation'][:].squeeze(),
+    #                    'position': f['ABCMeta_0/position'][:].squeeze()}
 
     motion_data = None
 

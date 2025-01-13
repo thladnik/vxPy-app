@@ -102,6 +102,7 @@ def project_motion_vectors(centers: np.ndarray, motion_vectors: np.ndarray):
 
 class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
     subdivision_level = 3
+    sphere_model = sphere.IcosahedronSphere
     frame_num = 10000
     sp_cr = 57.  # spatial contiguity radius [deg]
     tp_cr = 1.  # temporal contiguity radius [s]
@@ -112,6 +113,9 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
     time = vxvisual.FloatParameter('time', internal=True)
     frame_index = vxvisual.IntParameter('frame_index', internal=True)
     noise_scale = vxvisual.FloatParameter('noise_scale', default=5., limits=(.01, 50.), step_size=.01)
+    reset_time = vxvisual.IntParameter('reset_time', default=1, limits=(0, 1), step_size=1, static=True)
+    speed_modifier = vxvisual.FloatParameter('speed_modifier', default=1., limits=(0.1, 10.), step_size=0.1)
+    texture_scale = 7.
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -141,7 +145,7 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
         # # If no temp data exists, create all visual data here
         # else:
 
-        sph = sphere.IcosahedronSphere(subdiv_lvl=self.subdivision_level)
+        sph = self.sphere_model(subdiv_lvl=self.subdivision_level)
         vertices = sph.get_vertices()
         indices = sph.get_indices()
 
@@ -210,13 +214,16 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
 
         data_dump = dict(centers=self.centers, vertices=self.vertices, indices=self.indices,
                          motion_vectors=self.motion_vectors, local_motion_vectors=self.local_motion_vectors,
-                         rotation_quats=self.rotation_quats)
+                         rotation_quats=self.rotation_quats.ndarray)
 
         vxcontainer.dump(data_dump, group=self.__class__.__name__)
 
     def initialize(self, **kwargs):
-        self.time.data = 0.
-        self.frame_index.data = -1
+        if self.reset_time.data[0] == 1:
+            self.time.data = 0.
+            self.frame_index.data = -1
+        self.noise_scale.data = self.texture_scale
+        self.speed_modifier.data = 1.
 
     def render(self, dt):
 
@@ -231,7 +238,8 @@ class ContiguousMotionNoise3D(vxvisual.SphericalVisual):
         future_quats = self.rotation_quats[tidx] * self.current_quats
 
         # SLERP current rotations
-        self.current_quats = qt.slerp(self.current_quats, future_quats, dt)
+        # self.current_quats = qt.slerp(self.current_quats, future_quats, dt)
+        self.current_quats = qt.slerp(self.current_quats, future_quats, dt*self.speed_modifier.data[0])
 
         # Stack for write
         stacked_quats = np.repeat(self.current_quats[:, None], 3, axis=0).reshape((-1, 4)).astype(np.float32)
@@ -250,7 +258,7 @@ class CMNUp(ContiguousMotionNoise3D):
     tp_cr = 3.  # temporal contiguity radius [s]
     fps = 20  # [frames/s]
     nominal_velocity = 50  # mean local velocity [deg/s]
-    motion_vector_bias = np.array([.0, .0, .2])
+    motion_vector_bias = np.array([.0, .0, 1.])
 
 
 class CMNForward(ContiguousMotionNoise3D):
@@ -260,7 +268,7 @@ class CMNForward(ContiguousMotionNoise3D):
     tp_cr = 3.  # temporal contiguity radius [s]
     fps = 20  # [frames/s]
     nominal_velocity = 50  # mean local velocity [deg/s]
-    motion_vector_bias = np.array([.2, .0, .0])
+    motion_vector_bias = np.array([1., .0, .0])
 
 
 class CMNLeft(ContiguousMotionNoise3D):
@@ -270,7 +278,7 @@ class CMNLeft(ContiguousMotionNoise3D):
     tp_cr = 3.  # temporal contiguity radius [s]
     fps = 20  # [frames/s]
     nominal_velocity = 50  # mean local velocity [deg/s]
-    motion_vector_bias = np.array([.0, .2, .0])
+    motion_vector_bias = np.array([.0, 1., .0])
 
 
 class CMN3D20240404(ContiguousMotionNoise3D):
@@ -302,6 +310,69 @@ class CMN3D20240411(ContiguousMotionNoise3D):
     fps = 20  # [frames/s]
     nominal_velocity = 67  # mean local velocity [deg/s]
     motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+
+
+class CMN3D20240606Vel80(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 1.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 80  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+
+
+class CMN3D20240606Vel100(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 1.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 100  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+
+
+class CMN3D20240606Vel120(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 1.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 120  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+
+
+class CMN3D20240606Vel140Scale7(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 1.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 140  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+    texture_scale = 7.
+
+
+class CMN3D20240606Vel160Scale3LargePatches(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 1
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 2.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 160  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+    texture_scale = 3.
+
+class CMN3DOcto20240710(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    sphere_model = sphere.Octahedron
+    frame_num = 30_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 2.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 160  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+    texture_scale = 3.
 
 
 if __name__ == '__main__':

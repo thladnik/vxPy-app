@@ -144,6 +144,7 @@ class BinaryBlackWhiteJitterNoise8deg(BinaryBlackWhiteJitterNoise):
     binary_pattern = vxvisual.Attribute('binary_pattern')
     patch_diameter = 8
 
+
 class BinaryBlackWhiteJitterNoise8deg2Hz(BinaryBlackWhiteJitterNoise):
 
     sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_640.mat'
