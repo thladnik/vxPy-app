@@ -1,13 +1,13 @@
-PATH_CALIBRATION: calibrations/spherical_4_channel_projection.yaml
+PATH_CALIBRATION: calibrations/spherical_4_channel_projection_holoSetup.yaml
 CAMERA_USE: true
 CAMERA_DEVICES:
   fish_embedded:
     api: vxpy.devices.camera.basler_pylon.BaslerCamera
     serial: 40511428
     model: a2A1920-160umBAS
-    width: 1936 # 484 # 968
-    height: 1216 # 304 # 608
-    frame_rate: 80
+    width: 1936
+    height: 1216
+    frame_rate: 120
     basler_props:
       ReverseX: false
       ReverseY: false
@@ -18,9 +18,9 @@ CAMERA_DEVICES:
       OffsetX: 0
       OffsetY: 0
       GainAuto: false
-      Gain: 20
+      Gain: 0
       ExposureAuto: false
-      ExposureTime: 10000
+      ExposureTime: 50
 ROUTINES:
   vxpy.extras.camera_capture.Frames: {}
   vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking:
@@ -30,7 +30,7 @@ ROUTINES:
   vxpy.extras.calculate_csd.CalculatePSD: {}
   vxpy.extras.write_test_attributes.SinesAddedWhiteNoise: {}
   vxpy.extras.write_test_attributes.RunCtrlLed: {}
-  vxpy.extras.server.FrameReceiverTcpServer:
+  vxpy.extras.server.ScanImageFrameReceiverTcpServer:
     _load_order: 0
     frame_width: 512
     frame_height: 512
@@ -44,12 +44,12 @@ DISPLAY_USE: true
 DISPLAY_FPS: 60
 DISPLAY_GL_VERSION: 100
 DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
-DISPLAY_WIN_POS_X: 2560
+DISPLAY_WIN_POS_X: 1648
 DISPLAY_WIN_POS_Y: 0
-DISPLAY_WIN_SCREEN_ID: 0
-DISPLAY_WIN_SIZE_HEIGHT_PX: 400
-DISPLAY_WIN_SIZE_WIDTH_PX: 400
-DISPLAY_USE_LCR_NATIVE_RES: false
+DISPLAY_WIN_SCREEN_ID: 2
+DISPLAY_WIN_SIZE_HEIGHT_PX: 1140
+DISPLAY_WIN_SIZE_WIDTH_PX: 912
+DISPLAY_USE_LCR_NATIVE_RES: true
 GUI_USE: true
 GUI_REFRESH: 30
 GUI_FPS: 20
@@ -71,10 +71,10 @@ IO_DEVICES:
       frame_sync:
         type: digital
         direction: input
-        map: d:1:i
-IO_MAX_SR: 200
+        map: d:2:i
+IO_MAX_SR: 1000
 WORKER_USE: true
-WORKER_RATE: 100
+WORKER_RATE: 1000
 RECORDER_USE: false
 REC_OUTPUT_FOLDER: ./recordings/
 REC_ATTRIBUTES:
@@ -84,6 +84,9 @@ REC_ATTRIBUTES:
   do*: {}
   eyepos_*: {}
   fish_embedded_frame:
+    videoformat: avi
+    codec: xvid
+  scanimage_frame:
     videoformat: avi
     codec: xvid
   roi_activity*: {}
