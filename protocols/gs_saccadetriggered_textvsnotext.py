@@ -53,7 +53,7 @@ class SaccadeTriggeredTextvsNoTextCombined(vxprotocol.TriggeredProtocol):
         # set fixed parameters no texture
         baseline_lum_notext = 0.75
         flash_dur_notext = 500
-        flash_freq_notext = 0.5
+        flash_freq_notext = 2
 
 
         # experimental conditions, (delay, flash_amp) In total 10 Conditions:
@@ -102,6 +102,6 @@ class SaccadeTriggeredTextvsNoTextCombined(vxprotocol.TriggeredProtocol):
                                                            flash_freq_notext))
                 self.add_phase(p)
 
-            p = vxprotocol.Phase(duration=5)
-            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-            self.add_phase(p)
+        p = vxprotocol.Phase(duration=5)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
+        self.add_phase(p)

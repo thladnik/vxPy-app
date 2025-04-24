@@ -1,0 +1,81 @@
+PATH_CALIBRATION: calibrations/spherical_4_channel_projection.yaml
+CAMERA_USE: true
+CAMERA_DEVICES:
+  fish_embedded:
+    api: vxpy.devices.camera.basler_pylon.BaslerCamera
+    serial: 40511428
+    model: a2A1920-160umBAS
+    width: 968 #1936 # 484 # 968
+    height: 608 # 1216 # 304 # 608
+    frame_rate: 160
+    basler_props:
+      ReverseX: false
+      ReverseY: false
+      BinningHorizontalMode: Average
+      BinningHorizontal: 2
+      BinningVerticalMode: Average
+      BinningVertical: 2
+      OffsetX: 0
+      OffsetY: 0
+      GainAuto: false
+      Gain: 35
+      ExposureAuto: false
+      ExposureTime: 1000
+ROUTINES:
+  vxpy.extras.camera_capture.Frames: {}
+  plugins.zf_tail_tracking.ZFTailTracking: {}
+  vxpy.extras.display_capture.Frames:
+    downsample_by: 2
+DISPLAY_USE: true
+DISPLAY_FPS: 120
+DISPLAY_GL_VERSION: 100
+DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
+DISPLAY_WIN_POS_X: 5120
+DISPLAY_WIN_POS_Y: 0
+DISPLAY_WIN_SCREEN_ID: 2
+DISPLAY_WIN_SIZE_HEIGHT_PX: 800
+DISPLAY_WIN_SIZE_WIDTH_PX: 1280
+DISPLAY_USE_LCR_NATIVE_RES: false
+GUI_USE: true
+GUI_REFRESH: 30
+GUI_FPS: 20
+GUI_SCREEN: 0
+GUI_ADDONS:
+  vxpy.extras.camera_capture.FrameUI: {}
+  plugins.zf_tail_tracking.ZFTailTrackingUI: {}
+  vxpy.extras.display_widgets.VisualStreamAddon: {}
+  vxpy.extras.display_widgets.VisualInteractor: {}
+IO_USE: true
+IO_MAX_SR: 200
+IO_DEVICES:
+  Dev1_arduino_uno:
+    api: vxpy.devices.arduino_daq.ArduinoDaq
+    model: Arduino
+    port: /dev/ttyACM0
+    pins:
+      y_mirror_in:
+        type: analog
+        direction: input
+        map: a:1:i
+      frame_sync:
+        type: digital
+        direction: input
+        map: d:2:i
+WORKER_USE: true
+WORKER_RATE: 100
+RECORDER_USE: false
+REC_OUTPUT_FOLDER: ./recordings/
+REC_ATTRIBUTES:
+  ai*: {}
+  ao*: {}
+  di*: {}
+  do*: {}
+  eyepos_*: {}
+  translational_speed: {}
+  angular_speed: {}
+  tail_pose_data: {}
+  fish_embedded_frame: # If you have this fish_embdedded_frame you record the non-cropped video, which lowers fps of rec
+    videoformat: avi
+    codec: xvid
+    bitrate: 3000
+TEST_SCRIPTS: {}
