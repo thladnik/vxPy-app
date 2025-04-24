@@ -1,0 +1,49 @@
+PATH_CALIBRATION: calibrations/spherical_4_channel_projection.yaml
+CAMERA_USE: true
+CAMERA_DEVICES:
+  fish_embedded:
+    api: vxpy.devices.camera.tis_windows_tisgrabber.TISCamera
+    exposure: 0.05
+    frame_rate: 60.0
+    gain: 3.0
+    height: 480
+    model: DMK 23UV024
+    serial: 7610476
+    width: 640
+    format: Y800
+ROUTINES:
+  vxpy.extras.camera_capture.Frames: {}
+  vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking:
+    roi_maxnum: 1
+    min_size: 45
+  plugins.telemetrix_stepper_feedback.KebabPositionTracker:
+    steps_to_full_rotation: 3200
+DISPLAY_USE: false
+GUI_USE: true
+GUI_REFRESH: 60
+GUI_FPS: 20
+GUI_SCREEN: 0
+GUI_ADDONS:
+  vxpy.extras.zf_eyeposition_tracking.ZFEyeTrackingUI: {}
+IO_USE: true
+IO_DEVICES:
+  Dev_kebab:
+    api: devices.telemetrix_stepper.TelemetrixStepperKebab
+    arduino_instance_id: 1
+IO_MAX_SR: 80
+WORKER_USE: false
+RECORDER_USE: false
+REC_OUTPUT_FOLDER: ./recordings/
+REC_ATTRIBUTES:
+  ai*: {}
+  ao*: {}
+  di*: {}
+  do*: {}
+  eyepos_*: {}
+  fish_embedded_frame:
+    videoformat: avi
+    codec: xvid
+  stepper_position: {}
+  stepper_rotation_number: {}
+  stepper_full_rotation_trigger: {}
+TEST_SCRIPTS: {}

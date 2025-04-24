@@ -68,7 +68,7 @@ class MotionAxis(vxvisual.Mat4Parameter):
 
         self.value_map = {'forward': self._rotate_forward,
                           'sideways': self._rotate_sideways,
-                          'vertical': np.eye(4)}
+                          'vertical': self._rotate_vertical()}
 
     @staticmethod
     def _rotate_forward():
@@ -77,6 +77,10 @@ class MotionAxis(vxvisual.Mat4Parameter):
     @staticmethod
     def _rotate_sideways():
         return transforms.rotate(90, (1, 0, 0))
+
+    @staticmethod
+    def _rotate_vertical():
+        return transforms.rotate(180, (0, 0, 1))
 
 
 class SphericalBlackWhiteGrating(vxvisual.SphericalVisual):

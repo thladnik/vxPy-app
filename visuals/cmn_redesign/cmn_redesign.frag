@@ -120,6 +120,8 @@ mat4 rotamat_from_quat(vec4 quat) {
 varying vec3 v_position;
 varying vec4 v_rotation;
 
+uniform float noise_scale;
+
 void main() {
 
     mat4 rotmat = rotamat_from_quat(v_rotation);
@@ -134,9 +136,9 @@ void main() {
 
     position = normalize(position);
 
-    float brightness = snoise(position*50.0);
-    vec4 color = vec4(vec3(brightness), 1.0);
-//    vec4 color = vec4(vec3(step(brightness, 0.2)), 1.0);
+    float brightness = snoise(position*noise_scale);
+//    vec4 color = vec4(vec3(brightness), 1.0);
+    vec4 color = vec4(vec3(step(brightness, 0.0)), 1.0);
     gl_FragColor = color;
 
 }

@@ -100,7 +100,7 @@ class TextureRotationCosineFlash(vxvisual.SphericalVisual):     # for coarse tex
     flash_freq = vxvisual.FloatParameter('flash_freq', static=True, default=2.0, limits=(0.0, 20.0), step_size=0.1)  # Hz
     rotation_start_time = vxvisual.IntParameter('rotation_start_time', static=True, default=4000, limits=(0.0, 5000), step_size=100)  # ms
     rotation_duration = vxvisual.IntParameter('rotation_duration', static=True, default=100, limits=(20, 200), step_size=10)  # ms
-    rotation_amplitude = vxvisual.FloatParameter('rotation_amplitude', static=True, default=30, limits=(0, 360), step_size=1)  # deg
+    rotation_amplitude = vxvisual.FloatParameter('rotation_amplitude', static=True, default=0, limits=(0, 360), step_size=1)  # deg
     rotation_direction = vxvisual.IntParameter('rotation_direction', static=True, default=1, limits=(-1, 1),
                                                  step_size=1)  # deg
 

@@ -68,6 +68,20 @@ class VORTestTriggered(vxprotocol.TriggeredProtocol):
 
                 self.direction *= -1
 
+                # 11.25°/s
+                phase = vxprotocol.Phase(duration=self._min_phase_duration(11.25, self.rounds))
+                phase.set_control(fish_kebab_controls.Control01,
+                                  {'velocity': 11.25, 'direction': self.direction, 'rounds': self.rounds,
+                                   'led_left_state': self.leds, 'led_right_state': self.leds})
+                self.add_phase(phase)
+
+                # chill phase
+                chill_phase = vxprotocol.Phase(duration=30)
+                chill_phase.set_control(fish_kebab_controls.Control01,
+                                        {'velocity': 0, 'direction': self.direction, 'rounds': 0,
+                                         'led_left_state': self.leds, 'led_right_state': self.leds})
+                self.add_phase(chill_phase)
+
             self.leds = 0.1
 
     def _min_phase_duration(self, velocity, rounds):
@@ -113,6 +127,41 @@ class DLR_protocol_dsb(vxprotocol.StaticProtocol):
                                   {'velocity': self.velocity, 'direction': self.direction,
                                    'rounds': self.rounds,
                                    'led_left_state': 0.005, 'led_right_state': 0.005})
+                self.add_phase(phase)
+
+
+class VOR_protocol_tvw(vxprotocol.TriggeredProtocol):
+
+    def __init__(self, *args, **kwargs):
+        vxprotocol.TriggeredProtocol.__init__(self, *args, **kwargs)
+
+        trigger = vxevent.OnTrigger('stepper_full_rotation_trigger')
+        self.set_phase_trigger(trigger)
+
+    rounds = 8
+    directions = [1, -1]
+    velocities = [90, 45, 22.5]
+
+    def _min_phase_duration(self, velocity, rounds):
+        return int(rounds * (360 / velocity))
+
+    def create(self):
+
+        for velocity in self.velocities:
+            for direction in self.directions:
+
+                # chill phase
+                chill_phase = vxprotocol.Phase(duration=30)
+                chill_phase.set_control(fish_kebab_controls.Control01,
+                                        {'velocity': 0, 'direction': direction, 'rounds': 0,
+                                         'led_left_state': 0, 'led_right_state': 0})
+                self.add_phase(chill_phase)
+
+                # stim phase
+                phase = vxprotocol.Phase(duration=self._min_phase_duration(velocity, self.rounds))
+                phase.set_control(fish_kebab_controls.Control01,
+                                  {'velocity': velocity, 'direction': direction, 'rounds': self.rounds,
+                                   'led_left_state': 0, 'led_right_state': 0})
                 self.add_phase(phase)
 
 
@@ -269,9 +318,84 @@ class Protocol01Static(vxprotocol.StaticProtocol):
 
 
 class SinusoidalVOR(vxprotocol.StaticProtocol):
+
+    frequencies = [0.0078125,0.015625,0.03125,0.0625, 0.125, 0.25,2]    #0.0078125,0.015625,0.03125,0.0625, 0.125, 0.25 (initially by set up by David)
+    amplitude = 60
+    rounds = 8
+
     def create(self):
 
-        phase = vxprotocol.Phase(duration=40)
-        phase.set_control(fish_kebab_controls.ControlSinusoidal, {'frequency': 0.15, 'amplitude': 90, 'rounds': 3,
-                                                          'led_left_state': 0., 'led_right_state': 0.})
+        # chill phase
+        phase = vxprotocol.Phase(duration=10)
+        phase.set_control(fish_kebab_controls.ControlSinusoidal, {'rounds': 0, 'frequency': 0, 'amplitude': 0,
+                                                                  'led_left_state': 0., 'led_right_state': 0.})
+        self.add_phase(phase)
+
+        for frequency in self.frequencies:
+
+            print(frequency)
+
+            phase = vxprotocol.Phase(duration=(1/frequency)*self.rounds + 5)
+            phase.set_control(fish_kebab_controls.ControlSinusoidal, {'rounds': self.rounds, 'frequency': frequency, 'amplitude': self.amplitude,
+                                                              'led_left_state': 0., 'led_right_state': 0.})
+            self.add_phase(phase)
+
+            # chill phase
+            phase = vxprotocol.Phase(duration=10)
+            phase.set_control(fish_kebab_controls.ControlSinusoidal,{'rounds': 0, 'frequency':0, 'amplitude': 0,
+                                                                     'led_left_state': 0., 'led_right_state': 0.})
+            self.add_phase(phase)
+
+
+class DiscreteStepperVOR(vxprotocol.StaticProtocol):
+
+    start_angle = current_angle = 0
+    stop_angle = 180     # [°]
+    step_size = 10       # [°]
+    direction = 1
+    phase_duration = 6     # [s]
+    anz_executions = 4
+
+    def create(self):
+
+        # chill phase
+        phase = vxprotocol.Phase(duration=30)
+        phase.set_control(fish_kebab_controls.ControlDiscretePositions, {'velocity': 0, 'direction': 1,
+                                                                         'target_angle': 0,
+                                                                         'current_angle': 0,
+                                                                         'led_left_state': 0., 'led_right_state': 0.})
+        self.add_phase(phase)
+
+
+        # for positive and negative angles
+        for i in range(self.anz_executions * 2):
+
+            # moving to stop angle
+            while self.current_angle < self.stop_angle:
+
+                self.current_angle += self.step_size
+
+                phase = vxprotocol.Phase(duration=self.phase_duration)
+                phase.set_control(fish_kebab_controls.ControlDiscretePositions, {'velocity': 5, 'direction': self.direction, 'target_angle': self.current_angle * self.direction,
+                                                                                 'current_angle': self.step_size, 'led_left_state': 0., 'led_right_state': 0.})
+                self.add_phase(phase)
+
+            self.direction *= -1
+
+            # moving backwards to start angle
+            while self.current_angle > self.start_angle:
+
+                self.current_angle -= self.step_size
+
+                phase = vxprotocol.Phase(duration=self.phase_duration)
+                phase.set_control(fish_kebab_controls.ControlDiscretePositions, {'velocity': 5, 'direction': self.direction, 'target_angle': self.current_angle * self.direction,
+                                                                                 'current_angle': self.step_size, 'led_left_state': 0., 'led_right_state': 0.})
+                self.add_phase(phase)
+
+        # chill phase
+        phase = vxprotocol.Phase(duration=30)
+        phase.set_control(fish_kebab_controls.ControlDiscretePositions, {'velocity': 0, 'direction': 1,
+                                                                         'target_angle': 0,
+                                                                         'current_angle': 0,
+                                                                         'led_left_state': 0., 'led_right_state': 0.})
         self.add_phase(phase)
