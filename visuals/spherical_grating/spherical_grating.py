@@ -169,13 +169,13 @@ class SphericalColorContrastGrating(SphericalBlackWhiteGrating):
 
     # Define parameters
     rgb01 = RGB01('rgb01', static=True, internal=True)
-    red01 = vxvisual.FloatParameter('red01', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)
-    green01 = vxvisual.FloatParameter('green01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
-    blue01 = vxvisual.FloatParameter('blue01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+    red01 = vxvisual.FloatParameter('red01', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.00001)
+    green01 = vxvisual.FloatParameter('green01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
+    blue01 = vxvisual.FloatParameter('blue01', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
     rgb02 = RGB02('rgb02', static=True, internal=True)
-    red02 = vxvisual.FloatParameter('red02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
-    green02 = vxvisual.FloatParameter('green02', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.01)
-    blue02 = vxvisual.FloatParameter('blue02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.01)
+    red02 = vxvisual.FloatParameter('red02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
+    green02 = vxvisual.FloatParameter('green02', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.00001)
+    blue02 = vxvisual.FloatParameter('blue02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
 
     # Paths to shaders
     FRAG_PATH = './spherical_color_contrast_grating.frag'
