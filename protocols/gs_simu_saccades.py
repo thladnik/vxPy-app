@@ -137,37 +137,44 @@ class TextureDisplacementStepFlash50Hz(StaticProtocol):
         # set fixed parameters
         sacc_duration = 100
         sacc_start = 1500
-        sine_dur = 30
+        sine_dur = 500
         sine_freq = 2
         baseline_lum = 0.75
         contrast = 0.5
 
         # experimental conditions, (sacc_ang, sine_start, sine_amp)
         conditions = [(-30, -500, 0.5), (-30, 20, 0.5), (-30, 100, 0.5), (-30, 250, 0.5), (-30, 500, 0.5),
-                      (-30, 1000, 0.5), (-30, 2000, 0.5), (-30, 4000, 0.5), (-30, 111, 0), (30, -500, 0.5),
-                      (30, 20, 0.5), (30, 100, 0.5), (30, 250, 0.5), (30, 500, 0.5), (30, 1000, 0.5),
-                      (30, 2000, 0.5), (30, 4000, 0.5), (30, 111, 0), (0, 333, 0.5), (0, 333, 0.5)]
+                      (-30, 1000, 0.5), (-30, 2000, 0.5), (-30, 4000, 0.5), (-30, 8000, 0.5), (-30, 16000, 0.5),
+                      (-30, 32000, 0.5), (-30, 111, 0), (30, -500, 0.5), (30, 20, 0.5), (30, 100, 0.5), (30, 250, 0.5),
+                      (30, 500, 0.5), (30, 1000, 0.5), (30, 2000, 0.5), (30, 4000, 0.5), (30, 8000, 0.5), (30, 16000, 0.5),
+                      (30, 32000, 0.5), (30, 111, 0), (0, 16333, 0.5), (0, 16333, 0.5)]
 
         # 10 seconds just texture (no flash)
 
-        for i in range(3):
-            # 10 seconds just texture (coarse)
+        for i in range(2):
+            '''# 10 seconds just texture (coarse)
             p = Phase(duration=10)
             p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777, sine_dur, 0,
                                                                       sine_freq, baseline_lum, contrast))
-            self.add_phase(p)
+            self.add_phase(p)'''
 
             # 4 repeats of all delay and saccade conditions in coarse
             for j in range(1):
                 for sacc_ang, sine_delay, sine_amp in np.random.permutation(conditions):
                     sine_start = sine_delay + sacc_start
-                    p = Phase(duration=8)
+                    p = Phase(duration=34)
                     p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
                                                                               sine_start,  sine_dur, sine_amp, sine_freq,
                                                                               baseline_lum, contrast))
                     self.add_phase(p)
 
-            # 10 seconds just texture (fine)
+                    p = Phase(duration=10)
+                    p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777,
+                                                                              sine_dur, 0, sine_freq, baseline_lum,
+                                                                              contrast))
+                    self.add_phase(p)
+
+            '''# 10 seconds just texture (fine)
             p = Phase(duration=10)
             p.set_visual(SimuSaccadeWithStepFlash4000, params4000step(sacc_duration, sacc_start, 0, 777, sine_dur, 0,
                                                                       sine_freq, baseline_lum, contrast))
@@ -185,4 +192,4 @@ class TextureDisplacementStepFlash50Hz(StaticProtocol):
 
         p = Phase(duration=5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-        self.add_phase(p)
+        self.add_phase(p)'''
