@@ -19,16 +19,18 @@ ROUTINES:
   vxpy.extras.calculate_csd.CalculatePSD: {}
   vxpy.extras.write_test_attributes.SinesAddedWhiteNoise: {}
   vxpy.extras.write_test_attributes.RunCtrlLed: {}
-  vxpy.extras.server.FrameReceiverTcpServer:
+  vxpy.extras.server.ScanImageFrameReceiverTcpServer:
     _load_order: 0
     frame_width: 512
     frame_height: 512
     frame_dtype: uint16
-  vxpy.extras.ca_processing.RoiActivityTrackerRoutine:
-    _load_order: 1
+  vxpy.extras.ca_processing_2nd_gen.NextGenTrackerRoutine:
+    _load_order: 2
     frame_width: 512
     frame_height: 512
     frame_dtype: uint16
+  vxpy.extras.sys_con.SysConRoutine:
+    _load_order: 3
 DISPLAY_USE: true
 DISPLAY_FPS: 60
 DISPLAY_GL_VERSION: 100
@@ -49,7 +51,8 @@ GUI_ADDONS:
   vxpy.extras.display_widgets.VisualInteractor: {}
   vxpy.extras.display_widgets.VisualStreamAddon: {}
   vxpy.extras.calculate_csd.DisplayPSD: {}
-  vxpy.extras.ca_processing.RoiActivityTrackerWidget: {}
+  vxpy.extras.ca_processing_2nd_gen.NextGenTrackerWidget: {}
+  vxpy.extras.sys_con.SysConControlWindow: {}
 IO_USE: true
 IO_DEVICES:
   Dev1_virtual:
@@ -112,4 +115,4 @@ REC_ATTRIBUTES:
   sawtooth_analogin: {}
   roi_activity*: {}
 TEST_SCRIPTS:
-  vxpy.extras.ca_processing_dummy_client.run_client: {}
+  vxpy.extras.scanimage_dummy_client.run_client: {}
