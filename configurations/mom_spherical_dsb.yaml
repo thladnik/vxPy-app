@@ -66,7 +66,7 @@ IO_DEVICES:
   Dev1_arduino_uno:
     api: vxpy.devices.arduino_daq.ArduinoDaq
     model: Arduino
-    port: /dev/ttyACM2
+    port: /dev/ttyACM1
     pins:
       frame_sync:
         type: digital
@@ -88,4 +88,5 @@ REC_ATTRIBUTES:
     codec: xvid
   roi_activity*: {}
   tcp_server_frame: {}
+  ~display_frame: {}
 TEST_SCRIPTS: {}

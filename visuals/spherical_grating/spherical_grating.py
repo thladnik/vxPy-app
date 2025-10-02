@@ -177,6 +177,9 @@ class SphericalColorContrastGrating(SphericalBlackWhiteGrating):
     green02 = vxvisual.FloatParameter('green02', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.00001)
     blue02 = vxvisual.FloatParameter('blue02', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
 
+    color01_name = vxvisual.StringParameter('color01_name', static=True)
+    color02_name = vxvisual.StringParameter('color02_name', static=True)
+
     # Paths to shaders
     FRAG_PATH = './spherical_color_contrast_grating.frag'
 
