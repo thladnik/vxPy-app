@@ -1,4 +1,4 @@
-PATH_CALIBRATION: calibrations/spherical_4_channel_projection_holoSetup.yaml
+PATH_CALIBRATION: calibrations/spherical_4_channel_projection_holo_setup.yaml
 CAMERA_USE: true
 CAMERA_DEVICES:
   fish_embedded:
@@ -7,7 +7,7 @@ CAMERA_DEVICES:
     model: a2A1920-160umBAS
     width: 1936
     height: 1216
-    frame_rate: 120
+    frame_rate: 60
     basler_props:
       ReverseX: false
       ReverseY: false
@@ -20,7 +20,7 @@ CAMERA_DEVICES:
       GainAuto: false
       Gain: 0
       ExposureAuto: false
-      ExposureTime: 50
+      ExposureTime: 5000
 ROUTINES:
   vxpy.extras.camera_capture.Frames: {}
   vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking:
@@ -86,9 +86,7 @@ REC_ATTRIBUTES:
   fish_embedded_frame:
     videoformat: avi
     codec: xvid
-  scanimage_frame:
-    videoformat: avi
-    codec: xvid
   roi_activity*: {}
   tcp_server_frame: {}
+  ~display_frame: {}
 TEST_SCRIPTS: {}
