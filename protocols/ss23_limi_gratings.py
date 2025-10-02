@@ -30,13 +30,14 @@ class RotatingGratingsSFT(vxprotocol.StaticProtocol):
         # Fix seed
         np.random.seed(1)
 
-        moving_phase_dur = 8  # seconds
-        pause_phase_dur = 8  # seconds
+        moving_phase_dur = 30  # seconds
+        pause_phase_dur = 15  # seconds
         num_repeat = 3  # number of repeats
 
         # spatial_periods = [180, 90, 45, 22.5, 11.25, 5.625]   # deg/cycle
-        spatial_frequency = [0.005, 0.01, 0.02, 0.04, 0.08, 0.16]   # cycles/degree
-        permuted_sf = np.random.permutation(spatial_frequency)
+        spatial_frequency = 1/0.06   # cycles/degree
+        ang_vel = [3.75, 7.5, 15, 30]
+        permuted_ang_vel = np.random.permutation(ang_vel)
 
         # Add pre-phase
         p = vxprotocol.Phase(15)
@@ -44,7 +45,7 @@ class RotatingGratingsSFT(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
         for i in range(num_repeat):
-            for sf in permuted_sf:
+            for av in permuted_ang_vel:
                 for direction in [1, -1]:
                     # Static phase
                     p = vxprotocol.Phase(pause_phase_dur)
@@ -53,7 +54,7 @@ class RotatingGratingsSFT(vxprotocol.StaticProtocol):
                                   SphericalBlackWhiteGrating.motion_type: 'rotation',
                                   SphericalBlackWhiteGrating.motion_axis: 'vertical',
                                   SphericalBlackWhiteGrating.angular_velocity: 0,
-                                  SphericalBlackWhiteGrating.angular_period: 1/sf}
+                                  SphericalBlackWhiteGrating.angular_period: spatial_frequency}
                                  )
                     self.add_phase(p)
 
@@ -63,8 +64,8 @@ class RotatingGratingsSFT(vxprotocol.StaticProtocol):
                                  {SphericalBlackWhiteGrating.waveform: 'rectangular',
                                   SphericalBlackWhiteGrating.motion_type: 'rotation',
                                   SphericalBlackWhiteGrating.motion_axis: 'vertical',
-                                  SphericalBlackWhiteGrating.angular_velocity: 50 * direction,
-                                  SphericalBlackWhiteGrating.angular_period: 1/sf}
+                                  SphericalBlackWhiteGrating.angular_velocity: av * direction,
+                                  SphericalBlackWhiteGrating.angular_period: spatial_frequency}
                                  )
                     self.add_phase(p)
 
