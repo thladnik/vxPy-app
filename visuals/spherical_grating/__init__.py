@@ -1,2 +1,2 @@
 from .spherical_grating import SphericalBlackWhiteGrating, SphericalColorContrastGrating
-from .spherical_grating_2 import SphericalColorContrastGrating as SphericalColorContrastGrating2
+# from .spherical_grating_2 import SphericalColorContrastGrating as SphericalColorContrastGrating2
