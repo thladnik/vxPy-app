@@ -4,7 +4,7 @@ import vxpy.core.attribute as vxattribute
 import vxpy.core.control as vxcontrol
 import vxpy.core.devices.serial as vxserial
 import vxpy.core.container as vxcontainer
-from vxpy.devices.sutterMP285 import SutterMP285
+from vxpy.devices.sutter_mp285 import SutterMP285
 import vxpy.core.container as vxcontainer
 
 
