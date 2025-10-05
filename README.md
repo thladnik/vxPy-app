@@ -20,3 +20,6 @@ To run your own configuration, create your own configuration file (see `configur
 * Ubuntu: `bash run.sh path/to/your_config.yaml`
 
 Alternatively, if you plan on adding your own stimuli or analysis routines, follow the installation steps in the core documentation at [VxPy](https://github.com/thladnik/vxPy) 
+
+> [!NOTE]  
+> The first time when running the example configuration, it may take a while for everything to start. Even after VxPy has started, the Camera process monitor may be stuck on "Starting" while VxPy is downloading the camera sample files.
