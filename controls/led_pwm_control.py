@@ -1,3 +1,7 @@
+"""Implementation of a basic control to module light intensity of a
+LED in vxpy.plugins.led_pwm_plugin.LedTriggerRoutine
+"""
+
 import vxpy.core.control as vxcontrol
 from plugins.led_pwm_plugin import LedTriggerRoutine
 
@@ -17,7 +21,6 @@ class LedPWMControl(vxcontrol.BaseControl):
         if self.light_intensity is None:
             return
 
-        # pins['led_pwm_out'].write(self.light_intensity)
         LedTriggerRoutine.instance().light_intensity = self.light_intensity
 
 

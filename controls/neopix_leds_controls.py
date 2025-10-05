@@ -1,3 +1,7 @@
+"""NeoPixel control implementation.
+
+Allows for control of LED strips or matrices that use the NeoPixel protocol
+"""
 import numpy as np
 
 import vxpy.core.attribute as vxattribute
@@ -38,7 +42,6 @@ class ControlTest(vxcontrol.BaseControl):
 
     def _end(self):
         self.device.clear_pixels()
-        print('-----END PHASE')
 
 
 class ControlNeopixRamp(vxcontrol.BaseControl):
@@ -103,8 +106,6 @@ class ControlNeopixRamp(vxcontrol.BaseControl):
         vxcontainer.add_to_phase_dataset('led_rgb_intensity', self.led_current_intensity)
 
     def _end(self):
-        print('-----END PHASE')
-
         self.device.set_led(self.led_num,
                             [int(float(self.red_ch) * self.led_end_intensity),
                              int(float(self.green_ch) * self.led_end_intensity),

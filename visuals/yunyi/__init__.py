@@ -1,1 +1,0 @@
-from .scratch_2 import CMN_foreground

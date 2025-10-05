@@ -147,11 +147,11 @@ class ct_prey_capture_stereopsis_blue(vxprotocol.StaticProtocol):
             p = vxprotocol.Phase(move_duration)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
             if this_phase['occluder_pos'] == occlusion_all_open:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                               {'move_to_x': 0, 'move_to_y': this_phase['occluder_pos'], 'move_to_z': 0})
             else:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
-                                  {'move_to_x': this_phase['occluder_pos'], 'move_to_y': 0, 'move_to_z': 0})
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
+                              {'move_to_x': this_phase['occluder_pos'], 'move_to_y': 0, 'move_to_z': 0})
             self.add_phase(p)
 
             # show visual
@@ -169,11 +169,11 @@ class ct_prey_capture_stereopsis_blue(vxprotocol.StaticProtocol):
             p = vxprotocol.Phase(move_duration)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
             if this_phase['occluder_pos'] == occlusion_all_open:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                               {'move_to_x': 0, 'move_to_y': this_phase['occluder_pos'] *-1, 'move_to_z': 0})
             else:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
-                                   {'move_to_x': this_phase['occluder_pos'] *-1, 'move_to_y': 0, 'move_to_z': 0})
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
+                              {'move_to_x': this_phase['occluder_pos'] *-1, 'move_to_y': 0, 'move_to_z': 0})
             self.add_phase(p)
 
 
@@ -184,7 +184,7 @@ class ct_prey_capture_stereopsis_blue(vxprotocol.StaticProtocol):
         # move occlusion away
         p = vxprotocol.Phase(abs(occlusion_all_open) / sutter_speed + 1)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-        p.set_control(sutter_micromanipulator_controls.ControlSutter,
+        p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                       {'move_to_x': 0, 'move_to_y': occlusion_all_open, 'move_to_z': 0})
         self.add_phase(p)
 
@@ -236,7 +236,7 @@ class ct_prey_capture_stereopsis_blue(vxprotocol.StaticProtocol):
         # move micromanipulator back and make dark again
         p = vxprotocol.Phase(abs(occlusion_all_open) / sutter_speed + 1)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-        p.set_control(sutter_micromanipulator_controls.ControlSutter,
+        p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                       {'move_to_x': 0, 'move_to_y': occlusion_all_open * -1, 'move_to_z': 0})
         self.add_phase(p)
 
@@ -353,11 +353,11 @@ class ct_prey_capture_stereopsis_red(vxprotocol.StaticProtocol):
             p = vxprotocol.Phase(move_duration)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
             if this_phase['occluder_pos'] == occlusion_all_open:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                               {'move_to_x': 0, 'move_to_y': this_phase['occluder_pos'], 'move_to_z': 0})
             else:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
-                                  {'move_to_x': this_phase['occluder_pos'], 'move_to_y': 0, 'move_to_z': 0})
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
+                              {'move_to_x': this_phase['occluder_pos'], 'move_to_y': 0, 'move_to_z': 0})
             self.add_phase(p)
 
             # show visual
@@ -375,11 +375,11 @@ class ct_prey_capture_stereopsis_red(vxprotocol.StaticProtocol):
             p = vxprotocol.Phase(move_duration)
             p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
             if this_phase['occluder_pos'] == occlusion_all_open:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                               {'move_to_x': 0, 'move_to_y': this_phase['occluder_pos'] *-1, 'move_to_z': 0})
             else:
-                p.set_control(sutter_micromanipulator_controls.ControlSutter,
-                                   {'move_to_x': this_phase['occluder_pos'] *-1, 'move_to_y': 0, 'move_to_z': 0})
+                p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
+                              {'move_to_x': this_phase['occluder_pos'] *-1, 'move_to_y': 0, 'move_to_z': 0})
             self.add_phase(p)
 
 
@@ -390,7 +390,7 @@ class ct_prey_capture_stereopsis_red(vxprotocol.StaticProtocol):
         # move occlusion away
         p = vxprotocol.Phase(abs(occlusion_all_open) / sutter_speed + 1)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-        p.set_control(sutter_micromanipulator_controls.ControlSutter,
+        p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                       {'move_to_x': 0, 'move_to_y': occlusion_all_open, 'move_to_z': 0})
         self.add_phase(p)
 
@@ -442,6 +442,6 @@ class ct_prey_capture_stereopsis_red(vxprotocol.StaticProtocol):
         # move micromanipulator back and make dark again
         p = vxprotocol.Phase(abs(occlusion_all_open) / sutter_speed + 1)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
-        p.set_control(sutter_micromanipulator_controls.ControlSutter,
+        p.set_control(sutter_micromanipulator_controls.ControlSutterMP,
                       {'move_to_x': 0, 'move_to_y': occlusion_all_open * -1, 'move_to_z': 0})
         self.add_phase(p)
