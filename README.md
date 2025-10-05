@@ -11,3 +11,12 @@ Download the repository as a ZIP file and extract it to a folder of your choice.
 * If you're using Windows 11 run the `install.bat` file in the extracted folder.
 * If you're using Ubuntu, open a terminal in the extracted folder and run `bash install.sh`.'
 
+## Running VxPy
+
+To run the example configuration, run the `run.bat` file on Windows (double click) or `bash run.sh` in a terminal on Ubuntu.
+
+To run your own configuration, create your own configuration file (see `configurations/example.yaml` for reference) and run (in a terminal):
+* Windows: `.\run.bat path/to/your_config.yaml` 
+* Ubuntu: `bash run.sh path/to/your_config.yaml`
+
+Alternatively, if you plan on adding your own stimuli or analysis routines, follow the installation steps in the core documentation at [VxPy](https://github.com/thladnik/vxPy) 
