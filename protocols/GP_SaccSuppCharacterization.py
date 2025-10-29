@@ -132,7 +132,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
 
 
         # PART 1: Spatial Frequency Tuning, Motion
-        '''repeats = 2
+        repeats = 2
         for i in range(repeats):
             for direction, ang_per in np.random.permutation(SFTm_conditions):
                 # Static Phase
@@ -205,7 +205,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         # 5 sec grey between characterization sections
         p = vxprotocol.Phase(10)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
-        self.add_phase(p)'''
+        self.add_phase(p)
 
 
         # PART 3c: On/Off Flashes

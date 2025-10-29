@@ -110,7 +110,7 @@ class CharacterizationProtocol(vxprotocol.StaticProtocol):
         dot_grey_phase_duration = 6 # sec
 
         # Variable Conditions:
-        SFTm_conditions = [(-1, 90), (1, 90), (-1, 45), (1, 45), (-1, 22.5), (1, 22.5), (-1, 11), (1, 11.25), (-1, 5.625), (1, 5.625)]   # direction and angular period in °
+        SFTm_conditions = [(-1, 90), (1, 90), (-1, 45), (1, 45), (-1, 22.5), (1, 22.5), (-1, 11.25), (1, 11.25), (-1, 5.625), (1, 5.625)]   # direction and angular period in °
         DS_conditions = [(-1,'translation','forward'),(1,'translation','forward'),(-1,'translation','vertical'),
                         (1,'translation','vertical'),(-1,'rotation','forward'),(1,'rotation','forward')]  # direction, motion type and motion axis
         onoff_color = [0.5, 1, 0.5, -1]

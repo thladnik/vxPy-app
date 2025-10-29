@@ -1,5 +1,5 @@
 """
-vxPy_app ./visuals/spherical_grating/spherical_grating.py
+vxPy_app ./visuals/spherical_grating/ml_rotating_grating.py
 Copyright (C) 2022 Tim Hladnik
 
 This program is free software: you can redistribute it and/or modify
