@@ -1,0 +1,172 @@
+DEBUG   2025-10-30 11:03:44,941 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+DEBUG   2025-10-30 11:03:44,984 vxpy.core.ipc[Controller]                Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:03:46,064 vxpy.modules.controller                  Running vxPy 0.1.7
+INFO    2025-10-30 11:03:46,855 vxpy.modules.controller                  Protocolized processes: ['Display', 'Io']
+INFO    2025-10-30 11:03:47,079 vxpy.modules.controller                  Minimum sleep period is 1.528ms
+INFO    2025-10-30 11:03:47,081 vxpy.modules.controller                  Timing precision on system 0.499487ms
+INFO    2025-10-30 11:03:47,081 vxpy.modules.controller                  Load routine vxpy.extras.calculate_csd.CalculatePSD (load priority 1000)
+DEBUG   2025-10-30 11:03:49,606 vxpy.core.routine                        Create ValueProxy for CalculatePSD.nperseg (<class 'int'>)
+DEBUG   2025-10-30 11:03:49,659 vxpy.core.routine                        Create ValueProxy for CalculatePSD.process_name (<class 'str'>)
+INFO    2025-10-30 11:03:49,710 vxpy.modules.controller                  Load routine vxpy.extras.camera_capture.Frames (load priority 1000)
+DEBUG   2025-10-30 11:03:50,111 vxpy.core.routine                        Create ListProxy for Frames.device_list
+DEBUG   2025-10-30 11:03:50,165 vxpy.core.routine                        Create DictProxy for Frames.flip_lr
+DEBUG   2025-10-30 11:03:50,221 vxpy.core.routine                        Create DictProxy for Frames.flip_ud
+DEBUG   2025-10-30 11:03:50,264 vxpy.core.routine                        Create ValueProxy for Frames.frame_postfix (<class 'str'>)
+DEBUG   2025-10-30 11:03:50,300 vxpy.core.routine                        Create ValueProxy for Frames.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:50,329 vxpy.core.routine                        Create DictProxy for Frames.rotation
+INFO    2025-10-30 11:03:52,537 vxpy.modules.controller                  Load routine vxpy.extras.display_capture.Frames (load priority 1000)
+DEBUG   2025-10-30 11:03:52,539 vxpy.core.routine                        Create ValueProxy for Frames.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:52,542 vxpy.core.routine                        Create ValueProxy for Frames.downsample_by (<class 'int'>)
+INFO    2025-10-30 11:03:52,626 vxpy.modules.controller                  Load routine vxpy.extras.write_test_attributes.RunCtrlLed (load priority 1000)
+DEBUG   2025-10-30 11:03:52,750 vxpy.core.routine                        Create ValueProxy for RunCtrlLed.process_name (<class 'str'>)
+INFO    2025-10-30 11:03:52,754 vxpy.modules.controller                  Load routine vxpy.extras.write_test_attributes.SinesAddedWhiteNoise (load priority 1000)
+DEBUG   2025-10-30 11:03:52,893 vxpy.core.routine                        Create ValueProxy for SinesAddedWhiteNoise.attr_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:52,896 vxpy.core.routine                        Create ValueProxy for SinesAddedWhiteNoise.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:52,898 vxpy.core.routine                        Create ListProxy for SinesAddedWhiteNoise.frequencies
+INFO    2025-10-30 11:03:52,906 vxpy.modules.controller                  Load routine vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking (load priority 1000)
+DEBUG   2025-10-30 11:03:53,020 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_le_pos_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,023 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_le_vel_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,025 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_re_pos_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,028 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_re_vel_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,031 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.binary_threshold (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,033 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,035 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness_max (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,037 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness_min (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,039 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.camera_device_id (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,043 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.contrast (<class 'float'>)
+DEBUG   2025-10-30 11:03:53,045 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.current_roi_count (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,048 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.extracted_rect_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,049 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.flip_direction (<class 'bool'>)
+DEBUG   2025-10-30 11:03:53,052 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.frame_corrected_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,055 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.frame_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,057 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_axes_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,060 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_sacc_direction_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,064 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_sacc_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,067 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.min_particle_size (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,070 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,073 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_axes_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,077 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_sacc_direction_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,082 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_sacc_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,086 vxpy.core.routine                        Create ListProxy for ZFEyeTracking.reference_points
+DEBUG   2025-10-30 11:03:53,090 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.roi_maxnum (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,094 vxpy.core.routine                        Create ListProxy for ZFEyeTracking.rois
+DEBUG   2025-10-30 11:03:53,098 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.routine_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,100 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.sacc_trigger_name (<class 'str'>)
+DEBUG   2025-10-30 11:03:53,102 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.saccade_threshold (<class 'int'>)
+DEBUG   2025-10-30 11:03:53,105 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.use_image_correction (<class 'bool'>)
+DEBUG   2025-10-30 11:03:53,108 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.use_motion_correction (<class 'bool'>)
+INFO    2025-10-30 11:03:53,111 vxpy.core.routine                        Set roi_maxnum to 1 in routine ZFEyeTracking
+INFO    2025-10-30 11:03:53,112 vxpy.core.routine                        Set min_size to 45 in routine ZFEyeTracking
+DEBUG   2025-10-30 11:03:53,112 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.min_size (<class 'int'>)
+INFO    2025-10-30 11:04:01,004 vxpy.modules.controller                  Start process Camera (PID: 30928)
+DEBUG   2025-10-30 11:04:01,005 vxpy.core.ipc[Controller]                Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:04:01,499 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:04:01,515 vxpy.core.process[Camera]                Initialize routine Frames
+INFO    2025-10-30 11:04:01,708 vxpy.core.attribute[Camera]              Set attribute "fish_embedded_frame" to be written to file. 
+INFO    2025-10-30 11:04:01,709 vxpy.core.process[Camera]                Initialize routine ZFEyeTracking
+DEBUG   2025-10-30 11:04:01,710 vxpy.core.ipc[Camera]                    Set state from STATE.NA to STATE.STARTING
+DEBUG   2025-10-30 11:04:01,710 vxpy.devices.camera.virtual_camera       Open dummy camera data file
+INFO    2025-10-30 11:04:01,711 vxpy.utils.examples                      Download dataset single_zf_spontaneous_eye_movements_115Hz
+INFO    2025-10-30 11:04:01,711 vxpy.utils.examples                      Trying source https://github.com/thladnik/vxpy/releases/download/v0.1.4/single_zf_spontaneous_eye_movements_115Hz.hdf5
+INFO    2025-10-30 11:04:01,958 vxpy.utils.examples                      https://github.com/thladnik/vxpy/releases/download/v0.1.4/single_zf_spontaneous_eye_movements_115Hz.hdf5 unavailable
+INFO    2025-10-30 11:04:01,961 vxpy.utils.examples                      Trying source https://github.com/thladnik/vxpy/releases/download/0.1.4/single_zf_spontaneous_eye_movements_115Hz.hdf5
+INFO    2025-10-30 11:04:02,458 vxpy.utils.examples                      Download single_zf_spontaneous_eye_movements_115Hz.hdf5 to temp\single_zf_spontaneous_eye_movements_115Hz.hdf5
+INFO    2025-10-30 11:04:02,458 vxpy.utils.examples                      Size of single_zf_spontaneous_eye_movements_115Hz.hdf5: 1743899648
+INFO    2025-10-30 11:04:05,384 vxpy.modules.controller                  Start process Display (PID: 31404)
+DEBUG   2025-10-30 11:04:05,385 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:04:05,653 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:04:05,661 vxpy.core.process[Display]               Initialize routine Frames
+DEBUG   2025-10-30 11:04:05,661 vxpy.core.ipc[Display]                   Set state from STATE.NA to STATE.STARTING
+DEBUG   2025-10-30 11:04:06,541 vxpy.modules.display                     Set canvas position to (2560, 0)
+DEBUG   2025-10-30 11:04:06,543 vxpy.modules.display                     Set canvas size to (400, 400)
+INFO    2025-10-30 11:04:06,606 vxpy.core.process[Display]               Process started
+DEBUG   2025-10-30 11:04:06,606 vxpy.core.ipc[Display]                   Set state from STATE.STARTING to STATE.IDLE
+INFO    2025-10-30 11:04:09,073 vxpy.modules.controller                  Start process Gui (PID: 11780)
+DEBUG   2025-10-30 11:04:09,074 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:04:09,311 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+DEBUG   2025-10-30 11:04:09,318 vxpy.core.ipc[Gui]                       Set state from STATE.NA to STATE.STARTING
+WARNING 2025-10-30 11:04:09,751 vxpy.modules.gui                         Using windows windowing platform. This is untested.
+DEBUG   2025-10-30 11:04:09,941 vxpy.core.process[Gui]                   Register callback RecordingWidget:RecordingWidget.show_lab_notebook in module Gui
+DEBUG   2025-10-30 11:04:09,942 vxpy.core.process[Gui]                   Register callback RecordingWidget:RecordingWidget.close_lab_notebook in module Gui
+INFO    2025-10-30 11:04:12,757 vxpy.modules.controller                  Start process Io (PID: 32024)
+DEBUG   2025-10-30 11:04:12,758 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:04:12,965 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:04:12,971 vxpy.core.process[Io]                    Initialize routine RunCtrlLed
+INFO    2025-10-30 11:04:12,971 vxpy.core.process[Io]                    Initialize routine SinesAddedWhiteNoise
+DEBUG   2025-10-30 11:04:12,973 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'test_sines_whitenoise') > kwargs: {'axis': 'Noisy signals'}
+INFO    2025-10-30 11:04:12,973 vxpy.core.attribute[Io]                  Set attribute "test_sines_whitenoise" to be written to file. 
+DEBUG   2025-10-30 11:04:12,974 vxpy.core.ipc[Io]                        Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:04:12,975 vxpy.modules.io                          Initialize VirtualDaqPin('on_off_1s_di', PINSIGTYPE.DIGITAL, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:04:12,975 vxpy.core.attribute[Io]                  Set attribute "di_on_off_1s_di" to be written to file. 
+DEBUG   2025-10-30 11:04:12,975 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'di_on_off_1s_di') > kwargs: {'axis': 'di'}
+INFO    2025-10-30 11:04:12,975 vxpy.modules.io                          Initialize VirtualDaqPin('noisy_sinewave_input', PINSIGTYPE.ANALOG, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:04:12,975 vxpy.core.attribute[Io]                  Set attribute "ai_noisy_sinewave_input" to be written to file. 
+DEBUG   2025-10-30 11:04:12,976 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'ai_noisy_sinewave_input') > kwargs: {'axis': 'ai'}
+INFO    2025-10-30 11:04:12,976 vxpy.modules.io                          Initialize VirtualDaqPin('ctrl_led', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:04:12,976 vxpy.core.attribute[Io]                  Set attribute "do_ctrl_led" to be written to file. 
+DEBUG   2025-10-30 11:04:12,976 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_ctrl_led') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:04:12,976 vxpy.modules.io                          Initialize VirtualDaqPin('slow_sinewave_input', PINSIGTYPE.ANALOG, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:04:12,976 vxpy.core.attribute[Io]                  Set attribute "ai_slow_sinewave_input" to be written to file. 
+DEBUG   2025-10-30 11:04:12,976 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'ai_slow_sinewave_input') > kwargs: {'axis': 'ai'}
+INFO    2025-10-30 11:04:12,977 vxpy.modules.io                          Initialize VirtualDaqPin('led_ctrl1', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:04:12,977 vxpy.core.attribute[Io]                  Set attribute "do_led_ctrl1" to be written to file. 
+DEBUG   2025-10-30 11:04:12,978 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl1') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:04:12,978 vxpy.modules.io                          Initialize VirtualDaqPin('led_ctrl2', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:04:12,978 vxpy.core.attribute[Io]                  Set attribute "do_led_ctrl2" to be written to file. 
+DEBUG   2025-10-30 11:04:12,978 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl2') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:04:12,979 vxpy.core.process[Io]                    Process started
+DEBUG   2025-10-30 11:04:12,979 vxpy.core.ipc[Io]                        Set state from STATE.STARTING to STATE.IDLE
+INFO    2025-10-30 11:04:16,405 vxpy.modules.controller                  Start process Worker (PID: 31808)
+DEBUG   2025-10-30 11:04:16,406 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:04:16,406 vxpy.core.ipc[Controller]                Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', '__record_group_id') > kwargs: {'name': 'Record group ID', 'axis': 'ID'}
+INFO    2025-10-30 11:04:16,407 vxpy.core.process[Controller]            Process started
+DEBUG   2025-10-30 11:04:16,407 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:04:16,659 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:04:16,665 vxpy.core.process[Worker]                Initialize routine CalculatePSD
+DEBUG   2025-10-30 11:04:16,666 vxpy.core.process[Worker]                Register callback CalculatePSD:CalculatePSD.set_input_signal in module Worker
+DEBUG   2025-10-30 11:04:16,666 vxpy.core.process[Worker]                Register callback CalculatePSD:CalculatePSD.set_integration_window_width in module Worker
+DEBUG   2025-10-30 11:04:16,666 vxpy.core.ipc[Worker]                    Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:04:16,667 vxpy.core.process[Worker]                Process started
+DEBUG   2025-10-30 11:04:16,668 vxpy.core.ipc[Worker]                    Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:04:26,511 vxpy.core.process[Gui]                   Register callback PlottingWindow:PlottingWindow.add_buffer_attribute in module Gui
+DEBUG   2025-10-30 11:04:26,511 vxpy.core.process[Gui]                   Register callback PlottingWindow:PlottingWindow.remove_buffer_attribute in module Gui
+INFO    2025-10-30 11:04:26,526 vxpy.modules.gui                         Load UI addon vxpy.extras.camera_capture.FrameUI
+INFO    2025-10-30 11:04:26,641 vxpy.modules.gui                         Load UI addon vxpy.extras.zf_eyeposition_tracking.ZFEyeTrackingUI
+DEBUG   2025-10-30 11:04:26,730 matplotlib                               CACHEDIR=C:\Users\gsoto\.matplotlib
+DEBUG   2025-10-30 11:04:26,747 matplotlib.font_manager                  Using fontManager instance from C:\Users\gsoto\.matplotlib\fontlist-v390.json
+INFO    2025-10-30 11:04:27,131 vxpy.modules.gui                         Load UI addon vxpy.extras.display_widgets.VisualInteractor
+INFO    2025-10-30 11:04:27,361 vxpy.modules.gui                         Load UI addon vxpy.extras.display_widgets.VisualStreamAddon
+INFO    2025-10-30 11:04:27,427 vxpy.modules.gui                         Load UI addon vxpy.extras.calculate_csd.DisplayPSD
+DEBUG   2025-10-30 11:04:27,444 vxpy.core.ipc[Gui]                       Send to modules Worker with signal SIGNAL.rpc > args: ('CalculatePSD.set_integration_window_width', 1024) > kwargs: {}
+DEBUG   2025-10-30 11:04:27,449 vxpy.core.process[Worker]                Worker received message from Gui. Signal: SIGNAL.rpc, args: ('CalculatePSD.set_integration_window_width', 1024), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:04:27,449 vxpy.core.process[Worker]                Call registered callback Worker:CalculatePSD.set_integration_window_width with args (1024,) and kwargs {}
+DEBUG   2025-10-30 11:04:27,694 vxpy.core.ipc[Gui]                       Send to modules Worker with signal SIGNAL.rpc > args: ('CalculatePSD.set_input_signal', 'di_on_off_1s_di') > kwargs: {'force_overwrite': True}
+DEBUG   2025-10-30 11:04:27,696 vxpy.core.process[Worker]                Worker received message from Gui. Signal: SIGNAL.rpc, args: ('CalculatePSD.set_input_signal', 'di_on_off_1s_di'), kwargs: {'force_overwrite': True, '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:27,697 vxpy.core.process[Worker]                Call registered callback Worker:CalculatePSD.set_input_signal with args ('di_on_off_1s_di',) and kwargs {'force_overwrite': True}
+INFO    2025-10-30 11:04:27,697 vxpy.extras.calculate_csd                Set input signal in CalculatePSD to di_on_off_1s_di.
+INFO    2025-10-30 11:04:27,733 vxpy.core.process[Gui]                   Process started
+DEBUG   2025-10-30 11:04:27,733 vxpy.core.ipc[Gui]                       Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:04:27,734 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'test_sines_whitenoise'), kwargs: {'axis': 'Noisy signals', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:27,734 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('test_sines_whitenoise',) and kwargs {'axis': 'Noisy signals'}
+DEBUG   2025-10-30 11:04:28,002 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'di_on_off_1s_di'), kwargs: {'axis': 'di', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,002 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('di_on_off_1s_di',) and kwargs {'axis': 'di'}
+DEBUG   2025-10-30 11:04:28,161 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'ai_noisy_sinewave_input'), kwargs: {'axis': 'ai', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,162 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('ai_noisy_sinewave_input',) and kwargs {'axis': 'ai'}
+DEBUG   2025-10-30 11:04:28,374 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_ctrl_led'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,374 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_ctrl_led',) and kwargs {'axis': 'do'}
+DEBUG   2025-10-30 11:04:28,551 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'ai_slow_sinewave_input'), kwargs: {'axis': 'ai', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,552 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('ai_slow_sinewave_input',) and kwargs {'axis': 'ai'}
+DEBUG   2025-10-30 11:04:28,670 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl1'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,670 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_led_ctrl1',) and kwargs {'axis': 'do'}
+DEBUG   2025-10-30 11:04:28,810 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl2'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,810 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_led_ctrl2',) and kwargs {'axis': 'do'}
+DEBUG   2025-10-30 11:04:28,957 vxpy.core.process[Gui]                   Gui received message from Controller. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', '__record_group_id'), kwargs: {'name': 'Record group ID', 'axis': 'ID', '_send_verbosely': True}
+DEBUG   2025-10-30 11:04:28,957 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('__record_group_id',) and kwargs {'name': 'Record group ID', 'axis': 'ID'}
+INFO    2025-10-30 11:05:05,824 vxpy.core.process[Camera]                Process started
+DEBUG   2025-10-30 11:05:05,825 vxpy.core.ipc[Camera]                    Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:06:15,499 vxpy.core.ipc[Gui]                       Send to modules Controller with signal SIGNAL.rpc > args: ('Controller.commence_shutdown',) > kwargs: {}
+DEBUG   2025-10-30 11:06:15,500 vxpy.core.process[Controller]            Controller received message from Gui. Signal: SIGNAL.rpc, args: ('Controller.commence_shutdown',), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:06:15,500 vxpy.core.process[Controller]            Callback to Controller:commence_shutdown with args () and kwargs {}
+DEBUG   2025-10-30 11:06:15,501 vxpy.modules.controller                  Shutdown requested. Checking.
+DEBUG   2025-10-30 11:06:15,502 vxpy.modules.controller                  Shut down processes
+DEBUG   2025-10-30 11:06:15,502 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.SHUTDOWN

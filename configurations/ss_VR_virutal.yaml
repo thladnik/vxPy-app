@@ -1,0 +1,61 @@
+PATH_CALIBRATION: calibrations/spherical_4_channel_projection.yaml
+CAMERA_USE: true
+CAMERA_DEVICES:
+  fish_embedded:
+    api: vxpy.devices.camera.virtual_camera.VirtualCamera
+    data_source: dataset
+    data_path: zf_embedded_eyes_and_tail3
+    preload_data: false
+    width: 968
+    height: 608
+    frame_rate: 160
+ROUTINES:
+  vxpy.extras.camera_capture.Frames: {}
+  plugins.zf_tail_tracking.ZFTailTracking:
+    _load_order: 0
+  vxpy.extras.display_capture.Frames:
+    downsample_by: 2
+  plugins.motion_model_VR.MotionModelApplication:
+    _load_order: 1
+DISPLAY_USE: true
+DISPLAY_FPS: 120
+DISPLAY_GL_VERSION: 100
+DISPLAY_TRANSFORM: Spherical4ChannelProjectionTransform
+DISPLAY_WIN_POS_X: 5120
+DISPLAY_WIN_POS_Y: 0
+DISPLAY_WIN_SCREEN_ID: 2
+DISPLAY_WIN_SIZE_HEIGHT_PX: 800
+DISPLAY_WIN_SIZE_WIDTH_PX: 1280
+DISPLAY_USE_LCR_NATIVE_RES: false
+GUI_USE: true
+GUI_REFRESH: 30
+GUI_FPS: 20
+GUI_SCREEN: 0
+GUI_ADDONS:
+  vxpy.extras.camera_capture.FrameUI: {}
+  plugins.zf_tail_tracking.ZFTailTrackingUI: {}
+  plugins.motion_model_VR.MotionModelUI: {}
+  vxpy.extras.display_widgets.VisualStreamAddon: {}
+  vxpy.extras.display_widgets.VisualInteractor: {}
+IO_USE: true
+IO_MAX_SR: 200
+IO_DEVICES: {}
+WORKER_USE: true
+WORKER_RATE: 100
+RECORDER_USE: false
+REC_OUTPUT_FOLDER: ./recordings/
+REC_ATTRIBUTES:
+  ai*: {}
+  ao*: {}
+  di*: {}
+  do*: {}
+  eyepos_*: {}
+  translational_speed: {}
+  angular_speed: {}
+  velocity_vector: {}
+  tail_pose_data: {}
+  fish_embedded_frame:
+    videoformat: avi
+    codec: xvid
+    bitrate: 3000
+TEST_SCRIPTS: {}

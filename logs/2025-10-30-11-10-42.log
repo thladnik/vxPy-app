@@ -1,0 +1,367 @@
+DEBUG   2025-10-30 11:10:43,363 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+DEBUG   2025-10-30 11:10:43,368 vxpy.core.ipc[Controller]                Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:10:43,560 vxpy.modules.controller                  Running vxPy 0.1.7
+INFO    2025-10-30 11:10:43,723 vxpy.modules.controller                  Protocolized processes: ['Display', 'Io']
+INFO    2025-10-30 11:10:43,830 vxpy.modules.controller                  Minimum sleep period is 1.621ms
+INFO    2025-10-30 11:10:43,832 vxpy.modules.controller                  Timing precision on system 0.505924ms
+INFO    2025-10-30 11:10:43,832 vxpy.modules.controller                  Load routine vxpy.extras.calculate_csd.CalculatePSD (load priority 1000)
+DEBUG   2025-10-30 11:10:44,575 vxpy.core.routine                        Create ValueProxy for CalculatePSD.nperseg (<class 'int'>)
+DEBUG   2025-10-30 11:10:44,577 vxpy.core.routine                        Create ValueProxy for CalculatePSD.process_name (<class 'str'>)
+INFO    2025-10-30 11:10:44,579 vxpy.modules.controller                  Load routine vxpy.extras.camera_capture.Frames (load priority 1000)
+DEBUG   2025-10-30 11:10:44,671 vxpy.core.routine                        Create ListProxy for Frames.device_list
+DEBUG   2025-10-30 11:10:44,674 vxpy.core.routine                        Create DictProxy for Frames.flip_lr
+DEBUG   2025-10-30 11:10:44,676 vxpy.core.routine                        Create DictProxy for Frames.flip_ud
+DEBUG   2025-10-30 11:10:44,678 vxpy.core.routine                        Create ValueProxy for Frames.frame_postfix (<class 'str'>)
+DEBUG   2025-10-30 11:10:44,680 vxpy.core.routine                        Create ValueProxy for Frames.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:44,682 vxpy.core.routine                        Create DictProxy for Frames.rotation
+INFO    2025-10-30 11:10:45,474 vxpy.modules.controller                  Load routine vxpy.extras.display_capture.Frames (load priority 1000)
+DEBUG   2025-10-30 11:10:45,476 vxpy.core.routine                        Create ValueProxy for Frames.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,478 vxpy.core.routine                        Create ValueProxy for Frames.downsample_by (<class 'int'>)
+INFO    2025-10-30 11:10:45,545 vxpy.modules.controller                  Load routine vxpy.extras.write_test_attributes.RunCtrlLed (load priority 1000)
+DEBUG   2025-10-30 11:10:45,640 vxpy.core.routine                        Create ValueProxy for RunCtrlLed.process_name (<class 'str'>)
+INFO    2025-10-30 11:10:45,642 vxpy.modules.controller                  Load routine vxpy.extras.write_test_attributes.SinesAddedWhiteNoise (load priority 1000)
+DEBUG   2025-10-30 11:10:45,734 vxpy.core.routine                        Create ValueProxy for SinesAddedWhiteNoise.attr_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,737 vxpy.core.routine                        Create ValueProxy for SinesAddedWhiteNoise.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,738 vxpy.core.routine                        Create ListProxy for SinesAddedWhiteNoise.frequencies
+INFO    2025-10-30 11:10:45,744 vxpy.modules.controller                  Load routine vxpy.extras.zf_eyeposition_tracking.ZFEyeTracking (load priority 1000)
+DEBUG   2025-10-30 11:10:45,835 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_le_pos_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,838 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_le_vel_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,839 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_re_pos_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,841 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.ang_re_vel_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,843 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.binary_threshold (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,845 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,847 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness_max (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,849 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.brightness_min (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,851 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.camera_device_id (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,852 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.contrast (<class 'float'>)
+DEBUG   2025-10-30 11:10:45,855 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.current_roi_count (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,857 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.extracted_rect_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,858 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.flip_direction (<class 'bool'>)
+DEBUG   2025-10-30 11:10:45,860 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.frame_corrected_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,862 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.frame_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,864 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_axes_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,865 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_sacc_direction_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,867 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.le_sacc_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,869 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.min_particle_size (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,871 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.process_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,873 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_axes_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,874 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_sacc_direction_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,876 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.re_sacc_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,878 vxpy.core.routine                        Create ListProxy for ZFEyeTracking.reference_points
+DEBUG   2025-10-30 11:10:45,880 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.roi_maxnum (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,882 vxpy.core.routine                        Create ListProxy for ZFEyeTracking.rois
+DEBUG   2025-10-30 11:10:45,884 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.routine_prefix (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,886 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.sacc_trigger_name (<class 'str'>)
+DEBUG   2025-10-30 11:10:45,887 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.saccade_threshold (<class 'int'>)
+DEBUG   2025-10-30 11:10:45,889 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.use_image_correction (<class 'bool'>)
+DEBUG   2025-10-30 11:10:45,891 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.use_motion_correction (<class 'bool'>)
+INFO    2025-10-30 11:10:45,893 vxpy.core.routine                        Set roi_maxnum to 1 in routine ZFEyeTracking
+INFO    2025-10-30 11:10:45,893 vxpy.core.routine                        Set min_size to 45 in routine ZFEyeTracking
+DEBUG   2025-10-30 11:10:45,893 vxpy.core.routine                        Create ValueProxy for ZFEyeTracking.min_size (<class 'int'>)
+INFO    2025-10-30 11:10:49,120 vxpy.modules.controller                  Start process Camera (PID: 24016)
+DEBUG   2025-10-30 11:10:49,122 vxpy.core.ipc[Controller]                Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:10:49,332 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:10:49,337 vxpy.core.process[Camera]                Initialize routine Frames
+INFO    2025-10-30 11:10:49,441 vxpy.core.attribute[Camera]              Set attribute "fish_embedded_frame" to be written to file. 
+INFO    2025-10-30 11:10:49,442 vxpy.core.process[Camera]                Initialize routine ZFEyeTracking
+DEBUG   2025-10-30 11:10:49,442 vxpy.core.ipc[Camera]                    Set state from STATE.NA to STATE.STARTING
+DEBUG   2025-10-30 11:10:49,442 vxpy.devices.camera.virtual_camera       Open dummy camera data file
+INFO    2025-10-30 11:10:49,444 vxpy.core.process[Camera]                Process started
+DEBUG   2025-10-30 11:10:49,445 vxpy.core.ipc[Camera]                    Set state from STATE.STARTING to STATE.IDLE
+INFO    2025-10-30 11:10:51,902 vxpy.modules.controller                  Start process Display (PID: 30376)
+DEBUG   2025-10-30 11:10:51,903 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:10:52,111 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:10:52,116 vxpy.core.process[Display]               Initialize routine Frames
+DEBUG   2025-10-30 11:10:52,116 vxpy.core.ipc[Display]                   Set state from STATE.NA to STATE.STARTING
+DEBUG   2025-10-30 11:10:52,436 vxpy.modules.display                     Set canvas position to (2560, 0)
+DEBUG   2025-10-30 11:10:52,437 vxpy.modules.display                     Set canvas size to (400, 400)
+INFO    2025-10-30 11:10:52,502 vxpy.core.process[Display]               Process started
+DEBUG   2025-10-30 11:10:52,502 vxpy.core.ipc[Display]                   Set state from STATE.STARTING to STATE.IDLE
+INFO    2025-10-30 11:10:55,055 vxpy.modules.controller                  Start process Gui (PID: 31168)
+DEBUG   2025-10-30 11:10:55,056 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:10:55,251 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+DEBUG   2025-10-30 11:10:55,255 vxpy.core.ipc[Gui]                       Set state from STATE.NA to STATE.STARTING
+WARNING 2025-10-30 11:10:55,536 vxpy.modules.gui                         Using windows windowing platform. This is untested.
+DEBUG   2025-10-30 11:10:55,678 vxpy.core.process[Gui]                   Register callback RecordingWidget:RecordingWidget.show_lab_notebook in module Gui
+DEBUG   2025-10-30 11:10:55,678 vxpy.core.process[Gui]                   Register callback RecordingWidget:RecordingWidget.close_lab_notebook in module Gui
+DEBUG   2025-10-30 11:10:57,047 vxpy.core.process[Gui]                   Register callback PlottingWindow:PlottingWindow.add_buffer_attribute in module Gui
+DEBUG   2025-10-30 11:10:57,048 vxpy.core.process[Gui]                   Register callback PlottingWindow:PlottingWindow.remove_buffer_attribute in module Gui
+INFO    2025-10-30 11:10:57,061 vxpy.modules.gui                         Load UI addon vxpy.extras.camera_capture.FrameUI
+INFO    2025-10-30 11:10:57,159 vxpy.modules.gui                         Load UI addon vxpy.extras.zf_eyeposition_tracking.ZFEyeTrackingUI
+DEBUG   2025-10-30 11:10:57,232 matplotlib                               CACHEDIR=C:\Users\gsoto\.matplotlib
+DEBUG   2025-10-30 11:10:57,237 matplotlib.font_manager                  Using fontManager instance from C:\Users\gsoto\.matplotlib\fontlist-v390.json
+INFO    2025-10-30 11:10:57,643 vxpy.modules.gui                         Load UI addon vxpy.extras.display_widgets.VisualInteractor
+INFO    2025-10-30 11:10:57,869 vxpy.modules.gui                         Load UI addon vxpy.extras.display_widgets.VisualStreamAddon
+INFO    2025-10-30 11:10:57,957 vxpy.modules.gui                         Load UI addon vxpy.extras.calculate_csd.DisplayPSD
+DEBUG   2025-10-30 11:10:57,976 vxpy.core.ipc[Gui]                       Send to modules Worker with signal SIGNAL.rpc > args: ('CalculatePSD.set_integration_window_width', 1024) > kwargs: {}
+DEBUG   2025-10-30 11:10:58,211 vxpy.core.ipc[Gui]                       Send to modules Worker with signal SIGNAL.rpc > args: ('CalculatePSD.set_input_signal', 'Camera_iteration') > kwargs: {'force_overwrite': True}
+INFO    2025-10-30 11:10:58,242 vxpy.core.process[Gui]                   Process started
+DEBUG   2025-10-30 11:10:58,242 vxpy.core.ipc[Gui]                       Set state from STATE.STARTING to STATE.IDLE
+INFO    2025-10-30 11:10:58,366 vxpy.modules.controller                  Start process Io (PID: 24064)
+DEBUG   2025-10-30 11:10:58,367 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:10:58,621 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:10:58,627 vxpy.core.process[Io]                    Initialize routine RunCtrlLed
+INFO    2025-10-30 11:10:58,628 vxpy.core.process[Io]                    Initialize routine SinesAddedWhiteNoise
+DEBUG   2025-10-30 11:10:58,629 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'test_sines_whitenoise') > kwargs: {'axis': 'Noisy signals'}
+INFO    2025-10-30 11:10:58,629 vxpy.core.attribute[Io]                  Set attribute "test_sines_whitenoise" to be written to file. 
+DEBUG   2025-10-30 11:10:58,630 vxpy.core.ipc[Io]                        Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:10:58,630 vxpy.modules.io                          Initialize VirtualDaqPin('on_off_1s_di', PINSIGTYPE.DIGITAL, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:10:58,630 vxpy.core.attribute[Io]                  Set attribute "di_on_off_1s_di" to be written to file. 
+DEBUG   2025-10-30 11:10:58,630 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'di_on_off_1s_di') > kwargs: {'axis': 'di'}
+INFO    2025-10-30 11:10:58,631 vxpy.modules.io                          Initialize VirtualDaqPin('noisy_sinewave_input', PINSIGTYPE.ANALOG, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:10:58,632 vxpy.core.attribute[Io]                  Set attribute "ai_noisy_sinewave_input" to be written to file. 
+DEBUG   2025-10-30 11:10:58,632 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'ai_noisy_sinewave_input') > kwargs: {'axis': 'ai'}
+INFO    2025-10-30 11:10:58,632 vxpy.modules.io                          Initialize VirtualDaqPin('ctrl_led', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:10:58,632 vxpy.core.attribute[Io]                  Set attribute "do_ctrl_led" to be written to file. 
+DEBUG   2025-10-30 11:10:58,632 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_ctrl_led') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:10:58,633 vxpy.modules.io                          Initialize VirtualDaqPin('slow_sinewave_input', PINSIGTYPE.ANALOG, PINSIGDIR.INPUT)
+INFO    2025-10-30 11:10:58,633 vxpy.core.attribute[Io]                  Set attribute "ai_slow_sinewave_input" to be written to file. 
+DEBUG   2025-10-30 11:10:58,633 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'ai_slow_sinewave_input') > kwargs: {'axis': 'ai'}
+INFO    2025-10-30 11:10:58,633 vxpy.modules.io                          Initialize VirtualDaqPin('led_ctrl1', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:10:58,634 vxpy.core.attribute[Io]                  Set attribute "do_led_ctrl1" to be written to file. 
+DEBUG   2025-10-30 11:10:58,634 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl1') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:10:58,634 vxpy.modules.io                          Initialize VirtualDaqPin('led_ctrl2', PINSIGTYPE.DIGITAL, PINSIGDIR.OUTPUT)
+INFO    2025-10-30 11:10:58,635 vxpy.core.attribute[Io]                  Set attribute "do_led_ctrl2" to be written to file. 
+DEBUG   2025-10-30 11:10:58,635 vxpy.core.ipc[Io]                        Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl2') > kwargs: {'axis': 'do'}
+INFO    2025-10-30 11:10:58,635 vxpy.core.process[Io]                    Process started
+DEBUG   2025-10-30 11:10:58,636 vxpy.core.ipc[Io]                        Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:10:58,662 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'test_sines_whitenoise'), kwargs: {'axis': 'Noisy signals', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:58,663 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('test_sines_whitenoise',) and kwargs {'axis': 'Noisy signals'}
+DEBUG   2025-10-30 11:10:58,756 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'di_on_off_1s_di'), kwargs: {'axis': 'di', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:58,756 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('di_on_off_1s_di',) and kwargs {'axis': 'di'}
+DEBUG   2025-10-30 11:10:58,874 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'ai_noisy_sinewave_input'), kwargs: {'axis': 'ai', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:58,875 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('ai_noisy_sinewave_input',) and kwargs {'axis': 'ai'}
+DEBUG   2025-10-30 11:10:59,004 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_ctrl_led'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:59,004 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_ctrl_led',) and kwargs {'axis': 'do'}
+DEBUG   2025-10-30 11:10:59,146 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'ai_slow_sinewave_input'), kwargs: {'axis': 'ai', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:59,146 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('ai_slow_sinewave_input',) and kwargs {'axis': 'ai'}
+DEBUG   2025-10-30 11:10:59,224 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl1'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:59,224 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_led_ctrl1',) and kwargs {'axis': 'do'}
+DEBUG   2025-10-30 11:10:59,310 vxpy.core.process[Gui]                   Gui received message from Io. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', 'do_led_ctrl2'), kwargs: {'axis': 'do', '_send_verbosely': True}
+DEBUG   2025-10-30 11:10:59,311 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('do_led_ctrl2',) and kwargs {'axis': 'do'}
+INFO    2025-10-30 11:11:02,138 vxpy.modules.controller                  Start process Worker (PID: 32748)
+DEBUG   2025-10-30 11:11:02,140 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:11:02,140 vxpy.core.ipc[Controller]                Send to modules Gui with signal SIGNAL.rpc > args: ('PlottingWindow.add_buffer_attribute', '__record_group_id') > kwargs: {'name': 'Record group ID', 'axis': 'ID'}
+INFO    2025-10-30 11:11:02,141 vxpy.core.process[Controller]            Process started
+DEBUG   2025-10-30 11:11:02,141 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.IDLE
+DEBUG   2025-10-30 11:11:02,188 vxpy.core.process[Gui]                   Gui received message from Controller. Signal: SIGNAL.rpc, args: ('PlottingWindow.add_buffer_attribute', '__record_group_id'), kwargs: {'name': 'Record group ID', 'axis': 'ID', '_send_verbosely': True}
+DEBUG   2025-10-30 11:11:02,188 vxpy.core.process[Gui]                   Call registered callback Gui:PlottingWindow.add_buffer_attribute with args ('__record_group_id',) and kwargs {'name': 'Record group ID', 'axis': 'ID'}
+DEBUG   2025-10-30 11:11:02,393 vxpy.calibration                         Load calibration file calibrations/spherical_4_channel_projection.yaml
+INFO    2025-10-30 11:11:02,399 vxpy.core.process[Worker]                Initialize routine CalculatePSD
+DEBUG   2025-10-30 11:11:02,399 vxpy.core.process[Worker]                Register callback CalculatePSD:CalculatePSD.set_input_signal in module Worker
+DEBUG   2025-10-30 11:11:02,400 vxpy.core.process[Worker]                Register callback CalculatePSD:CalculatePSD.set_integration_window_width in module Worker
+DEBUG   2025-10-30 11:11:02,400 vxpy.core.ipc[Worker]                    Set state from STATE.NA to STATE.STARTING
+INFO    2025-10-30 11:11:02,401 vxpy.core.process[Worker]                Process started
+DEBUG   2025-10-30 11:11:02,402 vxpy.core.ipc[Worker]                    Set state from STATE.STARTING to STATE.IDLE
+DEBUG   2025-10-30 11:11:02,402 vxpy.core.process[Worker]                Worker received message from Gui. Signal: SIGNAL.rpc, args: ('CalculatePSD.set_integration_window_width', 1024), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:11:02,403 vxpy.core.process[Worker]                Call registered callback Worker:CalculatePSD.set_integration_window_width with args (1024,) and kwargs {}
+DEBUG   2025-10-30 11:11:02,405 vxpy.core.process[Worker]                Worker received message from Gui. Signal: SIGNAL.rpc, args: ('CalculatePSD.set_input_signal', 'Camera_iteration'), kwargs: {'force_overwrite': True, '_send_verbosely': True}
+DEBUG   2025-10-30 11:11:02,406 vxpy.core.process[Worker]                Call registered callback Worker:CalculatePSD.set_input_signal with args ('Camera_iteration',) and kwargs {'force_overwrite': True}
+INFO    2025-10-30 11:11:02,406 vxpy.extras.calculate_csd                Set input signal in CalculatePSD to Camera_iteration.
+DEBUG   2025-10-30 11:11:04,427 vxpy.core.ipc[Gui]                       Send to modules Controller with signal SIGNAL.rpc > args: ('Controller.start_protocol', 'protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash') > kwargs: {}
+DEBUG   2025-10-30 11:11:04,428 vxpy.core.process[Controller]            Controller received message from Gui. Signal: SIGNAL.rpc, args: ('Controller.start_protocol', 'protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash'), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:11:04,428 vxpy.core.process[Controller]            Callback to Controller:start_protocol with args ('protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash',) and kwargs {}
+DEBUG   2025-10-30 11:11:04,429 vxpy.modules.controller                  Protocol start requested for importpath protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash
+DEBUG   2025-10-30 11:11:04,430 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.PRCL_START_REQ
+INFO    2025-10-30 11:11:06,433 vxpy.modules.controller                  Start StaticProtocol from import path protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash
+DEBUG   2025-10-30 11:11:06,434 vxpy.core.ipc[Controller]                Set state from STATE.PRCL_START_REQ to STATE.PRCL_START
+DEBUG   2025-10-30 11:11:06,435 vxpy.core.process[Io]                    Load protocol from import path protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash
+DEBUG   2025-10-30 11:11:06,443 vxpy.core.process[Display]               Load protocol from import path protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash
+DEBUG   2025-10-30 11:11:08,176 vxpy.core.ipc[Io]                        Set state from STATE.IDLE to STATE.PRCL_STARTED
+DEBUG   2025-10-30 11:11:08,282 vxpy.core.visual                         Load vertex shader from ./gs_texture.vert
+DEBUG   2025-10-30 11:11:08,282 vxpy.core.visual                         Load shader from C:\Users\gsoto\PycharmProjects\vxPy-app-main\visuals\gs_saccadic_suppression\gs_texture.vert
+DEBUG   2025-10-30 11:11:08,283 vxpy.core.visual                         Parse vertex shader
+DEBUG   2025-10-30 11:11:08,284 vxpy.core.visual                         Load shader from C:\Users\gsoto\PycharmProjects\vxPy-app-main\visuals\gs_saccadic_suppression\gs_simu_saccade_sine_flash.frag
+DEBUG   2025-10-30 11:11:08,316 vxpy.core.ipc[Display]                   Set state from STATE.IDLE to STATE.PRCL_STARTED
+DEBUG   2025-10-30 11:11:08,322 vxpy.core.ipc[Controller]                Set state from STATE.PRCL_START to STATE.PRCL_IN_PROGRESS
+DEBUG   2025-10-30 11:11:08,324 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:08,324 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STARTED to STATE.PRCL_STC_WAIT_FOR_PHASE
+WARNING 2025-10-30 11:11:08,339 vxpy.modules.display                     Tried to stop visual while none was set
+DEBUG   2025-10-30 11:11:08,340 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:08,340 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STARTED to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:08,343 vxpy.modules.controller                  Start record group 0
+DEBUG   2025-10-30 11:11:08,343 vxpy.modules.controller                  Prepare phase 0
+DEBUG   2025-10-30 11:11:08,345 vxpy.core.process[Io]                    Ready phase 0
+DEBUG   2025-10-30 11:11:08,346 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:08,356 vxpy.core.process[Display]               Ready phase 0
+DEBUG   2025-10-30 11:11:08,358 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:08,358 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 0, saccade_start_time: 0, saccade_target_angle: 0, sine_start_time: 0, sine_duration: 0, sine_amp: 0, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:08,361 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:08,368 vxpy.modules.controller                  Set phase 0 to interval to [25.018, 30.018)
+INFO    2025-10-30 11:11:08,380 vxpy.core.process[Display]               Run phase 0 at 25.018
+INFO    2025-10-30 11:11:08,381 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:08,383 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+INFO    2025-10-30 11:11:08,385 vxpy.core.process[Io]                    Run phase 0 at 25.022
+DEBUG   2025-10-30 11:11:08,385 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:13,385 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:13,385 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:13,400 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:13,401 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:13,402 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:13,407 vxpy.modules.controller                  Start record group 1
+DEBUG   2025-10-30 11:11:13,408 vxpy.modules.controller                  Prepare phase 1
+DEBUG   2025-10-30 11:11:13,408 vxpy.core.process[Io]                    Ready phase 1
+DEBUG   2025-10-30 11:11:13,410 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:13,410 vxpy.core.process[Display]               Ready phase 1
+DEBUG   2025-10-30 11:11:13,410 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:13,411 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 0, sine_start_time: 777, sine_duration: 500, sine_amp: 0, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:13,413 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:13,429 vxpy.modules.controller                  Set phase 1 to interval to [30.066, 40.066)
+INFO    2025-10-30 11:11:13,431 vxpy.core.process[Io]                    Run phase 1 at 30.070
+DEBUG   2025-10-30 11:11:13,432 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+INFO    2025-10-30 11:11:13,445 vxpy.core.process[Display]               Run phase 1 at 30.075
+INFO    2025-10-30 11:11:13,445 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:13,447 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:23,437 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:23,438 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:23,460 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:23,461 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:23,462 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:23,471 vxpy.modules.controller                  Start record group 2
+DEBUG   2025-10-30 11:11:23,471 vxpy.modules.controller                  Prepare phase 2
+DEBUG   2025-10-30 11:11:23,473 vxpy.core.process[Io]                    Ready phase 2
+DEBUG   2025-10-30 11:11:23,474 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:23,486 vxpy.core.process[Display]               Ready phase 2
+DEBUG   2025-10-30 11:11:23,487 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:23,488 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: -30.0, sine_start_time: 1520.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:23,490 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:23,498 vxpy.modules.controller                  Set phase 2 to interval to [40.145, 46.145)
+INFO    2025-10-30 11:11:23,508 vxpy.core.process[Display]               Run phase 2 at 40.146
+INFO    2025-10-30 11:11:23,508 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:23,509 vxpy.core.process[Io]                    Run phase 2 at 40.147
+DEBUG   2025-10-30 11:11:23,509 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:23,509 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:29,512 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:29,513 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:29,534 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:29,534 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:29,535 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:29,542 vxpy.core.process[Io]                    Ready phase 3
+DEBUG   2025-10-30 11:11:29,542 vxpy.core.process[Display]               Ready phase 3
+DEBUG   2025-10-30 11:11:29,542 vxpy.modules.controller                  Start record group 3
+DEBUG   2025-10-30 11:11:29,543 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:29,543 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:29,544 vxpy.modules.controller                  Prepare phase 3
+INFO    2025-10-30 11:11:29,544 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 1499.0, sine_duration: 500, sine_amp: 0.0, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:29,546 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:29,562 vxpy.modules.controller                  Set phase 3 to interval to [46.202, 52.202)
+INFO    2025-10-30 11:11:29,565 vxpy.core.process[Io]                    Run phase 3 at 46.203
+DEBUG   2025-10-30 11:11:29,566 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+INFO    2025-10-30 11:11:29,576 vxpy.core.process[Display]               Run phase 3 at 46.209
+INFO    2025-10-30 11:11:29,577 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:29,579 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:35,569 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:35,569 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:35,592 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:35,593 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:35,594 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:35,610 vxpy.modules.controller                  Start record group 4
+DEBUG   2025-10-30 11:11:35,610 vxpy.core.process[Io]                    Ready phase 4
+DEBUG   2025-10-30 11:11:35,611 vxpy.modules.controller                  Prepare phase 4
+DEBUG   2025-10-30 11:11:35,611 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:35,617 vxpy.core.process[Display]               Ready phase 4
+DEBUG   2025-10-30 11:11:35,619 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:35,620 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 1750.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:35,622 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:35,630 vxpy.modules.controller                  Set phase 4 to interval to [52.279, 58.279)
+INFO    2025-10-30 11:11:35,641 vxpy.core.process[Display]               Run phase 4 at 52.279
+INFO    2025-10-30 11:11:35,641 vxpy.core.process[Io]                    Run phase 4 at 52.279
+INFO    2025-10-30 11:11:35,641 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:35,642 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:35,643 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:41,647 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:41,648 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:41,663 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:41,663 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:41,664 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:41,678 vxpy.modules.controller                  Start record group 5
+DEBUG   2025-10-30 11:11:41,678 vxpy.modules.controller                  Prepare phase 5
+DEBUG   2025-10-30 11:11:41,680 vxpy.core.process[Io]                    Ready phase 5
+DEBUG   2025-10-30 11:11:41,681 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:41,687 vxpy.core.process[Display]               Ready phase 5
+DEBUG   2025-10-30 11:11:41,688 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:41,689 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 2500.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:41,691 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:41,695 vxpy.modules.controller                  Set phase 5 to interval to [58.346, 64.346)
+INFO    2025-10-30 11:11:41,708 vxpy.core.process[Display]               Run phase 5 at 58.346
+INFO    2025-10-30 11:11:41,709 vxpy.core.process[Io]                    Run phase 5 at 58.346
+INFO    2025-10-30 11:11:41,709 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:41,710 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:41,711 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:47,716 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:47,717 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:47,730 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:47,731 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:47,733 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:47,741 vxpy.modules.controller                  Start record group 6
+DEBUG   2025-10-30 11:11:47,742 vxpy.modules.controller                  Prepare phase 6
+DEBUG   2025-10-30 11:11:47,742 vxpy.core.process[Io]                    Ready phase 6
+DEBUG   2025-10-30 11:11:47,743 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:47,755 vxpy.core.process[Display]               Ready phase 6
+DEBUG   2025-10-30 11:11:47,756 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:47,757 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 1520.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:47,759 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:47,768 vxpy.modules.controller                  Set phase 6 to interval to [64.416, 70.416)
+INFO    2025-10-30 11:11:47,778 vxpy.core.process[Display]               Run phase 6 at 64.416
+INFO    2025-10-30 11:11:47,779 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:47,781 vxpy.core.process[Io]                    Run phase 6 at 64.418
+DEBUG   2025-10-30 11:11:47,781 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:47,782 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:53,785 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:53,786 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:53,815 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:53,815 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:53,817 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:53,828 vxpy.modules.controller                  Start record group 7
+DEBUG   2025-10-30 11:11:53,828 vxpy.modules.controller                  Prepare phase 7
+DEBUG   2025-10-30 11:11:53,831 vxpy.core.process[Io]                    Ready phase 7
+DEBUG   2025-10-30 11:11:53,832 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:53,840 vxpy.core.process[Display]               Ready phase 7
+DEBUG   2025-10-30 11:11:53,842 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:53,843 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 5500.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:53,845 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:53,853 vxpy.modules.controller                  Set phase 7 to interval to [70.503, 76.503)
+INFO    2025-10-30 11:11:53,866 vxpy.core.process[Display]               Run phase 7 at 70.503
+INFO    2025-10-30 11:11:53,866 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:53,867 vxpy.core.process[Io]                    Run phase 7 at 70.504
+DEBUG   2025-10-30 11:11:53,867 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:53,867 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:11:59,874 vxpy.core.process[Io]                    Wait for phase
+DEBUG   2025-10-30 11:11:59,876 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:59,899 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:59,900 vxpy.core.process[Display]               Wait for phase
+DEBUG   2025-10-30 11:11:59,900 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STC_WAIT_FOR_PHASE
+DEBUG   2025-10-30 11:11:59,909 vxpy.modules.controller                  Start record group 8
+DEBUG   2025-10-30 11:11:59,909 vxpy.modules.controller                  Prepare phase 8
+DEBUG   2025-10-30 11:11:59,914 vxpy.core.process[Io]                    Ready phase 8
+DEBUG   2025-10-30 11:11:59,915 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+DEBUG   2025-10-30 11:11:59,921 vxpy.core.process[Display]               Ready phase 8
+DEBUG   2025-10-30 11:11:59,922 vxpy.modules.display                     Set visual to existing instance of SimuSaccadeWithStepFlash2000
+INFO    2025-10-30 11:11:59,923 vxpy.core.visual                         Update parameters for visual SimuSaccadeWithStepFlash2000: saccade_duration: 100, saccade_start_time: 1500, saccade_target_angle: 30.0, sine_start_time: 1600.0, sine_duration: 500, sine_amp: 0.3, sine_freq: 2, baseline_lum: 0.75, contrast: 0.5
+DEBUG   2025-10-30 11:11:59,926 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_WAIT_FOR_PHASE to STATE.PRCL_STC_PHASE_READY
+INFO    2025-10-30 11:11:59,934 vxpy.modules.controller                  Set phase 8 to interval to [76.583, 82.583)
+INFO    2025-10-30 11:11:59,946 vxpy.core.process[Display]               Run phase 8 at 76.583
+INFO    2025-10-30 11:11:59,947 vxpy.modules.display                     Start new visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:11:59,950 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+INFO    2025-10-30 11:11:59,950 vxpy.core.process[Io]                    Run phase 8 at 76.588
+DEBUG   2025-10-30 11:11:59,951 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STC_PHASE_READY to STATE.PRCL_IN_PHASE
+DEBUG   2025-10-30 11:12:05,005 vxpy.core.ipc[Gui]                       Send to modules Controller with signal SIGNAL.rpc > args: ('Controller.stop_protocol',) > kwargs: {}
+DEBUG   2025-10-30 11:12:05,011 vxpy.core.process[Controller]            Controller received message from Gui. Signal: SIGNAL.rpc, args: ('Controller.stop_protocol',), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:12:05,012 vxpy.core.process[Controller]            Callback to Controller:stop_protocol with args () and kwargs {}
+DEBUG   2025-10-30 11:12:05,013 vxpy.core.ipc[Controller]                Set state from STATE.PRCL_IN_PROGRESS to STATE.PRCL_STOP_REQ
+INFO    2025-10-30 11:12:05,018 vxpy.modules.controller                  Stop protocol protocols.LF_saccadicsuppression_obendbehavior.FreeSwimmingTextureDisplacementFlash
+DEBUG   2025-10-30 11:12:05,019 vxpy.core.ipc[Controller]                Set state from STATE.PRCL_STOP_REQ to STATE.PRCL_STOP
+DEBUG   2025-10-30 11:12:05,021 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STOPPED
+DEBUG   2025-10-30 11:12:05,026 vxpy.modules.display                     Stop visual SimuSaccadeWithStepFlash2000
+DEBUG   2025-10-30 11:12:05,027 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_IN_PHASE to STATE.PRCL_STOPPED
+DEBUG   2025-10-30 11:12:05,035 vxpy.modules.controller                  Clean up protocol
+DEBUG   2025-10-30 11:12:05,038 vxpy.core.ipc[Controller]                Set state from STATE.PRCL_STOP to STATE.IDLE
+DEBUG   2025-10-30 11:12:05,041 vxpy.core.ipc[Io]                        Set state from STATE.PRCL_STOPPED to STATE.IDLE
+DEBUG   2025-10-30 11:12:05,046 vxpy.core.ipc[Display]                   Set state from STATE.PRCL_STOPPED to STATE.IDLE
+DEBUG   2025-10-30 11:12:06,656 vxpy.core.ipc[Gui]                       Send to modules Controller with signal SIGNAL.rpc > args: ('Controller.commence_shutdown',) > kwargs: {}
+DEBUG   2025-10-30 11:12:06,661 vxpy.core.process[Controller]            Controller received message from Gui. Signal: SIGNAL.rpc, args: ('Controller.commence_shutdown',), kwargs: {'_send_verbosely': True}
+DEBUG   2025-10-30 11:12:06,661 vxpy.core.process[Controller]            Callback to Controller:commence_shutdown with args () and kwargs {}
+DEBUG   2025-10-30 11:12:06,661 vxpy.modules.controller                  Shutdown requested. Checking.
+DEBUG   2025-10-30 11:12:06,663 vxpy.modules.controller                  Shut down processes
+DEBUG   2025-10-30 11:12:06,663 vxpy.core.ipc[Controller]                Set state from STATE.IDLE to STATE.SHUTDOWN
+DEBUG   2025-10-30 11:12:06,666 vxpy.core.ipc[Camera]                    Set state from STATE.IDLE to STATE.STOPPED
