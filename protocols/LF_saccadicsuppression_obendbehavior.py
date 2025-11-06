@@ -12,8 +12,8 @@ def params2000step(sacc_duration, sacc_start, sacc_ang, flash_start, flash_dur, 
         SimuSaccadeWithStepFlash2000.sine_start_time: flash_start,
         SimuSaccadeWithStepFlash2000.sine_duration: flash_dur,
         SimuSaccadeWithStepFlash2000.sine_amp: flash_amp,
-        SimuSaccadeWithStepFlash2000.sine_freq: sine_freq,
-        SimuSaccadeWithStepFlash2000.baseline_lum: flash_freq,
+        SimuSaccadeWithStepFlash2000.sine_freq: flash_freq,
+        SimuSaccadeWithStepFlash2000.baseline_lum: baseline_lum,
         SimuSaccadeWithStepFlash2000.contrast: contrast
     }
 
@@ -28,7 +28,7 @@ class FreeSwimmingTextureDisplacementFlash(StaticProtocol):
         np.random.seed(1)
 
         # set fixed parameters
-        sacc_duration = 100
+        sacc_duration = 120
         sacc_start = 1500
         flash_dur = 500
         flash_freq = 2
@@ -52,18 +52,19 @@ class FreeSwimmingTextureDisplacementFlash(StaticProtocol):
         # show only-texture at beginning -> habituation
         p = Phase(duration=5)
         p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(0, 0, 0,
-                                                          0, 0, 0, baseline_lum, contrast))
+                                                          0, 0, 0,flash_freq, baseline_lum, contrast))
         self.add_phase(p)
 
         for i in range(5):
-            # pause phase
-            p = Phase(duration=10)
-            p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777, flash_dur, 0,
-                                                                      flash_freq, baseline_lum, contrast))
-            self.add_phase(p)
-
-            # stimulus phase
             for flash_delay, sacc_ang, flash_amp in np.random.permutation(conditions):
+                # pause phase
+                p = Phase(duration=10)
+                p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777, flash_dur, 0,
+                                                                      flash_freq, baseline_lum, contrast))
+                self.add_phase(p)
+
+                # stimulus phase
+
                 flash_start = flash_delay + sacc_start
                 p = Phase(duration=6)
                 p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
