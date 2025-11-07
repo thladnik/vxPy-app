@@ -97,7 +97,7 @@ class ContiguousMotionNoise(vxvisual.SphericalVisual):
     time = vxvisual.FloatParameter('time', internal=True)
 
     frame_index = vxvisual.IntParameter('frame_index', internal=True)
-    motion_frame = vxvisual.Parameter('motion_matrix', shape=(320,), dtype=np.complex_, internal=True)
+    motion_frame = vxvisual.Parameter('motion_matrix', shape=(320,), dtype=np.complex128, internal=True)
 
     frame_num = 1_000
     tp_sigma = 10

@@ -24,8 +24,7 @@ from vxpy.api.attribute import ArrayAttribute, ArrayType, read_attribute
 from vxpy.api.camera import get_config_for_camera, Format
 from vxpy.core.dependency import require_camera_device
 from vxpy.api.routine import CameraRoutine
-from vxpy.api.ui import AddonWidget
-
+import vxpy.core.ui as vxui
 
 class ParticleDetection(CameraRoutine):
 
@@ -73,10 +72,10 @@ class ParticleDetection(CameraRoutine):
         self.frame_with_keypoints.write(new_frame)
 
 
-class ParticleDetectionWidget(AddonWidget):
+class ParticleDetectionWidget(vxui.AddonWidget):
 
     def __init__(self, *args, **kwargs):
-        AddonWidget.__init__(self, *args, **kwargs)
+        vxui.AddonWidget.__init__(self, *args, **kwargs)
         self.setLayout(QtWidgets.QHBoxLayout())
 
         # Add graphics widget

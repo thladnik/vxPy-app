@@ -16,8 +16,8 @@ class TestSutterDSB(vxprotocol.StaticProtocol):
                       SphericalBlackWhiteGrating.motion_type: 'rotation',
                       SphericalBlackWhiteGrating.angular_period: 5,
                       SphericalBlackWhiteGrating.angular_velocity: 0})
-        phase.set_control(sutter_micromanipulator_controls.ControlSutter,
-                                  {'move_to_x': -500, 'move_to_y': 0, 'move_to_z': 0})
+        phase.set_control(sutter_micromanipulator_controls.ControlSutterMP,
+                          {'move_to_x': -500, 'move_to_y': 0, 'move_to_z': 0})
         self.add_phase(phase)
 
 

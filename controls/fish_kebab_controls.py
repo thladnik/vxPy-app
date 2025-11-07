@@ -1,3 +1,10 @@
+"""Controls associated with the KEBAB setup.
+
+Setup uses a stepper motor to rotate a mounting platform (with the embedded fish)
+with variable or constant velocity profiles to alter vestibular or gravitational input to fish's sensory system.
+At the same time it can differentially modulate the relative luminance of two LEDs on opposite sites,
+to simulate varying positions of incident light rays and trigger the dorsal light reflex.
+"""
 import numpy as np
 import time
 
@@ -68,7 +75,6 @@ class Control01(vxcontrol.BaseControl):
         vxcontainer.add_to_phase_dataset('led_right', self.led_right_state)
 
     def _end(self):
-        print('-----END PHASE')
         self.device.board.analog_write(self.device.led_left, 0)
         self.device.board.analog_write(self.device.led_right, 0)
         self.device.board.stepper_stop(self.device.motor)
@@ -166,7 +172,6 @@ class Control02(vxcontrol.BaseControl):
         vxcontainer.add_to_phase_dataset('led_right', self.led_right_current_state)
 
     def _end(self):
-        print('-----END PHASE')
         self.device.board.analog_write(self.device.led_left, self._led_state_output(self.led_left_end_state))
         self.device.board.analog_write(self.device.led_right, self._led_state_output(self.led_right_end_state))
         self.device.board.stepper_stop(self.device.motor)
@@ -253,7 +258,7 @@ class ControlSinusoidal(vxcontrol.BaseControl):
         # check if zero-position is reached
         if self.current_pos * self.old_pos < 0 or self.current_pos == 0:
             self.round_counter += 1
-            print('times zero-position is reached: ', self.round_counter)
+            # print('times zero-position is reached: ', self.round_counter)
 
             # check if break condition (x rounds) is reached
             if self.round_counter >= self.rounds * 2:
@@ -280,7 +285,6 @@ class ControlSinusoidal(vxcontrol.BaseControl):
         vxcontainer.add_to_phase_dataset('motor_pos [°]', (self.current_pos / self.steps_to_full_rotation) * 360)
 
     def _end(self):
-        print('-----END PHASE')
         self.device.board.analog_write(self.device.led_left, 0)
         self.device.board.analog_write(self.device.led_right, 0)
         self.device.board.stepper_stop(self.device.motor)
@@ -345,7 +349,6 @@ class ControlDiscretePositions(vxcontrol.BaseControl):
         vxcontainer.add_to_phase_dataset('led_right', self.led_right_state)
 
     def _end(self):
-        print('-----END PHASE')
         self.device.board.analog_write(self.device.led_left, 0)
         self.device.board.analog_write(self.device.led_right, 0)
         self.device.board.stepper_stop(self.device.motor)
