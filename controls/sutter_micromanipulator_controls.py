@@ -4,7 +4,7 @@ import vxpy.core.attribute as vxattribute
 import vxpy.core.control as vxcontrol
 import vxpy.core.devices.serial as vxserial
 import vxpy.core.container as vxcontainer
-from vxpy.devices.sutterMP285 import SutterMP285
+from vxpy.devices.sutter_mp285 import SutterMP285
 import vxpy.core.container as vxcontainer
 
 
@@ -36,8 +36,7 @@ class ControlSutter(vxcontrol.BaseControl):
 
         vxcontainer.add_phase_attributes({'sutter_start_pos_xyz': start_xyz_position, 'sutter_end_pos_xyz': end_xyz_position})
 
-    def main(self, dt: float):
-
+    def main(self, dt: float, **pins):
         pass
 
     def _end(self):
