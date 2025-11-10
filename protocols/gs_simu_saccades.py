@@ -186,3 +186,96 @@ class TextureDisplacementStepFlash50Hz(StaticProtocol):
         p = Phase(duration=5)
         p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
         self.add_phase(p)
+
+
+class DoubleFlashes_for_Reviewer(StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticProtocol.__init__(self, *args, **kwargs)
+
+        self.global_visual_props['azim_angle'] = 0.
+
+        # Fix seed
+        np.random.seed(1)
+
+        # set fixed parameters
+        sacc_duration = 0
+        sacc_start = 0
+        sacc_ang = 0
+        short_flash_dur = 30
+        short_flash_delay = 1500
+        long_flash_dur = 500
+        sine_freq = 2
+        baseline_lum = 0.75
+        contrast = 0.5
+
+        # experimental conditions, (short flash amp, long flash amp, delay)
+        conditions_short = [(0.5,0.5,100),(0.5,0.5,250),(0.5,0.5,500),(0.5,0.5,1000),(0.5,0.5,2000),(0.5,0.5,4000),
+                            (0.5,0.5,8000),(0.5,0.5,16000),(0.5,0.5,32000),(0,0.5,16333),(0,0.5,16333),(0.5,0,81)]
+        conditions_long = [(0.5,0.5,2000),(0.5,0.5,4000),(0.5,0.5,8000),(0.5,0.5,16000),0.5,(0.5,32000),(0,0.5,16333),
+                           (0,0.5,16333),(0.5,0,81)]
+
+        # 10 seconds just texture (no flash)
+
+        # 10 seconds just texture (coarse)
+        p = Phase(duration=10)
+        p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777, 0, 0,
+                                                                  sine_freq, baseline_lum, contrast))
+        self.add_phase(p)
+
+        # 4 repeats of short flash paired with long sine flicker
+        for j in range(4):
+            for short_flash_amp, long_flash_amp, delay in np.random.permutation(conditions_short):
+
+                # short flash phase
+                p = Phase(duration=(short_flash_delay + short_flash_dur)/1000)
+                p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
+                                                                          short_flash_delay, short_flash_dur, short_flash_amp, sine_freq,
+                                                                          baseline_lum, contrast))
+                self.add_phase(p)
+
+                # long flash phase
+                long_flash_start = delay - short_flash_dur
+                p = Phase(duration=34)
+                p.set_visual(SimuSaccadeWithSineFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
+                                                                          long_flash_start, long_flash_dur,
+                                                                          long_flash_amp, sine_freq,
+                                                                          baseline_lum, contrast))
+                self.add_phase(p)
+
+                # pause phase
+                p = Phase(duration=10)
+                p.set_visual(SimuSaccadeWithStepFlash2000, params2000step(sacc_duration, sacc_start, 0, 777, 0, 0,
+                                                                          sine_freq, baseline_lum, contrast))
+                self.add_phase(p)
+
+        # 4 repeats of long sine flicker paired with long sine flicker
+        for j in range(4):
+            for first_flash_amp, second_flash_amp, delay in np.random.permutation(conditions_short):
+                # short flash phase
+                p = Phase(duration=(short_flash_delay + long_flash_dur)/1000)
+                p.set_visual(SimuSaccadeWithSineFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
+                                                                          short_flash_delay, long_flash_dur,
+                                                                          first_flash_amp, sine_freq,
+                                                                          baseline_lum, contrast))
+                self.add_phase(p)
+
+                # long flash phase
+                second_flash_start = delay - long_flash_dur
+                p = Phase(duration=34)
+                p.set_visual(SimuSaccadeWithSineFlash2000, params2000step(sacc_duration, sacc_start, sacc_ang,
+                                                                          second_flash_start, long_flash_dur,
+                                                                          second_flash_amp, sine_freq,
+                                                                          baseline_lum, contrast))
+                self.add_phase(p)
+
+                # pause phase
+                p = Phase(duration=10)
+                p.set_visual(SimuSaccadeWithStepFlash2000,
+                             params2000step(sacc_duration, sacc_start, 0, 777, 0, 0,
+                                            sine_freq, baseline_lum, contrast))
+                self.add_phase(p)
+
+        p = Phase(duration=5)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([0, 0, 0])})
+        self.add_phase(p)
