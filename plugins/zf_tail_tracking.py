@@ -1,4 +1,6 @@
-"""Tail Tracking Plugin for vxPy
+"""Zebrafish larva tail tracking plugin for VxPy
+
+Uses DeepLabCut and therefore requires optional dependency `dlclive`
 """
 from __future__ import annotations
 

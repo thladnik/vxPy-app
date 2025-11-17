@@ -73,13 +73,13 @@ class BaselineFlashTextureScreening(StaticProtocol):
         #30 seconds just texture (no flash)
         p = Phase(duration=30)
         p.set_visual(SimuSaccadeWithSineFlash2000,
-            {SimuSaccadeWithSineFlash2000.saccade_duration: 100,
-            SimuSaccadeWithSineFlash2000.saccade_start_time: 1500,
-            SimuSaccadeWithSineFlash2000.saccade_target_angle: 0,
-            SimuSaccadeWithSineFlash2000.sine_start_time: 1500,
-            SimuSaccadeWithSineFlash2000.sine_duration: 500,
+            {SimuSaccadeWithSineFlash2000.rotation_duration: 100,
+            SimuSaccadeWithSineFlash2000.rotation_start_time: 1500,
+            SimuSaccadeWithSineFlash2000.rotation_amplitude: 0,
+            SimuSaccadeWithSineFlash2000.flash_start_time: 1500,
+            SimuSaccadeWithSineFlash2000.flash_duration: 500,
             SimuSaccadeWithSineFlash2000.sine_amp: 0,
-            SimuSaccadeWithSineFlash2000.sine_freq: 2,
+            SimuSaccadeWithSineFlash2000.flash_freq: 2,
             SimuSaccadeWithSineFlash2000.baseline_lum: 0.75,
             SimuSaccadeWithSineFlash2000.contrast: 0.5})
         self.add_phase(p)
@@ -89,13 +89,13 @@ class BaselineFlashTextureScreening(StaticProtocol):
 
             p = Phase(duration=8)
             p.set_visual(SimuSaccadeWithSineFlash2000,
-                     {SimuSaccadeWithSineFlash2000.saccade_duration: 100,
-                      SimuSaccadeWithSineFlash2000.saccade_start_time: 1500,
-                      SimuSaccadeWithSineFlash2000.saccade_target_angle: 0,
-                      SimuSaccadeWithSineFlash2000.sine_start_time: 1500,
-                      SimuSaccadeWithSineFlash2000.sine_duration: 500,
+                     {SimuSaccadeWithSineFlash2000.rotation_duration: 100,
+                      SimuSaccadeWithSineFlash2000.rotation_start_time: 1500,
+                      SimuSaccadeWithSineFlash2000.rotation_amplitude: 0,
+                      SimuSaccadeWithSineFlash2000.flash_start_time: 1500,
+                      SimuSaccadeWithSineFlash2000.flash_duration: 500,
                       SimuSaccadeWithSineFlash2000.sine_amp: 0.5,
-                      SimuSaccadeWithSineFlash2000.sine_freq: 2,
+                      SimuSaccadeWithSineFlash2000.flash_freq: 2,
                       SimuSaccadeWithSineFlash2000.baseline_lum: 0.75,
                       SimuSaccadeWithSineFlash2000.contrast: 0.5})
             self.add_phase(p)'''

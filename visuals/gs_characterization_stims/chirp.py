@@ -79,3 +79,31 @@ class LogChirp(vxvisual.SphericalVisual):
         self.apply_transform(self.chirp)
         self.chirp.draw('triangles', indices=self.index_buffer)
 
+
+
+class RGB(vxvisual.Vec3Parameter):
+
+    def __init__(self, *args, **kwargs):
+        vxvisual.Vec3Parameter.__init__(self, *args, **kwargs)
+
+    def upstream_updated(self):
+        self.data = [ColorLogChirp.red.data[0],
+                     ColorLogChirp.green.data[0],
+                     ColorLogChirp.blue.data[0]]
+
+class ColorLogChirp(LogChirp):
+
+    rgb = RGB('rgb', static=True, internal=True)
+    red = vxvisual.FloatParameter('red', static=True, default=1.0, limits=(0.0, 1.0), step_size=0.00001)
+    green = vxvisual.FloatParameter('green', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
+    blue = vxvisual.FloatParameter('blue', static=True, default=0.0, limits=(0.0, 1.0), step_size=0.00001)
+
+    FRAG_LOC = './chirp_color.frag'
+
+    def __init__(self, *args, **kwargs):
+        LogChirp.__init__(self, *args, **kwargs)
+        self.red.add_downstream_link(self.rgb)
+        self.green.add_downstream_link(self.rgb)
+        self.blue.add_downstream_link(self.rgb)
+
+        self.rgb.connect(self.chirp)

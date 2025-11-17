@@ -81,13 +81,13 @@ class MotionAxis(visual.Mat4Parameter):
         return transforms.rotate(90, (1, 0, 0))
 
 
-class MovingDotOnTexture2000(vxvisual.SphericalVisual):
+class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
 
     # Define general Parameters
-    time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
+    time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0), step_size=0.01)
 
     # Define Texture Parameters
-    rotation = vxvisual.Mat4Parameter('rotation', default=30.0, limits=(0.0, 360.0), internal=True)
+    rotation = vxvisual.Mat4Parameter('rotation', default=0.0, limits=(0.0, 360.0), internal=True)
     texture_default = vxvisual.Attribute('texture_default', static=True)
     luminance = vxvisual.FloatParameter('luminance', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0),
@@ -97,17 +97,20 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
 
     # Define Moving Dot parameters
     motion_axis = MotionAxis('motion_axis', static=True, default='vertical')
-    dot_polarity = vxvisual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
-    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=-30, limits=(-180, 180), step_size=5,
-                                              static=True)
-    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5, static=True)
-    dot_angular_diameter = vxvisual.FloatParameter('dot_angular_diameter', default=20, limits=(1, 90), step_size=1, static=True)
-    dot_offset_angle = vxvisual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5, static=True)
-    dot_location = vxvisual.Vec3Parameter('dot_location', default=0)
+    disc_polarity = vxvisual.IntParameter('disc_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
+    disc_azimuth = vxvisual.FloatParameter('disc_azimuth', default=0, limits=(-180, 180), step_size=5, static=True) # in °
+    disc_current_azimuth = vxvisual.FloatParameter('disc_current_azimuth', default = 0)
+    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
+                                           static=True) # in °
+    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
+    disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
+    disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
+
+
 
     # Paths to shaders
-    VERT_PATH = './gs_dot_on_texture.vert'
-    FRAG_PATH = './gs_dot_on_texture.frag'
+    VERT_PATH = 'gs_looming_disc.vert'
+    FRAG_PATH = 'gs_looming_disc.frag'
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -119,27 +122,28 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
         self.index_buffer = gloo.IndexBuffer(indices)
 
         # Set up program
-        self.rotating_dot = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH),
+        self.looming_disc = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH),
                                          count=vertices.shape[0])
-        self.rotating_dot['a_position'] = vertices
+        self.looming_disc['a_position'] = vertices
 
         # Set normalized texture
         tex = np.ascontiguousarray((intensity - intensity.min()) / (intensity.max() - intensity.min()))
         self.texture_default.data = tex
 
         # Connect parameters (this makes them be automatically updated in the connected programs)
-        self.time.connect(self.rotating_dot)
-        self.rotation.connect(self.rotating_dot)
-        self.luminance.connect(self.rotating_dot)
-        self.contrast.connect(self.rotating_dot)
-        self.texture_default.connect(self.rotating_dot)
-        self.motion_axis.connect(self.rotating_dot)
-        self.dot_polarity.connect(self.rotating_dot)
-        self.dot_start_angle.connect(self.rotating_dot)
-        self.dot_angular_velocity.connect(self.rotating_dot)
-        self.dot_angular_diameter.connect(self.rotating_dot)
-        self.dot_offset_angle.connect(self.rotating_dot)
-        self.dot_location.connect(self.rotating_dot)
+        self.time.connect(self.looming_disc)
+        self.rotation.connect(self.looming_disc)
+        self.luminance.connect(self.looming_disc)
+        self.contrast.connect(self.looming_disc)
+        self.texture_default.connect(self.looming_disc)
+        self.motion_axis.connect(self.looming_disc)
+        self.disc_polarity.connect(self.looming_disc)
+        self.disc_azimuth.connect(self.looming_disc)
+        self.disc_current_azimuth.connect(self.looming_disc)
+        self.disc_elevation.connect(self.looming_disc)
+        self.disc_starting_diameter.connect(self.looming_disc)
+        self.disc_expansion_lv.connect(self.looming_disc)
+        self.disc_diameter.connect(self.looming_disc)
 
         self.protocol.global_visual_props['azim_angle'] = 0.
 
@@ -161,40 +165,40 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
         baseline_lum = self.luminance.data[0]
         self.luminance.data = baseline_lum
 
-        # dot location
-        start_ang = self.dot_start_angle.data[0]
-        ang_vel = self.dot_angular_velocity.data[0]
-        dot_offset = self.dot_offset_angle.data[0]
+        # set global texture azimuth
         text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
 
-        t_switch = 500
-        t_stop = 1500
-        if time < t_switch:
-            dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
-            dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
-        elif t_switch < time < t_stop:
-            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
-                       ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
-            dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+        # disc location (adjusted for change in texture location)
+        disc_azim = self.disc_azimuth.data[0]
+
+        current_azim = (disc_azim + text_azim) + (time / 1000) * np.pi
+
+        self.disc_current_azimuth.data = current_azim
+
+        # disc size
+        start_size = self.disc_starting_diameter.data[0]
+        expansion_lv = self.disc_expansion_lv.data[0]
+
+        current_diameter = start_size * np.exp(time/expansion_lv)
+
+        self.disc_diameter.data = current_diameter
 
         # Apply default transforms to the program for mapping according to hardware calibration
-        self.apply_transform(self.rotating_dot)
+        self.apply_transform(self.looming_disc)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
-        self.rotating_dot.draw('triangles', indices=self.index_buffer)
+        self.looming_disc.draw('triangles', indices=self.index_buffer)
 
 
-class MovingDotOnTexture4000(vxvisual.SphericalVisual):
+class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
 
     # Define general Parameters
-    time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
+    time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0), step_size=0.01)
 
     # Define Texture Parameters
     rotation = vxvisual.Mat4Parameter('rotation', default=0.0, limits=(0.0, 360.0), internal=True)
     texture_default = vxvisual.Attribute('texture_default', static=True)
-    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)
+    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0),
                                        step_size=0.01)  # Absolute contrast
 
@@ -202,16 +206,20 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
 
     # Define Moving Dot parameters
     motion_axis = MotionAxis('motion_axis', static=True, default='vertical')
-    dot_polarity = vxvisual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
-    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=30, limits=(-180, 180), step_size=5, static=True)
-    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=-60, limits=(-360, 360), step_size=5, static=True)
-    dot_angular_diameter = vxvisual.FloatParameter('dot_angular_diameter', default=20, limits=(1, 90), step_size=1, static=True)
-    dot_offset_angle = vxvisual.FloatParameter('dot_offset_angle', default=-20, limits=(-85, 85), step_size=5, static=True)
-    dot_location = vxvisual.Vec3Parameter('dot_location', default=0)
+    disc_polarity = vxvisual.IntParameter('disc_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
+    disc_azimuth = vxvisual.FloatParameter('disc_azimuth', default=0, limits=(-180, 180), step_size=5, static=True) # in °
+    disc_current_azimuth = vxvisual.FloatParameter('disc_current_azimuth', default = 0)
+    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
+                                           static=True) # in °
+    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
+    disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
+    disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
+
+
 
     # Paths to shaders
-    VERT_PATH = './gs_dot_on_texture.vert'
-    FRAG_PATH = './gs_dot_on_texture.frag'
+    VERT_PATH = 'gs_looming_disc.vert'
+    FRAG_PATH = 'gs_looming_disc.frag'
 
     def __init__(self, *args, **kwargs):
         vxvisual.SphericalVisual.__init__(self, *args, **kwargs)
@@ -223,27 +231,28 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
         self.index_buffer = gloo.IndexBuffer(indices)
 
         # Set up program
-        self.rotating_dot = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH),
+        self.looming_disc = gloo.Program(self.load_vertex_shader(self.VERT_PATH), self.load_shader(self.FRAG_PATH),
                                          count=vertices.shape[0])
-        self.rotating_dot['a_position'] = vertices
+        self.looming_disc['a_position'] = vertices
 
         # Set normalized texture
         tex = np.ascontiguousarray((intensity - intensity.min()) / (intensity.max() - intensity.min()))
         self.texture_default.data = tex
 
         # Connect parameters (this makes them be automatically updated in the connected programs)
-        self.time.connect(self.rotating_dot)
-        self.rotation.connect(self.rotating_dot)
-        self.luminance.connect(self.rotating_dot)
-        self.contrast.connect(self.rotating_dot)
-        self.texture_default.connect(self.rotating_dot)
-        self.motion_axis.connect(self.rotating_dot)
-        self.dot_polarity.connect(self.rotating_dot)
-        self.dot_start_angle.connect(self.rotating_dot)
-        self.dot_angular_velocity.connect(self.rotating_dot)
-        self.dot_angular_diameter.connect(self.rotating_dot)
-        self.dot_offset_angle.connect(self.rotating_dot)
-        self.dot_location.connect(self.rotating_dot)
+        self.time.connect(self.looming_disc)
+        self.rotation.connect(self.looming_disc)
+        self.luminance.connect(self.looming_disc)
+        self.contrast.connect(self.looming_disc)
+        self.texture_default.connect(self.looming_disc)
+        self.motion_axis.connect(self.looming_disc)
+        self.disc_polarity.connect(self.looming_disc)
+        self.disc_azimuth.connect(self.looming_disc)
+        self.disc_current_azimuth.connect(self.looming_disc)
+        self.disc_elevation.connect(self.looming_disc)
+        self.disc_starting_diameter.connect(self.looming_disc)
+        self.disc_expansion_lv.connect(self.looming_disc)
+        self.disc_diameter.connect(self.looming_disc)
 
         self.protocol.global_visual_props['azim_angle'] = 0.
 
@@ -265,27 +274,26 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
         baseline_lum = self.luminance.data[0]
         self.luminance.data = baseline_lum
 
-        # dot location
-        start_ang = self.dot_start_angle.data[0]
-        ang_vel = self.dot_angular_velocity.data[0]
-        dot_offset = self.dot_offset_angle.data[0]
+        # set global texture azimuth
         text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
 
-        t_switch = 500
-        t_stop = 1500
-        if time < t_switch:
-            dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
-            dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
-        elif t_switch < time < t_stop:
-            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
-                       ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
-            dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+        # disc location (adjusted for change in texture location)
+        disc_azim = self.disc_azimuth.data[0]
+
+        current_azim = (disc_azim + text_azim) + (time / 1000) * np.pi
+
+        self.disc_current_azimuth.data = current_azim
+
+        # disc size
+        start_size = self.disc_starting_diameter.data[0]
+        expansion_lv = self.disc_expansion_lv.data[0]
+
+        current_diameter = start_size * np.exp(time/expansion_lv)
+
+        self.disc_diameter.data = current_diameter
 
         # Apply default transforms to the program for mapping according to hardware calibration
-        self.apply_transform(self.rotating_dot)
+        self.apply_transform(self.looming_disc)
 
         # Draw the actual visual stimulus using the indices of the  triangular faces
-        self.rotating_dot.draw('triangles', indices=self.index_buffer)
-
+        self.looming_disc.draw('triangles', indices=self.index_buffer)

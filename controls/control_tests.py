@@ -1,3 +1,5 @@
+"""Example control implementation, that demonstrates how to write control signals to a PIN output and save data to file
+"""
 import numpy as np
 
 import vxpy.core.attribute as vxattribute

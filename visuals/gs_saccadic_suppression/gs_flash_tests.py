@@ -72,7 +72,7 @@ def _convert_mat_texture_to_hdf(mat_path: str, hdf_path: str):
 
 class TextureModulateContrLum(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
+    VERT_LOC = './ml_texture.vert'
     FRAG_LOC = './gs_texture_meanlum_mod.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
@@ -151,7 +151,7 @@ class SinusAmplitude(vxvisual.FloatParameter):
 
 class TextureSinusLumModulation(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
+    VERT_LOC = './ml_texture.vert'
     FRAG_LOC = './gs_texture_meanlum_mod.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
@@ -240,7 +240,7 @@ class FlashLuminance(vxvisual.FloatParameter):
 
 class TextureFlash(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
+    VERT_LOC = './ml_texture.vert'
     FRAG_LOC = './gs_texture_meanlum_mod.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
@@ -324,7 +324,7 @@ class AngularVelocity(vxvisual.FloatParameter):
 
 class TextureRotation(vxvisual.SphericalVisual):
 
-    VERT_LOC = './gs_texture.vert'
+    VERT_LOC = './ml_texture.vert'
     FRAG_LOC = './gs_texture_meanlum_mod.frag'
 
     time = vxvisual.FloatParameter('time', default=0.0, limits=(0.0, 20.0))
