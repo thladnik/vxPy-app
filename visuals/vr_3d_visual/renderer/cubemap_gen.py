@@ -17,17 +17,18 @@ from direct.task import Task
 
 def get_abspath(path):
 
-    return os.path.join('visuals/vr_3d_visual/renderer', path)
+    # return os.path.join('visuals/vr_3d_visual/renderer', path)
+    # return pathlib.Path(path).as_posix()
     # path = pathlib.Path(path).as_posix()
     #
-    # # Fix cwd for Windows (remove drive letter and prepend '/')
-    # cwd = pathlib.Path.cwd()
-    # if isinstance(cwd, pathlib.WindowsPath):
-    #     cwd_posix = '/' + cwd.as_posix().replace(':', '')
-    # else:
-    #     cwd_posix = cwd.as_posix()
-    #
-    # return os.path.join(cwd_posix, *'visuals/vr_3d_visual/renderer'.split('/'), *path.split('/'))
+    # Fix cwd for Windows (remove drive letter and prepend '/')
+    cwd = pathlib.Path.cwd()
+    if isinstance(cwd, pathlib.WindowsPath):
+        cwd_posix = '/' + cwd.as_posix().replace(':', '')
+    else:
+        cwd_posix = cwd.as_posix()
+
+    return os.path.join(cwd_posix, *'visuals/vr_3d_visual/renderer'.split('/'), *path.split('/'))
 
 
 class MyApp(ShowBase):
