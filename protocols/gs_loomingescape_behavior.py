@@ -37,7 +37,7 @@ def dot2000(luminance, contrast, motion_axis, dot_polarity, dot_start_ang, dot_a
     }
 
 
-def disc2000(luminance, contrast, motion_axis, disc_polarity, disc_azimuth, disc_elevation, disc_starting_diameter, disc_expansion_lv):
+def disc2000(luminance, contrast, motion_axis, disc_polarity, disc_azimuth, disc_elevation, disc_starting_diameter, disc_final_diameter, disc_expansion_lv):
     return {
         LoomingDiscOnTexture2000.luminance: luminance,
         LoomingDiscOnTexture2000.contrast: contrast,
@@ -46,6 +46,7 @@ def disc2000(luminance, contrast, motion_axis, disc_polarity, disc_azimuth, disc
         LoomingDiscOnTexture2000.disc_azimuth: disc_azimuth,
         LoomingDiscOnTexture2000.disc_elevation: disc_elevation,
         LoomingDiscOnTexture2000.disc_starting_diameter: disc_starting_diameter,
+        LoomingDiscOnTexture2000.disc_final_diameter: disc_final_diameter,
         LoomingDiscOnTexture2000.disc_expansion_lv: disc_expansion_lv
     }
 
@@ -76,7 +77,7 @@ class LoomingEscapeBehavior(StaticProtocol):
         luminance = 0.75
         motion_axis = 'vertical'
         dot_polarity = 'dark-on-light'
-        dot_start_ang = 30
+        dot_start_ang = 100
         dot_ang_vel = -60
         dot_ang_diameter = 20
         dot_offset = 10
@@ -86,9 +87,10 @@ class LoomingEscapeBehavior(StaticProtocol):
         disc_azimuth = 0
         disc_elevation = -90
         disc_starting_diameter = 2  # in °
+        disc_final_diameter = 180   # in °
         disc_expansion_lv = 240  # in ms
 
-        stimulus_choice = [1,2,3,4] # stimulus types: 1 = rotation grating CW, 2 = rotation grating CCW,3 = moving dot, 4 = looming disc
+        stimulus_choice = [3,4] # stimulus types: 1 = rotation grating CW, 2 = rotation grating CCW,3 = moving dot, 4 = looming disc
         repeats = 10    # each stimulus tye gets repeated 10x
         variants = np.array(stimulus_choice * repeats).reshape((-1,))
 
@@ -125,5 +127,73 @@ class LoomingEscapeBehavior(StaticProtocol):
                 p = Phase(duration=2.5)
                 p.set_visual(LoomingDiscOnTexture2000, disc2000(luminance, contrast, motion_axis, disc_polarity,
                                                                 disc_azimuth, disc_elevation, disc_starting_diameter,
-                                                                disc_expansion_lv))
+                                                                disc_final_diameter, disc_expansion_lv))
                 self.add_phase(p)
+
+
+
+class LoomingEscapeBehavior_TEST(StaticProtocol):
+
+    def __init__(self, *args, **kwargs):
+        StaticProtocol.__init__(self, *args, **kwargs)
+
+        self.global_visual_props['azim_angle'] = 0.
+
+        # Fix seed
+        np.random.seed(0)
+
+        # set fixed saccade parameters
+        sacc_duration = 8000    # in ms
+        sacc_ang = 240  # 30°/s * 8 sec = 240°
+        sine_start = 0
+        sacc_start = 0
+        sine_dur = 0
+        sine_freq = 0
+        sine_amp = 0
+        baseline_lum = 0.75
+        contrast = 0.5
+
+        # set fixed dot parameters
+        luminance = 0.75
+        motion_axis = 'vertical'
+        dot_polarity = 'dark-on-light'
+        dot_start_ang = 100
+        dot_ang_vel = -60
+        dot_ang_diameter = 20
+        dot_offset = 10
+
+        # set fixed dot parameters
+        disc_polarity = 'dark-on-light'
+        disc_azimuth = 0
+        disc_elevation = -90
+        disc_starting_diameter = 2  # in °
+        disc_final_diameter = 180  # in °
+        disc_expansion_lv = 240  # in ms
+
+        stimulus_choice = [3,4] # stimulus types: 1 = rotation grating CW, 2 = rotation grating CCW,3 = moving dot, 4 = looming disc
+        repeats = 10    # each stimulus tye gets repeated 10x
+        variants = np.array(stimulus_choice * repeats).reshape((-1,))
+
+
+
+        # all delay and saccade conditions in coarse
+        for i in range(1):
+
+            # 3 min just texture (pause phase)
+            p = Phase(duration=60*1)
+            p.set_visual(SimuSaccadeWithSineFlash2000, saccade2000(sacc_duration, sacc_start, 0, sine_start, sine_dur,
+                                                                   sine_amp, sine_freq, baseline_lum, contrast))
+            self.add_phase(p)
+
+
+            p = Phase(duration=2.5)
+            p.set_visual(LoomingDiscOnTexture2000, disc2000(luminance, contrast, motion_axis, disc_polarity,
+                                                            disc_azimuth, disc_elevation, disc_starting_diameter,
+                                                            disc_final_diameter, disc_expansion_lv))
+            self.add_phase(p)
+
+            # just texture at the end
+            p = Phase(duration=10)
+            p.set_visual(SimuSaccadeWithSineFlash2000, saccade2000(sacc_duration, sacc_start, 0, sine_start, sine_dur,
+                                                                   sine_amp, sine_freq, baseline_lum, contrast))
+            self.add_phase(p)

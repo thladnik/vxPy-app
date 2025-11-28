@@ -3,9 +3,9 @@ uniform float luminance;
 uniform float contrast;
 
 uniform int disc_polarity;
-uniform float disc_diameter;
-uniform float disc_current_azimuth;
-uniform float disc_elevation;
+uniform float disc_diameter;    //in degrees
+uniform float disc_current_azimuth; //in degrees
+uniform float disc_elevation;   //in degrees
 
 
 varying float v_texture_default;
@@ -28,8 +28,10 @@ vec3 sph2cart(vec2 sph_coords) {
 
 
 void main() {
-    float sec_length = disc_diameter / 360 * PI;
+    float sec_length = disc_diameter / 180 * PI;    //convert disc diameter from degrees to radians
     float c = step(sec_length / 2.0, distance(v_position, sph2cart(vec2(disc_current_azimuth, disc_elevation))));
+    //float c = smoothstep(sec_length, sec_length + 0.01, distance(v_position, sph2cart(vec2(disc_current_azimuth, disc_elevation))));
+
 
     if(c > 0.1) {
         gl_FragColor = vec4(vec3(v_texture_default * contrast + luminance - contrast / 2.0), 1.);

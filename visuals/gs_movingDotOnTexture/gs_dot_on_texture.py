@@ -25,7 +25,7 @@ import numpy as np
 from vxpy.core import visual
 from vxpy.utils import sphere
 import vxpy.core.visual as vxvisual
-from vxpy.utils.geometry import sph2cart1
+from vxpy.utils.geometry import sph2cart1, sph2cart
 
 
 def _convert_mat_texture_to_hdf(mat_path: str, hdf_path: str):
@@ -98,9 +98,9 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
     # Define Moving Dot parameters
     motion_axis = MotionAxis('motion_axis', static=True, default='vertical')
     dot_polarity = vxvisual.IntParameter('dot_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
-    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=-30, limits=(-180, 180), step_size=5,
+    dot_start_angle = vxvisual.FloatParameter('dot_start_angle', default=100, limits=(-180, 180), step_size=5,
                                               static=True)
-    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=60, limits=(-360, 360), step_size=5, static=True)
+    dot_angular_velocity = vxvisual.FloatParameter('dot_angular_velocity', default=-60, limits=(-360, 360), step_size=5, static=True)
     dot_angular_diameter = vxvisual.FloatParameter('dot_angular_diameter', default=20, limits=(1, 90), step_size=1, static=True)
     dot_offset_angle = vxvisual.FloatParameter('dot_offset_angle', default=0, limits=(-85, 85), step_size=5, static=True)
     dot_location = vxvisual.Vec3Parameter('dot_location', default=0)
@@ -162,22 +162,23 @@ class MovingDotOnTexture2000(vxvisual.SphericalVisual):
         self.luminance.data = baseline_lum
 
         # dot location
-        start_ang = self.dot_start_angle.data[0]
+        start_ang = self.dot_start_angle.data[0] / 180. * np.pi     #radians
         ang_vel = self.dot_angular_velocity.data[0]
         dot_offset = self.dot_offset_angle.data[0]
-        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
+        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi  #radians
 
         t_switch = 500
         t_stop = 1500
         if time < t_switch:
-            dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
+            dot_azim = (start_ang - text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+            self.dot_location.data = sph2cart(dot_azim, dot_elev, 1.)
         elif t_switch < time < t_stop:
-            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
+            dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi - text_azim) - \
                        ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+            self.dot_location.data = sph2cart(dot_azim, dot_elev, 1.)
+
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.rotating_dot)
@@ -276,12 +277,12 @@ class MovingDotOnTexture4000(vxvisual.SphericalVisual):
         if time < t_switch:
             dot_azim = (start_ang + text_azim) + (time / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+            self.dot_location.data = sph2cart(dot_azim, dot_elev, 1.)
         elif t_switch < time < t_stop:
             dot_azim = (start_ang + (t_switch / 1000) * ang_vel / 180.0 * np.pi + text_azim) - \
                        ((time - t_switch) / 1000) * ang_vel / 180.0 * np.pi
             dot_elev = dot_offset / 180. * np.pi
-            self.dot_location.data = sph2cart1(dot_azim, dot_elev, 1.)
+            self.dot_location.data = sph2cart(dot_azim, dot_elev, 1.)
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.rotating_dot)

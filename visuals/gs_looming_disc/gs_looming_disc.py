@@ -25,7 +25,7 @@ import numpy as np
 from vxpy.core import visual
 from vxpy.utils import sphere
 import vxpy.core.visual as vxvisual
-from vxpy.utils.geometry import sph2cart1
+from vxpy.utils.geometry import sph2cart1, sph2cart
 
 
 def _convert_mat_texture_to_hdf(mat_path: str, hdf_path: str):
@@ -89,7 +89,7 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
     # Define Texture Parameters
     rotation = vxvisual.Mat4Parameter('rotation', default=0.0, limits=(0.0, 360.0), internal=True)
     texture_default = vxvisual.Attribute('texture_default', static=True)
-    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.5, limits=(0.0, 1.0), step_size=0.01)
+    luminance = vxvisual.FloatParameter('luminance', static=True, default=0.75, limits=(0.0, 1.0), step_size=0.01)
     contrast = vxvisual.FloatParameter('contrast', static=True, default=0.5, limits=(0.0, 1.0),
                                        step_size=0.01)  # Absolute contrast
 
@@ -100,9 +100,12 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
     disc_polarity = vxvisual.IntParameter('disc_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
     disc_azimuth = vxvisual.FloatParameter('disc_azimuth', default=0, limits=(-180, 180), step_size=5, static=True) # in °
     disc_current_azimuth = vxvisual.FloatParameter('disc_current_azimuth', default = 0)
-    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
+    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=0, limits=(-90, 90), step_size=5,
                                            static=True) # in °
+    #disc_location = vxvisual.Vec3Parameter('disc_location', default=0)
     disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
+    disc_final_diameter = vxvisual.FloatParameter('disc_final_diameter', default=180, limits=(1, 360), step_size=1,
+                                                  static=True)  # in °
     disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
     disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
 
@@ -141,7 +144,9 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
         self.disc_azimuth.connect(self.looming_disc)
         self.disc_current_azimuth.connect(self.looming_disc)
         self.disc_elevation.connect(self.looming_disc)
+        #self.disc_location.connect(self.looming_disc)
         self.disc_starting_diameter.connect(self.looming_disc)
+        self.disc_final_diameter.connect(self.looming_disc)
         self.disc_expansion_lv.connect(self.looming_disc)
         self.disc_diameter.connect(self.looming_disc)
 
@@ -166,22 +171,29 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
         self.luminance.data = baseline_lum
 
         # set global texture azimuth
-        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
+        text_azim = self.protocol.global_visual_props['azim_angle']
 
         # disc location (adjusted for change in texture location)
-        disc_azim = self.disc_azimuth.data[0]
+        disc_azim = self.disc_azimuth.data[0]   # in degrees
 
-        current_azim = (disc_azim + text_azim) + (time / 1000) * np.pi
+        current_azim = disc_azim - text_azim    # in degrees
 
         self.disc_current_azimuth.data = current_azim
+
+        #self.disc_location.data = sph2cart(disc_azim, disc_elev, 1.)
 
         # disc size
         start_size = self.disc_starting_diameter.data[0]
         expansion_lv = self.disc_expansion_lv.data[0]
+        final_diameter = self.disc_final_diameter.data[0]
 
-        current_diameter = start_size * np.exp(time/expansion_lv)
+        if start_size * np.exp(time / expansion_lv) < final_diameter:
+            current_diameter = start_size * np.exp(time / expansion_lv)
+        else:
+            current_diameter = final_diameter
 
         self.disc_diameter.data = current_diameter
+        #print(current_diameter)
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.looming_disc)
@@ -212,6 +224,8 @@ class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
     disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
                                            static=True) # in °
     disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
+    disc_final_diameter = vxvisual.FloatParameter('disc_final_diameter', default=100, limits=(1, 360), step_size=1,
+                                                     static=True)  # in °
     disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
     disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
 
@@ -251,6 +265,7 @@ class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
         self.disc_current_azimuth.connect(self.looming_disc)
         self.disc_elevation.connect(self.looming_disc)
         self.disc_starting_diameter.connect(self.looming_disc)
+        self.disc_final_diameter.connect(self.looming_disc)
         self.disc_expansion_lv.connect(self.looming_disc)
         self.disc_diameter.connect(self.looming_disc)
 
@@ -275,20 +290,25 @@ class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
         self.luminance.data = baseline_lum
 
         # set global texture azimuth
-        text_azim = self.protocol.global_visual_props['azim_angle'] / 180. * np.pi
+        text_azim = self.protocol.global_visual_props['azim_angle']
+
 
         # disc location (adjusted for change in texture location)
         disc_azim = self.disc_azimuth.data[0]
 
-        current_azim = (disc_azim + text_azim) + (time / 1000) * np.pi
+        current_azim = disc_azim - text_azim
 
         self.disc_current_azimuth.data = current_azim
 
         # disc size
         start_size = self.disc_starting_diameter.data[0]
         expansion_lv = self.disc_expansion_lv.data[0]
+        final_diameter = self.disc_final_diameter.data[0]
 
-        current_diameter = start_size * np.exp(time/expansion_lv)
+        if start_size * np.exp(time/expansion_lv) < final_diameter:
+            current_diameter = start_size * np.exp(time/expansion_lv)
+        else:
+            current_diameter = final_diameter
 
         self.disc_diameter.data = current_diameter
 

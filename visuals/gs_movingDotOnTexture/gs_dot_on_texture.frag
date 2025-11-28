@@ -7,7 +7,7 @@ uniform float dot_start_angle;
 uniform float dot_angular_velocity;
 uniform float dot_angular_diameter;
 uniform float dot_offset_angle;
-uniform vec3 dot_location;
+uniform vec3 dot_location;  //cartesian coordinates from visual
 
 varying float v_texture_default;
 varying vec3 v_position;
@@ -26,9 +26,9 @@ varying vec3 v_position;
 void main() {
 //    vec3 dot_location = sph2cart(vec2((dot_start_angle + time * dot_angular_velocity) / 180.0 * PI,
 //                                      dot_offset_angle / 180 * PI));
-    float sec_length = sin(dot_angular_diameter / 360 * PI);
+    float sec_length = dot_angular_diameter / 180 * PI; //convert dot diameter from degrees to radians
 //    vec3 color = vec3(1.0 - smoothstep(sec_length, sec_length + 0.01, distance(v_position, dot_location)));
-    float c = smoothstep(sec_length, sec_length + 0.01, distance(v_position, dot_location));
+    float c = step(sec_length / 2.0, distance(v_position, dot_location));
 //    vec3 color = vec3(1.0 - c);
     if(c > 0.1) {
         gl_FragColor = vec4(vec3(v_texture_default * contrast + luminance - contrast / 2.0), 1.);
