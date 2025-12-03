@@ -183,17 +183,20 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
         #self.disc_location.data = sph2cart(disc_azim, disc_elev, 1.)
 
         # disc size
-        start_size = self.disc_starting_diameter.data[0]
-        expansion_lv = self.disc_expansion_lv.data[0]
-        final_diameter = self.disc_final_diameter.data[0]
+        start_size = np.deg2rad(self.disc_starting_diameter.data[0])  # must convert from degree to rad
+        expansion_lv = self.disc_expansion_lv.data[0]  # in ms
+        final_diameter = np.deg2rad(self.disc_final_diameter.data[0])  # must convert from degree to rad
 
-        if start_size * np.exp(time / expansion_lv) < final_diameter:
-            current_diameter = start_size * np.exp(time / expansion_lv)
+        t_0 = expansion_lv / np.tan(start_size / 2)  # virtual time to collision
+
+        if time >= t_0:
+            current_diameter = final_diameter  # stay at max
         else:
-            current_diameter = final_diameter
-
-        self.disc_diameter.data = current_diameter
+            theta = 2 * np.arctan(expansion_lv / (t_0 - time))
+            current_diameter = min(theta, final_diameter)
         #print(current_diameter)
+
+        self.disc_diameter.data = np.rad2deg(current_diameter)  # back to degrees
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.looming_disc)
@@ -223,8 +226,8 @@ class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
     disc_current_azimuth = vxvisual.FloatParameter('disc_current_azimuth', default = 0)
     disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
                                            static=True) # in °
-    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
-    disc_final_diameter = vxvisual.FloatParameter('disc_final_diameter', default=100, limits=(1, 360), step_size=1,
+    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=4, limits=(1, 90), step_size=1, static=True) # in °
+    disc_final_diameter = vxvisual.FloatParameter('disc_final_diameter', default=180, limits=(1, 360), step_size=1,
                                                      static=True)  # in °
     disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
     disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
@@ -301,16 +304,21 @@ class LoomingDiscOnTexture4000(vxvisual.SphericalVisual):
         self.disc_current_azimuth.data = current_azim
 
         # disc size
-        start_size = self.disc_starting_diameter.data[0]
-        expansion_lv = self.disc_expansion_lv.data[0]
-        final_diameter = self.disc_final_diameter.data[0]
+        start_size = np.deg2rad(self.disc_starting_diameter.data[0])    # must convert from degree to rad
+        expansion_lv = self.disc_expansion_lv.data[0]   # in ms
+        final_diameter = np.deg2rad(self.disc_final_diameter.data[0])   # must convert from degree to rad
 
-        if start_size * np.exp(time/expansion_lv) < final_diameter:
-            current_diameter = start_size * np.exp(time/expansion_lv)
+        t_0 = expansion_lv/np.tan(start_size/2) #virtual time to collision
+
+        if time >= t_0:
+            current_diameter = final_diameter  # stay at max
         else:
-            current_diameter = final_diameter
+            theta = 2 * np.arctan(expansion_lv/(t_0 - time))
+            current_diameter = min(theta, final_diameter)
 
-        self.disc_diameter.data = current_diameter
+        #print(time, np.rad2deg(current_diameter))
+
+        self.disc_diameter.data = np.rad2deg(current_diameter)  #back to degrees
 
         # Apply default transforms to the program for mapping according to hardware calibration
         self.apply_transform(self.looming_disc)
