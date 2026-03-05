@@ -100,13 +100,13 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
     disc_polarity = vxvisual.IntParameter('disc_polarity', value_map={'dark-on-light': 1, 'light-on-dark': 2}, static=True)
     disc_azimuth = vxvisual.FloatParameter('disc_azimuth', default=0, limits=(-180, 180), step_size=5, static=True) # in °
     disc_current_azimuth = vxvisual.FloatParameter('disc_current_azimuth', default = 0)
-    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=0, limits=(-90, 90), step_size=5,
+    disc_elevation = vxvisual.FloatParameter('disc_elevation', default=-90, limits=(-90, 90), step_size=5,
                                            static=True) # in °
     #disc_location = vxvisual.Vec3Parameter('disc_location', default=0)
-    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=2, limits=(1, 90), step_size=1, static=True) # in °
+    disc_starting_diameter = vxvisual.FloatParameter('disc_starting_diameter', default=4, limits=(1, 90), step_size=1, static=True) # in °
     disc_final_diameter = vxvisual.FloatParameter('disc_final_diameter', default=180, limits=(1, 360), step_size=1,
                                                   static=True)  # in °
-    disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 200, limits=(5,500), step_size=5, static=True) # in ms
+    disc_expansion_lv = vxvisual.FloatParameter('disc_expansion_lv', default = 240, limits=(5,500), step_size=5, static=True) # in ms
     disc_diameter = vxvisual.FloatParameter('disc_diameter', default=0) # in °
 
 
@@ -194,7 +194,7 @@ class LoomingDiscOnTexture2000(vxvisual.SphericalVisual):
         else:
             theta = 2 * np.arctan(expansion_lv / (t_0 - time))
             current_diameter = min(theta, final_diameter)
-        #print(current_diameter)
+        print(np.rad2deg(current_diameter))
 
         self.disc_diameter.data = np.rad2deg(current_diameter)  # back to degrees
 
