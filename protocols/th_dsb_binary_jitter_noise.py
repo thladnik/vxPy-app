@@ -8,7 +8,9 @@ from visuals.jitter_noise import \
     BinaryBlackWhiteJitterNoise8deg2Hz, \
     BinaryBlackWhiteJitterNoise60deg, \
     BinaryBlackWhiteJitterNoise30deg, \
-    BinaryBlackWhiteJitterNoise10deg
+    BinaryBlackWhiteJitterNoise10deg, \
+    BinaryBlackWhiteJitterNoise5deg, \
+    BinaryBlackWhiteJitterNoise15deg
 
 
 class BinaryJitterNoise(StaticProtocol):
@@ -63,8 +65,8 @@ class BinaryJitterNoiseGS(StaticProtocol):
                   visual_params={SphereUniformBackground.u_color: [0.5, 0.5, 0.5]})
         self.add_phase(p)
 
-        p = Phase(600)
-        p.set_visual(BinaryBlackWhiteJitterNoise60deg)
+        p = Phase(60*60)
+        p.set_visual(BinaryBlackWhiteJitterNoise5deg)
         self.add_phase(p)
 
         p = Phase(60, visual=SphereUniformBackground,
@@ -72,15 +74,7 @@ class BinaryJitterNoiseGS(StaticProtocol):
         self.add_phase(p)
 
         p = Phase(30*60)
-        p.set_visual(BinaryBlackWhiteJitterNoise30deg)
-        self.add_phase(p)
-
-        p = Phase(60, visual=SphereUniformBackground,
-                  visual_params={SphereUniformBackground.u_color: [0.5, 0.5, 0.5]})
-        self.add_phase(p)
-
-        p = Phase(60 * 60)
-        p.set_visual(BinaryBlackWhiteJitterNoise10deg)
+        p.set_visual(BinaryBlackWhiteJitterNoise15deg)
         self.add_phase(p)
 
         p = Phase(60, visual=SphereUniformBackground,

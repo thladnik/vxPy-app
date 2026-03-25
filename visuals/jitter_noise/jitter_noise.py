@@ -192,6 +192,22 @@ class BinaryBlackWhiteJitterNoise10deg(BinaryBlackWhiteJitterNoise):
     jitter_update_rate = 1.0
     pattern_update_rate = 1.0
 
+class BinaryBlackWhiteJitterNoise5deg(BinaryBlackWhiteJitterNoise):
+
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_5deg.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 5
+    jitter_update_rate = 1.0
+    pattern_update_rate = 1.0
+
+class BinaryBlackWhiteJitterNoise15deg(BinaryBlackWhiteJitterNoise):
+
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_15deg.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 15
+    jitter_update_rate = 1.0
+    pattern_update_rate = 1.0
+
 if __name__ == '__main__':
 
     import matplotlib.pyplot as plt
