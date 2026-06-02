@@ -353,6 +353,16 @@ class CMN3D20240606Vel140Scale7(ContiguousMotionNoise3D):  # Increased velocity
     texture_scale = 7.
 
 
+class CMN3D20240606Vel140Scale7Long(ContiguousMotionNoise3D):  # Increased velocity
+    subdivision_level = 2
+    frame_num = 40_000
+    sp_cr = 57.  # spatial contiguity radius [deg]
+    tp_cr = 1.  # temporal contiguity radius [s]
+    fps = 20  # [frames/s]
+    nominal_velocity = 140  # mean local velocity [deg/s]
+    motion_vector_bias = np.array([0., 0., 0.])  # Bias motion vectors (for testing)
+    texture_scale = 7.
+
 class CMN3D20240606Vel160Scale3LargePatches(ContiguousMotionNoise3D):  # Increased velocity
     subdivision_level = 1
     frame_num = 30_000
