@@ -192,6 +192,14 @@ class BinaryBlackWhiteJitterNoise10deg(BinaryBlackWhiteJitterNoise):
     jitter_update_rate = 1.0
     pattern_update_rate = 1.0
 
+class BinaryBlackWhiteJitterNoise20deg(BinaryBlackWhiteJitterNoise):
+
+    sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_20deg.mat'
+    binary_pattern = vxvisual.Attribute('binary_pattern')
+    patch_diameter = 20
+    jitter_update_rate = 1.0
+    pattern_update_rate = 1.0
+
 class BinaryBlackWhiteJitterNoise5deg(BinaryBlackWhiteJitterNoise):
 
     sphere_vertex_filepath = './visuals/jitter_noise/repulsive_sphere_5deg.mat'
