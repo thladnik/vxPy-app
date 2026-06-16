@@ -1,7 +1,7 @@
 import numpy as np
 import vxpy.core.protocol as vxprotocol
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
-from visuals.jitter_noise import BinaryBlackWhiteJitterNoise20deg
+from visuals.jitter_noise import BinaryBlackWhiteJitterNoise30deg
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 from visuals.gs_characterization_stims.chirp import LogChirp
 from visuals.spherical_global_motion.motion_in_sphere import RotationGrating
@@ -62,7 +62,7 @@ class RF_characterization(vxprotocol.StaticProtocol):
         # set fixed parameters rotation
         rot_waveform = 'rect'
         rot_ang_per = 45    # °/cyc --> based on peak response found by DC
-        rot_ang_vel = 180   # °/s --> 4Hz temp frequency
+        rot_ang_vel = 90   # °/s --> 2Hz temp frequency
         rot_moving_duration = 12 # sec
         rot_pause_duration = 6  # sec
 
@@ -70,7 +70,7 @@ class RF_characterization(vxprotocol.StaticProtocol):
         trans_waveform = 'rectangular'
         trans_motion_type = 'translation'
         trans_ang_per = 45
-        trans_ang_vel = 180
+        trans_ang_vel = 90
         trans_moving_duration = 12
         trans_pause_duration = 6
 
@@ -96,7 +96,7 @@ class RF_characterization(vxprotocol.StaticProtocol):
 
         # 30 min binary jitter
         p = vxprotocol.Phase(jitter_duration)
-        p.set_visual(BinaryBlackWhiteJitterNoise20deg)
+        p.set_visual(BinaryBlackWhiteJitterNoise30deg)
         self.add_phase(p)
 
         # Pause phase (10 sec uniform grey)
@@ -159,6 +159,7 @@ class RF_characterization(vxprotocol.StaticProtocol):
         repeats = 2
         for i in range(repeats):
             for motion_axis, direction in np.random.permutation(trans_conditions):
+                # print(trans_ang_vel, direction, trans_ang_vel * int(direction))
                 # static phase
                 p = vxprotocol.Phase(trans_pause_duration)
                 p.set_visual(SphericalBlackWhiteGrating,paramsTranslation(trans_waveform, trans_motion_type, motion_axis, ang_vel=0, ang_period=trans_ang_per))
@@ -166,7 +167,7 @@ class RF_characterization(vxprotocol.StaticProtocol):
 
                 # rotation phase
                 p = vxprotocol.Phase(trans_moving_duration)
-                p.set_visual(SphericalBlackWhiteGrating,paramsTranslation(trans_waveform, trans_motion_type, motion_axis, ang_vel= trans_ang_vel * direction, ang_period=trans_ang_per))
+                p.set_visual(SphericalBlackWhiteGrating,paramsTranslation(trans_waveform, trans_motion_type, motion_axis, ang_vel= trans_ang_vel * int(direction), ang_period=trans_ang_per))
                 self.add_phase(p)
 
         # Pause phase (10 sec uniform grey)

@@ -356,7 +356,7 @@ class CMN3D20240606Vel140Scale7(ContiguousMotionNoise3D):  # Increased velocity
 class CMN3D20240606Vel140Scale7Long(ContiguousMotionNoise3D):  # Increased velocity
     subdivision_level = 2
     frame_num = 40_000
-    sp_cr = 57.  # spatial contiguity radius [deg]
+    sp_cr = 41.5  # spatial contiguity radius [deg]
     tp_cr = 1.  # temporal contiguity radius [s]
     fps = 20  # [frames/s]
     nominal_velocity = 140  # mean local velocity [deg/s]
