@@ -1,11 +1,12 @@
 import numpy as np
 import vxpy.core.protocol as vxprotocol
 from vxpy.visuals.spherical_uniform_background import SphereUniformBackground
-from visuals.jitter_noise import BinaryBlackWhiteJitterNoise30deg
+from visuals.jitter_noise import BinaryBlackWhiteJitterNoise10deg, BinaryBlackWhiteJitterNoise30deg, BinaryBlackWhiteJitterNoise60deg
 from visuals.spherical_grating import SphericalBlackWhiteGrating
 from visuals.gs_characterization_stims.chirp import LogChirp
 from visuals.spherical_global_motion.motion_in_sphere import RotationGrating
 from visuals.cmn_redesign import CMN3D20240606Vel140Scale7Long
+from visuals.gs_characterization_stims.sft_grating import SphericalSFTGrating
 
 
 def paramsTranslation(waveform, motion_type, motion_axis, ang_vel, ang_period):
@@ -33,6 +34,16 @@ def paramsRotation(elev, azim, ang_vel, ang_per, waveform):
         RotationGrating.angular_velocity: ang_vel,
         RotationGrating.angular_period: ang_per,
         RotationGrating.waveform: waveform
+    }
+
+def paramsSFGrat(waveform, motion_type, motion_axis, ang_vel, ang_period, offset):
+    return {
+        SphericalSFTGrating.waveform: waveform,
+        SphericalSFTGrating.motion_type: motion_type,
+        SphericalSFTGrating.motion_axis: motion_axis,
+        SphericalSFTGrating.angular_velocity: ang_vel,
+        SphericalSFTGrating.angular_period: ang_period,
+        SphericalSFTGrating.offset: offset
     }
 
 class RF_characterization(vxprotocol.StaticProtocol):
@@ -176,5 +187,95 @@ class RF_characterization(vxprotocol.StaticProtocol):
         self.add_phase(p)
 
 
+class RF_sizeselectivity(vxprotocol.StaticProtocol):
 
+    def __init__(self, *args, **kwargs):
+        vxprotocol.StaticProtocol.__init__(self, *args, **kwargs)
 
+        self.global_visual_props['azim_angle'] = 0.
+
+        # set fixed parameters binary jitter
+        jitter_duration_10 = 30 * 60  # sec
+        jitter_duration_30 = 30 * 60 # sec
+        jitter_duration_60 = 10 * 60 # sec
+
+        # set fixed parameters: SF Tuning Static
+        sfs_waveform = 'rectangular'
+        sfs_motion_type_hz = 'translation'
+        sfs_motion_type_vt = 'rotation'
+        sfs_motion_axis = 'vertical'
+        sfs_pattern_phase_duration = 6  # sec
+        sfs_grey_phase_duration = 12  # sec
+
+        # Variable conditions
+        SFTs_conditions = [(90, 0), (90, 0.25), (90, 0.5), (90, 0.75), (45, 0), (45, 0.25), (45, 0.5), (45, 0.75),
+                           (22.5, 0), (22.5, 0.25), (22.5, 0.5), (22.5, 0.75), (11.25, 0), (11.25, 0.25), (11.25, 0.5),
+                           (11.25, 0.75), (5.625, 0), (5.625, 0.25), (5.625, 0.5), (5.625, 0.75)]  # angular period in °/cyc, phase shift in cyc
+
+        # start protocol (10 sec uniform grey)
+        p = vxprotocol.Phase(10)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.asarray([.5, .5, .5])})
+        self.add_phase(p)
+
+        # 30 min binary jitter 10°
+        p = vxprotocol.Phase(jitter_duration_10)
+        p.set_visual(BinaryBlackWhiteJitterNoise10deg)
+        self.add_phase(p)
+
+        # Pause phase (10 sec uniform grey)
+        p = vxprotocol.Phase(10)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.asarray([.5, .5, .5])})
+        self.add_phase(p)
+
+        # 30 min binary jitter 30°
+        p = vxprotocol.Phase(jitter_duration_30)
+        p.set_visual(BinaryBlackWhiteJitterNoise30deg)
+        self.add_phase(p)
+
+        # Pause phase (10 sec uniform grey)
+        p = vxprotocol.Phase(10)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.asarray([.5, .5, .5])})
+        self.add_phase(p)
+
+        # 30 min binary jitter 60°
+        p = vxprotocol.Phase(jitter_duration_60)
+        p.set_visual(BinaryBlackWhiteJitterNoise60deg)
+        self.add_phase(p)
+
+        # Pause phase (10 sec uniform grey)
+        p = vxprotocol.Phase(10)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.asarray([.5, .5, .5])})
+        self.add_phase(p)
+
+        # Horizontal static SFT grating
+        for ang_per, phase_shift in np.random.permutation(SFTs_conditions):
+            # Pattern Phase
+            offset = ang_per * phase_shift
+            p = vxprotocol.Phase(sfs_pattern_phase_duration)
+            p.set_visual(SphericalSFTGrating,
+                         paramsSFGrat(sfs_waveform, sfs_motion_type_hz, sfs_motion_axis, 0, ang_per, offset))
+            self.add_phase(p)
+
+            # Grey Phase
+            p = vxprotocol.Phase(sfs_grey_phase_duration)
+            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+            self.add_phase(p)
+
+        # Pause phase (10 sec uniform grey)
+        p = vxprotocol.Phase(10)
+        p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.asarray([.5, .5, .5])})
+        self.add_phase(p)
+
+        # Vertical static SFT grating
+        for ang_per, phase_shift in np.random.permutation(SFTs_conditions):
+            # Pattern Phase
+            offset = ang_per * phase_shift
+            p = vxprotocol.Phase(sfs_pattern_phase_duration)
+            p.set_visual(SphericalSFTGrating,
+                         paramsSFGrat(sfs_waveform, sfs_motion_type_vt, sfs_motion_axis, 0, ang_per, offset))
+            self.add_phase(p)
+
+            # Grey Phase
+            p = vxprotocol.Phase(sfs_grey_phase_duration)
+            p.set_visual(SphereUniformBackground, {SphereUniformBackground.u_color: np.array([.5, .5, .5])})
+            self.add_phase(p)
