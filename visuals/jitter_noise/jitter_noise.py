@@ -109,7 +109,7 @@ class BinaryBlackWhiteJitterNoise(vxvisual.SphericalVisual):
         rng = np.random.default_rng()
         x = rng.uniform(0, 5)
         y = rng.uniform(0, 5)
-        angle = np.sqrt(x * (self.patch_diameter/10) + y * (self.patch_diameter/10))    #replicates Gupta et al. by simulating a rotation by 10% of patch diameter on x and y, and then taking sqrt(x+y) to get diagonal as rotation angle
+        angle = np.sqrt((x * (self.patch_diameter/10))**2 + (y * (self.patch_diameter/10))**2)    #replicates Gupta et al. by simulating a rotation by 10% of patch diameter on x and y, and then taking sqrt(x+y) to get diagonal as rotation angle
 
         v3 = np.random.rand(3)
         v3 /= np.linalg.norm(v3)
